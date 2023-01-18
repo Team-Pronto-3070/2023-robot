@@ -98,11 +98,6 @@ public class Swerve extends SubsystemBase {
     }
 
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isOpenLoop) {
-        // Adjust input based on max speed
-        xSpeed *= Constants.Swerve.maxSpeed;
-        ySpeed *= Constants.Swerve.maxSpeed;
-        rot *= Constants.Swerve.maxAngularSpeed;
-
         var swerveModuleStates = kinematics.toSwerveModuleStates(
             fieldRelative
                 ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getYaw())

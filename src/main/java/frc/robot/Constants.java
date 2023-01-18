@@ -6,6 +6,11 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
+    public static final class OI {
+        public static final int driverPort = 1;
+        public static final double deadband = 0.06;
+    }
+
     public static final class Swerve {
         public static final double wheelBase = 0.0; //distance between front and back wheels
         public static final double trackWidth = 0.0; //distance between left and right wheels
