@@ -1,16 +1,19 @@
 package frc.robot.subsystems;
 
+import java.util.Optional;
+import org.photonvision.EstimatedRobotPose;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.ADIS16448_IMU;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Vision;
 import frc.robot.util.ProntoSwerveModule;
 
 public class Swerve extends SubsystemBase {
@@ -23,7 +26,10 @@ public class Swerve extends SubsystemBase {
     private final ADIS16448_IMU gyro;
 
     public final SwerveDriveKinematics kinematics;
-    private final SwerveDriveOdometry odometry;
+
+    private final SwerveDrivePoseEstimator poseEstimator;
+
+    private final Vision vision;
     
     public Swerve() {
         frontLeft = new ProntoSwerveModule(
@@ -59,17 +65,17 @@ public class Swerve extends SubsystemBase {
             new Translation2d(-Constants.Swerve.wheelBase / 2, -Constants.Swerve.trackWidth / 2)
         );
 
-        odometry = new SwerveDriveOdometry(
-            kinematics,
-            getYaw(),
+        poseEstimator = new SwerveDrivePoseEstimator(
+            kinematics, 
+            getYaw(), 
             new SwerveModulePosition[] {
-                frontLeft.getPosition(),
-                frontRight.getPosition(),
-                rearLeft.getPosition(),
-                rearRight.getPosition()
-            }
-        );
-        
+                    frontLeft.getPosition(),
+                    frontRight.getPosition(),
+                    rearLeft.getPosition(),
+                    rearRight.getPosition()
+                }, new Pose2d());
+
+        vision = new Vision();
     }
 
     public Rotation2d getYaw() {
@@ -81,11 +87,11 @@ public class Swerve extends SubsystemBase {
     }
 
     public Pose2d getPose() {
-        return odometry.getPoseMeters();
+        return poseEstimator.getEstimatedPosition();
     }
 
     public void resetOdometry(Pose2d pose) {
-        odometry.resetPosition(
+        poseEstimator.resetPosition(
             getYaw(),
             new SwerveModulePosition[] {
                 frontLeft.getPosition(),
@@ -120,7 +126,7 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic() {
-        odometry.update(
+        poseEstimator.update(
             getYaw(),
             new SwerveModulePosition[] {
                 frontLeft.getPosition(),
@@ -129,5 +135,14 @@ public class Swerve extends SubsystemBase {
                 rearRight.getPosition()
             }
         );
+
+        Optional<EstimatedRobotPose> result =
+                vision.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
+
+        if (result.isPresent()) {
+            EstimatedRobotPose camPose = result.get();
+            poseEstimator.addVisionMeasurement(
+                    camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+        } 
     }
 }

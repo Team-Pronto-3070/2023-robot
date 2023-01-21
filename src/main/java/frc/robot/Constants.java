@@ -86,4 +86,8 @@ public final class Constants {
             public static final int currentLimit = 20;
         }
     }
+
+    public static final class Vision {
+        public static final String cameraName = "";
+    }
 }
