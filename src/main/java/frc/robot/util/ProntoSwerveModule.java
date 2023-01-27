@@ -1,3 +1,7 @@
+
+// Here is the actual swerve module class and interface
+
+
 package frc.robot.util;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -16,6 +20,9 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants;
 
+/**
+ * Swerve module specific functions and support that don't belong in the subsystem class 
+ */
 public class ProntoSwerveModule {
 
     private final TalonFX driveMotor;
@@ -80,6 +87,11 @@ public class ProntoSwerveModule {
         );
     }
 
+    /**
+     * 
+     * @param rawDesiredState
+     * @param isOpenLoop
+     */
     public void setDesiredState(SwerveModuleState rawDesiredState, boolean isOpenLoop) {
         SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(
             new SwerveModuleState(
@@ -106,6 +118,10 @@ public class ProntoSwerveModule {
         turningPID.setReference(angle.getRadians(), CANSparkMax.ControlType.kPosition);
     }
 
+    /**
+     * 
+     * @return TODO: documentation
+     */
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
             driveMotor.getSelectedSensorPosition() * Constants.Swerve.wheelCircumference / (Constants.Swerve.gearRatio * 2048.0),
@@ -113,6 +129,10 @@ public class ProntoSwerveModule {
         );
     }
 
+    /**
+     * 
+     * @return motor speed & current motor rotation
+     */
     public SwerveModuleState getState() {
         return new SwerveModuleState(
             ((driveMotor.getSelectedSensorVelocity() //raw falcon units

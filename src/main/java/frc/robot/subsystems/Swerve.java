@@ -1,3 +1,6 @@
+
+// Here is where the swerve subsystem is defined
+
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -13,6 +16,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.ProntoSwerveModule;
 
+/**
+ * Swerve subsystem
+ */
 public class Swerve extends SubsystemBase {
 
     private final ProntoSwerveModule frontLeft;
@@ -72,6 +78,10 @@ public class Swerve extends SubsystemBase {
         
     }
 
+    /**
+     * 
+     * @return the yaw of the swerve wheel
+     */
     public Rotation2d getYaw() {
         return Rotation2d.fromDegrees(gyro.getAngle());
     }
@@ -80,10 +90,18 @@ public class Swerve extends SubsystemBase {
         gyro.reset();
     }
 
+    /**
+     * 
+     * @return the position of the robot on the field as x and y in meters
+     */
     public Pose2d getPose() {
         return odometry.getPoseMeters();
     }
 
+    /**
+     * resets the odometry of the robot
+     * @param pose
+     */
     public void resetOdometry(Pose2d pose) {
         odometry.resetPosition(
             getYaw(),

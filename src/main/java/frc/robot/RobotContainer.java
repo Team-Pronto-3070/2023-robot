@@ -26,6 +26,9 @@ public class RobotContainer {
     configureBindings();
   }
 
+  /**
+   * All controller bindings are binded using the OI (Operator Interface)
+   */
   private void configureBindings() {
     oi.gyroResetButton.onTrue(swerve.runOnce(swerve::resetGryo));
   }

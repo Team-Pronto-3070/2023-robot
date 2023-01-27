@@ -11,6 +11,8 @@ public final class Constants {
         public static final double deadband = 0.06;
     }
 
+    //TODO fill consts
+    // need to fill consts so that simulation can work
     public static final class Swerve {
         public static final double wheelBase = 0.0; //distance between front and back wheels
         public static final double trackWidth = 0.0; //distance between left and right wheels
