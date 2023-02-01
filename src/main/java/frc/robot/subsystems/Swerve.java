@@ -16,9 +16,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.ProntoSwerveModule;
 
-/**
- * Swerve subsystem
- */
 public class Swerve extends SubsystemBase {
 
     private final ProntoSwerveModule frontLeft;
@@ -98,10 +95,7 @@ public class Swerve extends SubsystemBase {
         return odometry.getPoseMeters();
     }
 
-    /**
-     * resets the odometry of the robot
-     * @param pose
-     */
+
     public void resetOdometry(Pose2d pose) {
         odometry.resetPosition(
             getYaw(),

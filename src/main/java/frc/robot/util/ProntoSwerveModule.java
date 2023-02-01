@@ -87,11 +87,6 @@ public class ProntoSwerveModule {
         );
     }
 
-    /**
-     * 
-     * @param rawDesiredState
-     * @param isOpenLoop
-     */
     public void setDesiredState(SwerveModuleState rawDesiredState, boolean isOpenLoop) {
         SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(
             new SwerveModuleState(
@@ -118,10 +113,6 @@ public class ProntoSwerveModule {
         turningPID.setReference(angle.getRadians(), CANSparkMax.ControlType.kPosition);
     }
 
-    /**
-     * 
-     * @return TODO: documentation
-     */
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
             driveMotor.getSelectedSensorPosition() * Constants.Swerve.wheelCircumference / (Constants.Swerve.gearRatio * 2048.0),
