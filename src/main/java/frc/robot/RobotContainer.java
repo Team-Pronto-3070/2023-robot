@@ -11,6 +11,7 @@ import frc.robot.subsystems.Swerve;
 
 public class RobotContainer {
   private final OI oi = new OI(Constants.OI.driverPort);
+  private final Vision vision = new Vision();
 
   private final Swerve swerve = new Swerve();
 
@@ -28,6 +29,10 @@ public class RobotContainer {
 
   private void configureBindings() {
     oi.gyroResetButton.onTrue(swerve.runOnce(swerve::resetGryo));
+  }
+
+  public void periodic() {
+    swerve.addPotentialVisionMeasurement(vision.getEstimatedGlobalPose(swerve.getPose()));
   }
 
   public Command getAutonomousCommand() {
