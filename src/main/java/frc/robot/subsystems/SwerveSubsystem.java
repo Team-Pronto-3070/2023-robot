@@ -13,7 +13,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Vision;
 import frc.robot.util.ProntoSwerveModule;
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -29,7 +28,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private final SwerveDrivePoseEstimator poseEstimator;
 
-    private final Vision vision;
     
     public SwerveSubsystem() {
         frontLeft = new ProntoSwerveModule(
@@ -74,8 +72,6 @@ public class SwerveSubsystem extends SubsystemBase {
                     rearLeft.getPosition(),
                     rearRight.getPosition()
                 }, new Pose2d());
-
-        vision = new Vision();
     }
 
     public Rotation2d getYaw() {
@@ -124,6 +120,13 @@ public class SwerveSubsystem extends SubsystemBase {
         rearRight.setDesiredState(desiredStates[3], false);
     }
 
+    public void addPotentialVisionMeasurement(Optional<EstimatedRobotPose> potentialVisionEstimate) {
+        if (potentialVisionEstimate.isPresent()) {
+            EstimatedRobotPose camPose = potentialVisionEstimate.get();
+            poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+        }
+    }
+
     @Override
     public void periodic() {
         poseEstimator.update(
@@ -135,14 +138,5 @@ public class SwerveSubsystem extends SubsystemBase {
                 rearRight.getPosition()
             }
         );
-
-        Optional<EstimatedRobotPose> result =
-                vision.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
-
-        if (result.isPresent()) {
-            EstimatedRobotPose camPose = result.get();
-            poseEstimator.addVisionMeasurement(
-                    camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
-        } 
     }
 }

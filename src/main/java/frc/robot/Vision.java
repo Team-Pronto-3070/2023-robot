@@ -1,5 +1,6 @@
 package frc.robot;
 
+import java.io.IOException;
 import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -8,31 +9,25 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 
 public class Vision {
 
     private PhotonCamera camera;
     private PhotonPoseEstimator poseEstimator;
 
-    private static final Transform3d robotToCamera = new Transform3d(
-                        new Translation3d(0.5, 0.0, 0.5),
-                        new Rotation3d(0, 0,0)); //TODO input values
+    private boolean is_enabled = true;
+    private boolean can_enable = true;
 
     public Vision() {
         AprilTagFieldLayout aprilTagFieldLayout = null;
         try {
             aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
-        } catch (Exception e) {
-            //TODO: handle exception
+        } catch (IOException e) {
+            permenantlyDisable();
         }
 
-        // Forward Camera
         camera = new PhotonCamera(Constants.Vision.cameraName);
-
-        poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camera, robotToCamera);
+        poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camera, Constants.Vision.robotToCamera);
     }
 
      /**
@@ -41,10 +36,27 @@ public class Vision {
      *     of the observation. Assumes a planar field and the robot is always firmly on the ground
      */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
-
-        poseEstimator.setReferencePose(prevEstimatedRobotPose); // This is only necessary if strategy is CLOSEST_TO_REFERENCE_POSE
-        
+        if (!is_enabled) {
+            return Optional.empty();
+        }
+        poseEstimator.setReferencePose(prevEstimatedRobotPose);
         return poseEstimator.update();
     }
+
+    public void enable() {
+        if (can_enable) {
+            is_enabled = true;
+        }
+    }
+
+    //might want to do this while the robot is going up on the charge station so vision doesn't get confused
+    public void disable() {
+        is_enabled = false;
+    }
     
+    //use this to permantly disable vision if something goes completely wrong
+    public void permenantlyDisable() {
+        disable();
+        can_enable = false;
+    }
 }
