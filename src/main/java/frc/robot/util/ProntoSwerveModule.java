@@ -21,7 +21,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants;
 
 /**
- * Swerve module specific functions and support that don't belong in the subsystem class 
+ * A seperate swerve module class in order to enable multiple
+ * instances of a swerve module class with different states
  */
 public class ProntoSwerveModule {
 
@@ -122,7 +123,7 @@ public class ProntoSwerveModule {
 
     /**
      * 
-     * @return motor speed & current motor rotation
+     * @return the wheel speed(in m/s) & current wheel rotation(as a Rotation2d)
      */
     public SwerveModuleState getState() {
         return new SwerveModuleState(
