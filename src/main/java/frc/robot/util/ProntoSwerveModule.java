@@ -1,5 +1,5 @@
 
-// Here is the actual swerve module class and interface
+// Here is the actual swerve module class
 
 
 package frc.robot.util;
