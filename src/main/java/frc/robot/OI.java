@@ -1,3 +1,9 @@
+
+// OI stands for Operator Interface and is an abstraction
+// over the specific controller used to control the robot
+
+
+
 package frc.robot;
 
 import java.util.function.DoubleSupplier;

@@ -1,3 +1,7 @@
+
+// Here is the actual swerve module class
+
+
 package frc.robot.util;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -16,6 +20,10 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants;
 
+/**
+ * A seperate swerve module class in order to enable multiple
+ * instances of a swerve module class with different states
+ */
 public class ProntoSwerveModule {
 
     private final TalonFX driveMotor;
@@ -113,6 +121,10 @@ public class ProntoSwerveModule {
         );
     }
 
+    /**
+     * 
+     * @return the wheel speed(in m/s) & current wheel rotation(as a Rotation2d)
+     */
     public SwerveModuleState getState() {
         return new SwerveModuleState(
             ((driveMotor.getSelectedSensorVelocity() //raw falcon units
