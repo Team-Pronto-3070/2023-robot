@@ -3,6 +3,9 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
@@ -85,5 +88,20 @@ public final class Constants {
             public static final IdleMode idleMode = IdleMode.kBrake;
             public static final int currentLimit = 20;
         }
+    }
+    public static final class VoodooArm { //TODO
+        // i'm not sure what constants need to go here
+        // the ones here are just the numbers needed for
+        // the inverse kinematics
+
+        // I still am not sure how to do anything to be honest
+
+        public static final Translation2d BASE_TRANSLATION_OFFSET = new Translation2d(); // the spacial offset of the arm's base
+        public static final Rotation2d BASE_YAW_OFFSET = new Rotation2d(); // the offset yaw rotation of the arm
+        public static final double LOWER_SEGMENT_LEN = 1.0; // length of lower arm segment in meters
+        public static final Rotation2d LOWER_SEGMENT_STARTING_ANGLE = new Rotation2d(); // the initial angle of the lower segment
+        public static final double UPPER_SEGMENT_LEN = 1.0; // length of upper arm segment in meters
+        public static final Rotation2d UPPER_SEGMENT_STARTING_ANGLE = new Rotation2d(); // the initial angle of the upper segment
+
     }
 }
