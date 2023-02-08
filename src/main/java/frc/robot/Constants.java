@@ -86,4 +86,9 @@ public final class Constants {
             public static final int currentLimit = 20;
         }
     }
+    public static final class ElevatorArm {
+        public static final double initialArmLength = 1.0;
+        public static final double extentionAmount = 1.0;
+        public static final int extentionMotorID = 0;
+    }
 }
