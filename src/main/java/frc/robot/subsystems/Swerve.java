@@ -77,6 +77,11 @@ public class Swerve extends SubsystemBase {
         return Rotation2d.fromDegrees(gyro.getAngle());
     }
 
+    public double getPitch() {
+        // TODO check to see if this is correct method for pitch
+        return gyro.getYComplementaryAngle();
+    }
+
     public void resetGryo() {
         gyro.reset();
     }
