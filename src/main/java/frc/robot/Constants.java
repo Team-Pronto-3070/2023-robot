@@ -3,6 +3,7 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
@@ -90,5 +91,7 @@ public final class Constants {
         public static final double initialArmLength = 1.0;
         public static final double extentionAmount = 1.0;
         public static final int extentionMotorID = 0;
+        public static final int verticalDriveMotorID = 0;
+        public static final Translation2d armOffset = new Translation2d();
     }
 }
