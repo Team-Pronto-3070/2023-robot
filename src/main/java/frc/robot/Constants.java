@@ -98,14 +98,14 @@ public final class Constants {
         );
     }
 
-    public static final class AutoBalance {
-        public static double driveUpRampSpeed = 0.5;
-        public static final double onRampPitch = 0.0; 
-        public static final double balanceSetpoint = 0.0;
-        public static final class PID {
-            public static final double P = 0.0;
-            public static final double I = 0.0;
-            public static final double D = 0.0;
+    public static final class DriveCommands {
+        public static final class AutoBalance {
+            public static final double balanceSetpoint = 0.0;
+            public static final class PID {
+                public static final double P = 0.0;
+                public static final double I = 0.0;
+                public static final double D = 0.0;
+            }
         }
     }
 }
