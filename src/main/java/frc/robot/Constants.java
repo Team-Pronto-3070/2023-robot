@@ -9,6 +9,19 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
+    public static final class Auto {
+        public static final class TranslationPID {
+            public static final double P = 5.0;
+            public static final double I = 0.0;
+            public static final double D = 0.0;
+        }
+        public static final class RotationPID {
+            public static final double P = 0.5;
+            public static final double I = 0.0;
+            public static final double D = 0.0;
+        }
+    }
+
     public static final class OI {
         public static final int driverPort = 1;
         public static final double deadband = 0.06;
