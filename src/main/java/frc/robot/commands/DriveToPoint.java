@@ -67,9 +67,9 @@ public class DriveToPoint extends CommandBase {
             trajectory,
             swerve::getPose,
             swerve.kinematics,
-            new PIDController(Constants.Auto.XPID.P, Constants.Auto.XPID.I, Constants.Auto.XPID.D), // x controller
-            new PIDController(Constants.Auto.YPID.P, Constants.Auto.YPID.I, Constants.Auto.YPID.D), // y controller
-            new PIDController(Constants.Auto.RotationPID.P, Constants.Auto.RotationPID.I, Constants.Auto.RotationPID.D), // rotation controller
+            new PIDController(Constants.Auto.TranslationPID.P, Constants.Auto.TranslationPID.I, Constants.Auto.TranslationPID.D),
+            new PIDController(Constants.Auto.TranslationPID.P, Constants.Auto.TranslationPID.I, Constants.Auto.TranslationPID.D),
+            new PIDController(Constants.Auto.RotationPID.P, Constants.Auto.RotationPID.I, Constants.Auto.RotationPID.D),
             swerve::setModuleStates,
             useAllianceColor,
             swerve);
