@@ -13,6 +13,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 
 public class DriveToPoint extends CommandBase {
@@ -66,9 +67,9 @@ public class DriveToPoint extends CommandBase {
             trajectory,
             swerve::getPose,
             swerve.kinematics,
-            new PIDController(0, 0, 0), // x
-            new PIDController(0, 0, 0), // y
-            new PIDController(0, 0, 0), // rotation
+            new PIDController(Constants.Auto.XPID.P, Constants.Auto.XPID.I, Constants.Auto.XPID.D), // x controller
+            new PIDController(Constants.Auto.YPID.P, Constants.Auto.YPID.I, Constants.Auto.YPID.D), // y controller
+            new PIDController(Constants.Auto.RotationPID.P, Constants.Auto.RotationPID.I, Constants.Auto.RotationPID.D), // rotation controller
             swerve::setModuleStates,
             useAllianceColor,
             swerve);
