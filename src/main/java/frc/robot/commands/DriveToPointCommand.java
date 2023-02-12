@@ -1,107 +1,70 @@
 package frc.robot.commands;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 
 public class DriveToPointCommand extends CommandBase {
 
+    private final List<PathPoint> points;
+    private final PathConstraints constraints;
+    private final SwerveAutoBuilder autoBuilder;
     private final Swerve swerve;
 
-    private Pose2d startPose;
-    private final List<Pose2d> midpoints;
-    private final Pose2d endPose;
-    private final PathConstraints constraints;
-
-    private PathPlannerTrajectory trajectory;
-    private PPSwerveControllerCommand pathFollowingCommand;
-
-    private final boolean useAllianceColor;
+    private Command pathFollowingCommand;
 
 
     /**
      * Constructs a DriveToPoint command that will create and follow a trajectory 
-     * starting from the robots current pose, containing the midpoints finishing at the endPose
+     * starting from the robot's current pose
      * 
-     * @param endPose the robots final pose
-     * @param midpoints list of poses along the trajectory for the robot to follow
-     * @param constraints PathConstraints for the trajectory
-     * @param useAllianceColor Should the path states be automatically transformed based on alliance
-   *     color? In order for this to work properly, you MUST create your path on the blue side of
-   *     the field.
-     * @param swerve
+     * @param points a list of PathPoints that the robot will pass through, excluding the starting point
+     * @param constraints PathConstraints for the trajectory (maximum velocity and maximum acceleration)
+     * @param autoBuilder the autobuilder that will be used to follow the trajectory
+     * @param swerve the swerve subsystem
      */
-    public DriveToPointCommand(Pose2d endPose, List<Pose2d> midpoints, PathConstraints constraints, boolean useAllianceColor, Swerve swerve) {
-        this.swerve = swerve;
-        this.midpoints = midpoints;
-        this.endPose = endPose;
+    public DriveToPointCommand(List<PathPoint> points, PathConstraints constraints, SwerveAutoBuilder autoBuilder, Swerve swerve) {
+        this.points = points;
         this.constraints = constraints;
-        this.useAllianceColor = useAllianceColor;
+        this.autoBuilder = autoBuilder;
+        this.swerve = swerve;
 
         addRequirements(swerve);
     }
 
+    public DriveToPointCommand(PathPoint endPoint, PathConstraints constraints, SwerveAutoBuilder autoBuilder, Swerve swerve) {
+        this(List.of(endPoint), constraints, autoBuilder, swerve);
+    }
+
     @Override
     public void initialize() {
-        startPose = swerve.getPose();
+        Pose2d startPose = swerve.getPose();
+        ChassisSpeeds startSpeed = swerve.getChassisSpeeds();
 
-        trajectory = useAllianceColor 
-                        ? PathPlannerTrajectory.transformTrajectoryForAlliance(getTrajectory(), DriverStation.getAlliance()) 
-                        : getTrajectory();
-        
+        points.add(
+            0,
+            new PathPoint(
+                startPose.getTranslation(),
+                new Rotation2d(startSpeed.vxMetersPerSecond, startSpeed.vyMetersPerSecond).plus(swerve.getYaw()),
+                startPose.getRotation(),
+                Math.hypot(startSpeed.vxMetersPerSecond, startSpeed.vyMetersPerSecond)
+            )
+        );
 
-        // Could put this in the drive subsystem (ex: swerve.followTrajectory(swerve, trajectory))
-        pathFollowingCommand = new PPSwerveControllerCommand(
-            trajectory,
-            swerve::getPose,
-            swerve.kinematics,
-            new PIDController(Constants.Auto.TranslationPID.P, Constants.Auto.TranslationPID.I, Constants.Auto.TranslationPID.D),
-            new PIDController(Constants.Auto.TranslationPID.P, Constants.Auto.TranslationPID.I, Constants.Auto.TranslationPID.D),
-            new PIDController(Constants.Auto.RotationPID.P, Constants.Auto.RotationPID.I, Constants.Auto.RotationPID.D),
-            swerve::setModuleStates,
-            useAllianceColor,
-            swerve);
-
+        pathFollowingCommand = autoBuilder.followPath(PathPlanner.generatePath(constraints, points));
         pathFollowingCommand.initialize();
     }
-
-    
-
-    /*
-     * Returns the trajectory based on startPose, midpoints, and targetPose
-     */
-    private PathPlannerTrajectory getTrajectory() {
-        List<PathPoint> pathPoints = new ArrayList<>();
-        pathPoints.add(generatePathPointFromPose(startPose));
-
-        for (Pose2d pose : midpoints) {
-            pathPoints.add(generatePathPointFromPose(pose));
-        }
-
-        pathPoints.add(generatePathPointFromPose(endPose));
-
-        return PathPlanner.generatePath(constraints, pathPoints);
-    }
-
-    /*
-     * Turns a Pose2d into a PathPoint
-     */
-    private static PathPoint generatePathPointFromPose(Pose2d pose) {
-        return new PathPoint(pose.getTranslation(), pose.getRotation());
-    }
-
 
     @Override
     public void execute() {

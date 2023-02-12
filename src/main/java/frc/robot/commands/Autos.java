@@ -14,7 +14,7 @@ public class Autos {
     private final Swerve swerve;
 
     private final HashMap<String, Command> eventMap = new HashMap<>();
-    private final SwerveAutoBuilder autoBuilder;
+    public final SwerveAutoBuilder autoBuilder;
 
     public Autos(Swerve swerve) {
         this.swerve = swerve;
