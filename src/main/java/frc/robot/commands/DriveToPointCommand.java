@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 
-public class DriveToPoint extends CommandBase {
+public class DriveToPointCommand extends CommandBase {
 
     private final Swerve swerve;
 
@@ -43,7 +43,7 @@ public class DriveToPoint extends CommandBase {
    *     the field.
      * @param swerve
      */
-    public DriveToPoint(Pose2d endPose, List<Pose2d> midpoints, PathConstraints constraints, boolean useAllianceColor, Swerve swerve) {
+    public DriveToPointCommand(Pose2d endPose, List<Pose2d> midpoints, PathConstraints constraints, boolean useAllianceColor, Swerve swerve) {
         this.swerve = swerve;
         this.midpoints = midpoints;
         this.endPose = endPose;
