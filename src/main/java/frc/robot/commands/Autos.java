@@ -5,6 +5,7 @@ import java.util.HashMap;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Constants;
@@ -15,6 +16,7 @@ public class Autos {
 
     private final HashMap<String, Command> eventMap = new HashMap<>();
     public final SwerveAutoBuilder autoBuilder;
+    private final SendableChooser<Command> autoChooser;
 
     public Autos(SwerveSubsystem swerve) {
         this.swerve = swerve;
@@ -32,5 +34,12 @@ public class Autos {
             true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
             swerve // The drive subsystem. Used to properly set the requirements of path following commands
         );
+
+        autoChooser = new SendableChooser<Command>();
+        autoChooser.setDefaultOption("none", new PrintCommand("no auto option selected"));
+    }
+
+    public Command getSelectedAuto() {
+        return autoChooser.getSelected();
     }
 }

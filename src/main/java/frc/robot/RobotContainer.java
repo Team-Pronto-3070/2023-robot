@@ -6,7 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.commands.Autos;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
@@ -14,6 +14,8 @@ public class RobotContainer {
   private final Vision vision = new Vision();
 
   private final SwerveSubsystem swerve = new SwerveSubsystem();
+
+  private final Autos autos = new Autos(swerve);
 
   public RobotContainer() {
     swerve.setDefaultCommand(swerve.run(() -> swerve.drive(
@@ -36,6 +38,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return autos.getSelectedAuto();
   }
 }
