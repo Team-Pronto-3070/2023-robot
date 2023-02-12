@@ -11,7 +11,7 @@ import frc.robot.Constants;
 // This is Nick(100% not Kirill)
 
 // okay 
-public class ElevatorArm {
+public class ElevatorArmSubsystem {
 
     Rotation2d target_angle = new Rotation2d();
     double target_magnitude = 0.0;
