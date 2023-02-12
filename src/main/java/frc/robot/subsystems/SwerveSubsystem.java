@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.ProntoSwerveModule;
 
-public class Swerve extends SubsystemBase {
+public class SwerveSubsystem extends SubsystemBase {
 
     private final ProntoSwerveModule frontLeft;
     private final ProntoSwerveModule frontRight;
@@ -25,7 +25,7 @@ public class Swerve extends SubsystemBase {
     public final SwerveDriveKinematics kinematics;
     private final SwerveDriveOdometry odometry;
     
-    public Swerve() {
+    public SwerveSubsystem() {
         frontLeft = new ProntoSwerveModule(
             Constants.Swerve.FrontLeft.driveID,
             Constants.Swerve.FrontLeft.turnID,
