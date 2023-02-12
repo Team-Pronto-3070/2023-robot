@@ -26,7 +26,7 @@ public class DriveToPoint extends CommandBase {
     private final PathConstraints constraints;
 
     private PathPlannerTrajectory trajectory;
-    private PPSwerveControllerCommand pathDrivingCommand;
+    private PPSwerveControllerCommand pathFollowingCommand;
 
     private final boolean useAllianceColor;
 
@@ -63,7 +63,7 @@ public class DriveToPoint extends CommandBase {
         
 
         // Could put this in the drive subsystem (ex: swerve.followTrajectory(swerve, trajectory))
-        pathDrivingCommand = new PPSwerveControllerCommand(
+        pathFollowingCommand = new PPSwerveControllerCommand(
             trajectory,
             swerve::getPose,
             swerve.kinematics,
@@ -74,7 +74,7 @@ public class DriveToPoint extends CommandBase {
             useAllianceColor,
             swerve);
 
-        pathDrivingCommand.schedule();
+        pathFollowingCommand.initialize();
     }
 
     
@@ -104,16 +104,18 @@ public class DriveToPoint extends CommandBase {
 
 
     @Override
+    public void execute() {
+        pathFollowingCommand.execute();
+    }
+
+    @Override
     public boolean isFinished() {
-        return (pathDrivingCommand == null || !pathDrivingCommand.isScheduled());
+        return pathFollowingCommand.isFinished();
     }
 
     @Override
     public void end(boolean interrupted) {
-        if (interrupted) {
-            pathDrivingCommand.cancel();
-        }
-        swerve.drive(0,0,0,false, false); // stop
+        pathFollowingCommand.end(interrupted);
     }
     
 }
