@@ -9,7 +9,7 @@ import frc.robot.Constants;
 // this is another cmomment
 //Hello world x10000
 // okay 
-public class ElevatorArm {
+public class ElevatorArmSubsystem {
 
     Rotation2d target_angle = new Rotation2d();
     double target_magnitude = 0.0;
