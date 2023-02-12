@@ -8,15 +8,15 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Constants;
-import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.SwerveSubsystem;
 
 public class Autos {
-    private final Swerve swerve;
+    private final SwerveSubsystem swerve;
 
     private final HashMap<String, Command> eventMap = new HashMap<>();
     public final SwerveAutoBuilder autoBuilder;
 
-    public Autos(Swerve swerve) {
+    public Autos(SwerveSubsystem swerve) {
         this.swerve = swerve;
 
         eventMap.put("testprint", new PrintCommand("successfully ran a print command"));

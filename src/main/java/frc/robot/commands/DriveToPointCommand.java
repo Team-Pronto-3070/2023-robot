@@ -12,14 +12,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.SwerveSubsystem;
 
 public class DriveToPointCommand extends CommandBase {
 
     private final List<PathPoint> points;
     private final PathConstraints constraints;
     private final SwerveAutoBuilder autoBuilder;
-    private final Swerve swerve;
+    private final SwerveSubsystem swerve;
 
     private Command pathFollowingCommand;
 
@@ -33,7 +33,7 @@ public class DriveToPointCommand extends CommandBase {
      * @param autoBuilder the autobuilder that will be used to follow the trajectory
      * @param swerve the swerve subsystem
      */
-    public DriveToPointCommand(List<PathPoint> points, PathConstraints constraints, SwerveAutoBuilder autoBuilder, Swerve swerve) {
+    public DriveToPointCommand(List<PathPoint> points, PathConstraints constraints, SwerveAutoBuilder autoBuilder, SwerveSubsystem swerve) {
         this.points = points;
         this.constraints = constraints;
         this.autoBuilder = autoBuilder;
@@ -42,7 +42,7 @@ public class DriveToPointCommand extends CommandBase {
         addRequirements(swerve);
     }
 
-    public DriveToPointCommand(PathPoint endPoint, PathConstraints constraints, SwerveAutoBuilder autoBuilder, Swerve swerve) {
+    public DriveToPointCommand(PathPoint endPoint, PathConstraints constraints, SwerveAutoBuilder autoBuilder, SwerveSubsystem swerve) {
         this(List.of(endPoint), constraints, autoBuilder, swerve);
     }
 
