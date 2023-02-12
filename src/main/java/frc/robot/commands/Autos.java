@@ -14,15 +14,11 @@ import frc.robot.Constants;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class Autos {
-    private final SwerveSubsystem swerve;
-
-    private final HashMap<String, Command> eventMap = new HashMap<>();
     public final SwerveAutoBuilder autoBuilder;
     private final SendableChooser<Command> autoChooser;
 
     public Autos(SwerveSubsystem swerve) {
-        this.swerve = swerve;
-
+        HashMap<String, Command> eventMap = new HashMap<>();
         eventMap.put("testprint", new PrintCommand("successfully ran a print command"));
 
         autoBuilder = new SwerveAutoBuilder(
