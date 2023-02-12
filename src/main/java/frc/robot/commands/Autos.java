@@ -2,6 +2,8 @@ package frc.robot.commands;
 
 import java.util.HashMap;
 
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
@@ -37,6 +39,11 @@ public class Autos {
 
         autoChooser = new SendableChooser<Command>();
         autoChooser.setDefaultOption("none", new PrintCommand("no auto option selected"));
+        autoChooser.addOption("test1", buildAuto("test1"));
+    }
+
+    public Command buildAuto(String name) {
+        return autoBuilder.fullAuto(PathPlanner.loadPath(name, new PathConstraints(Constants.Auto.maxVelocity, Constants.Auto.maxAcceleration)));
     }
 
     public Command getSelectedAuto() {
