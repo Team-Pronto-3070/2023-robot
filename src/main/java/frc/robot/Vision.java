@@ -8,7 +8,9 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class Vision {
 
@@ -22,6 +24,9 @@ public class Vision {
         AprilTagFieldLayout aprilTagFieldLayout = null;
         try {
             aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
+            if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
+                aprilTagFieldLayout.setOrigin(OriginPosition.kRedAllianceWallRightSide);
+            }
         } catch (IOException e) {
             permenantlyDisable();
         }
