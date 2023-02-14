@@ -16,7 +16,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 
 public class DriveToPointCommand extends CommandBase {
 
-    private final List<PathPoint> points;
+    protected final List<PathPoint> points;
     private final PathConstraints constraints;
     private final SwerveAutoBuilder autoBuilder;
     private final SwerveSubsystem swerve;
@@ -79,5 +79,4 @@ public class DriveToPointCommand extends CommandBase {
     public void end(boolean interrupted) {
         pathFollowingCommand.end(interrupted);
     }
-    
 }
