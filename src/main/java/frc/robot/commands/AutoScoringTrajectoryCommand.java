@@ -1,21 +1,15 @@
 package frc.robot.commands;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPoint;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
-import frc.robot.Constants.Swerve;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class AutoScoringTrajectoryCommand extends DriveToPointCommand {
-
-    private DriveToPointCommand pathFollowingCommand;
-    private SwerveSubsystem swerve;
-    private Pose2d currentPose;
 
     public AutoScoringTrajectoryCommand(PathPoint endPoint, PathConstraints constraints, SwerveAutoBuilder autoBuilder, SwerveSubsystem swerve) {
         super(endPoint, constraints, autoBuilder, swerve);
@@ -23,7 +17,7 @@ public class AutoScoringTrajectoryCommand extends DriveToPointCommand {
 
     @Override
     public void initialize() {
-        currentPose = swerve.getPose();
+        Pose2d currentPose = swerve.getPose();
         double x = currentPose.getX();
         double y = currentPose.getY();
 
@@ -40,20 +34,5 @@ public class AutoScoringTrajectoryCommand extends DriveToPointCommand {
         }
 
         super.initialize();
-    }
-
-    @Override
-    public void execute() {
-        pathFollowingCommand.execute();
-    }
-
-    @Override
-    public boolean isFinished() {
-        return pathFollowingCommand.isFinished();
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        pathFollowingCommand.end(interrupted);
     }
 }

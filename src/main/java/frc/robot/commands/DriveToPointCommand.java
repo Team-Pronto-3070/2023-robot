@@ -19,7 +19,7 @@ public class DriveToPointCommand extends CommandBase {
     protected final List<PathPoint> points;
     private final PathConstraints constraints;
     private final SwerveAutoBuilder autoBuilder;
-    private final SwerveSubsystem swerve;
+    protected final SwerveSubsystem swerve;
 
     private Command pathFollowingCommand;
 
