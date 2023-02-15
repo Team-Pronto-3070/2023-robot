@@ -7,7 +7,7 @@ import edu.wpi.first.math.util.Units;
 
 public final class Constants {
     public static final class OI {
-        public static final int driverPort = 1;
+        public static final int driverPort = 0;
         public static final double deadband = 0.06;
     }
 
