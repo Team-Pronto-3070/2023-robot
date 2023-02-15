@@ -8,7 +8,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.ADIS16448_IMU;
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.ProntoSwerveModule;
@@ -20,7 +20,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final ProntoSwerveModule rearLeft;
     private final ProntoSwerveModule rearRight;
 
-    private final ADIS16448_IMU gyro;
+    private final ADIS16470_IMU gyro;
 
     public final SwerveDriveKinematics kinematics;
     private final SwerveDriveOdometry odometry;
@@ -50,7 +50,7 @@ public class SwerveSubsystem extends SubsystemBase {
             Constants.Swerve.RearRight.offset
         );
 
-        gyro = new ADIS16448_IMU();
+        gyro = new ADIS16470_IMU();
 
         kinematics = new SwerveDriveKinematics(
             new Translation2d(Constants.Swerve.wheelBase / 2, Constants.Swerve.trackWidth / 2),
