@@ -9,6 +9,9 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
+
+    public static final double fieldWidthMeters = 8.02;
+
     public static final class Auto {
         public static final double maxVelocity = 4.0; //meters per second
         public static final double maxAcceleration = 3.0; //meters per second squared
