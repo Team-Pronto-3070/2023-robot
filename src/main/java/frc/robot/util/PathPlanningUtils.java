@@ -13,7 +13,7 @@ public class PathPlanningUtils {
      * Transform a pose to the given alliance (blue alliance is default)
      * 
      * @param pose
-     * @param alliance 
+     * @param alliance current alliance
      * @return
      */
     public static Pose2d transformPoseForAlliance(Pose2d pose, DriverStation.Alliance alliance) {

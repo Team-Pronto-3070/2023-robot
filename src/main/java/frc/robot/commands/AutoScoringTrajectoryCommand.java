@@ -24,7 +24,7 @@ public class AutoScoringTrajectoryCommand extends DriveToPointCommand {
      * Constructs an AutoScoringTrajectoryCommand that will create and follow a trajectory 
      * bringing the robot to the given scoring node
      * 
-     * @param scoringNode target node (loading zonezone to wall)
+     * @param scoringNode target node
      * @param constraints PathConstraints for the trajectory (maximum velocity and maximum acceleration)
      * @param autoBuilder the autobuilder that will be used to follow the trajectory
      * @param swerve the swerve subsystem
