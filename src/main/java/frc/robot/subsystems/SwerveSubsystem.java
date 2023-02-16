@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.ProntoSwerveModule;
 
-public class Swerve extends SubsystemBase {
+public class SwerveSubsystem extends SubsystemBase {
 
     private final ProntoSwerveModule frontLeft;
     private final ProntoSwerveModule frontRight;
@@ -28,7 +28,7 @@ public class Swerve extends SubsystemBase {
 
     private final SwerveDrivePoseEstimator poseEstimator;
 
-    public Swerve() {
+    public SwerveSubsystem() {
         frontLeft = new ProntoSwerveModule(
             Constants.Swerve.FrontLeft.driveID,
             Constants.Swerve.FrontLeft.turnID,
@@ -88,6 +88,15 @@ public class Swerve extends SubsystemBase {
 
     public Pose2d getPose() {
         return poseEstimator.getEstimatedPosition();
+    }
+
+    public ChassisSpeeds getChassisSpeeds() {
+        return kinematics.toChassisSpeeds(
+            frontLeft.getState(),
+            frontRight.getState(),
+            rearLeft.getState(),
+            rearRight.getState()
+        );
     }
 
     public void resetOdometry(Pose2d pose) {
