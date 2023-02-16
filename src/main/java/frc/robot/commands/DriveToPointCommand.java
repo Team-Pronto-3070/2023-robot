@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import com.pathplanner.lib.PathConstraints;
@@ -9,9 +10,11 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class DriveToPointCommand extends CommandBase {
@@ -51,15 +54,43 @@ public class DriveToPointCommand extends CommandBase {
         Pose2d startPose = swerve.getPose();
         ChassisSpeeds startSpeed = swerve.getChassisSpeeds();
 
-        points.add(
-            0,
-            new PathPoint(
-                startPose.getTranslation(),
-                new Rotation2d(startSpeed.vxMetersPerSecond, startSpeed.vyMetersPerSecond).plus(swerve.getYaw()),
-                startPose.getRotation(),
-                Math.hypot(startSpeed.vxMetersPerSecond, startSpeed.vyMetersPerSecond)
-            )
-        );
+        double startVelocity = Math.hypot(startSpeed.vxMetersPerSecond, startSpeed.vyMetersPerSecond);
+
+        if (startVelocity > Constants.Auto.velocityDeadband) {
+            points.add(
+                0,
+                new PathPoint(
+                    startPose.getTranslation(),
+                    new Rotation2d(startSpeed.vxMetersPerSecond, startSpeed.vyMetersPerSecond).plus(swerve.getYaw()),
+                    startPose.getRotation(),
+                    Math.hypot(startSpeed.vxMetersPerSecond, startSpeed.vyMetersPerSecond)
+                )
+            );
+        } else {
+            try {
+                Field pathPointTranslation = PathPoint.class.getDeclaredField("position");
+                pathPointTranslation.setAccessible(true);
+                Translation2d nextTranslation = (Translation2d) pathPointTranslation.get(points.get(0));
+                points.add(
+                    0,
+                    new PathPoint(
+                        startPose.getTranslation(),
+                        nextTranslation.minus(startPose.getTranslation()).getAngle(),
+                        startPose.getRotation()
+                    )
+                );
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                points.add(
+                    0,
+                    new PathPoint(
+                        startPose.getTranslation(),
+                        startPose.getRotation(),
+                        startPose.getRotation()
+                    )
+                );
+            }
+        }
+
 
         pathFollowingCommand = autoBuilder.followPath(PathPlanner.generatePath(constraints, points));
         pathFollowingCommand.initialize();

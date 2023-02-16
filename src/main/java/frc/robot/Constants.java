@@ -15,6 +15,7 @@ public final class Constants {
     public static final class Auto {
         public static final double maxVelocity = 4.0; //meters per second
         public static final double maxAcceleration = 3.0; //meters per second squared
+        public static final double velocityDeadband = 0.05; //meters per second
         public static final class TranslationPID {
             public static final double P = 5.0;
             public static final double I = 0.0;
