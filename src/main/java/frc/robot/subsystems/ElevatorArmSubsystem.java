@@ -43,9 +43,11 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         target_extention = cartesian.getDistance(Constants.ElevatorArm.armOffset);
     }
 
-    /// Calculates the KG of the vertical drive.
-    /// This is not super straight forward as this
-    /// changes with the extention of the arm and the load
+    /**
+     * Calculates the KG of the vertical drive.
+     * This is not super straight forward as this
+     * changes with the extention of the arm and the load
+     */
     private double getVerticalKG() {
         // TODO replace with actual calculation
         return Constants.ElevatorArm.lowerArmWeight + (Constants.ElevatorArm.upperArmWeight * extention);
