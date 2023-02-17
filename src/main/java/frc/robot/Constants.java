@@ -89,9 +89,32 @@ public final class Constants {
     }
     public static final class ElevatorArm {
         public static final double initialArmLength = 1.0;
-        public static final double extentionAmount = 1.0;
+        public static final double maxExtention = 1.0;
         public static final int extentionMotorID = 0;
         public static final int verticalDriveMotorID = 0;
         public static final Translation2d armOffset = new Translation2d();
+
+        public static final class VerticalDrive {
+            public static final double KS = 0.0;
+            public static final double KV = 0.0;
+            public static final double KA = 0.0;
+            public static final double KG = 0.0;
+        }
+        public static final class ExtentionDrive {
+            public static final double KS = 0.0;
+            public static final double KV = 0.0;
+            public static final double KA = 0.0;
+            public static final double KG = 0.0;
+        }
+
+        public static final double lowerArmWeight = 0.0;
+        public static final double upperArmWeight = 0.0;
+        public static final double cubeWeight = 0.0;
+        public static final double coneWeight = 0.0;
+
+    }
+
+    public static final class Manipulator {
+        public static final double weight = 0.0;
     }
 }
