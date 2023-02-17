@@ -22,7 +22,8 @@ public final class Constants {
         private static final int drivingMotorPinionTeeth = 13; 
         public static final double gearRatio = (45.0 * 22) / (drivingMotorPinionTeeth * 15);
 
-        public static final double maxSpeed = 4.0; //meters per second
+        public static final double maxSpeed = Units.feetToMeters(15.87); //meters per second
+        public static final double maxAcceleration = 1.19 * 9.81; // traction limited: COF*g (TODO: this cof is for blue nitrile on carpet)
         public static final double maxAngularSpeed = 2 * Math.PI;
 
         //offsets are in radians
@@ -53,10 +54,10 @@ public final class Constants {
                 public static final double D = 0.0;
                 public static final double F = 0.0;
             }
-            public static final class Feedforward { //TODO
+            public static final class Feedforward {
                 public static final double KS = 0.0;
-                public static final double KV = 0.0;
-                public static final double KA = 0.0;
+                public static final double KV = 12 / maxSpeed;
+                public static final double KA = 12 / maxAcceleration;
             }
             public static final int continuousCurrentLimit = 35;
             public static final int peakCurrentLimit = 60;
@@ -74,6 +75,14 @@ public final class Constants {
             public static final double encoderPositionFactor = 2 * Math.PI; //radians
             public static final double encoderVelocityFactor = 2 * Math.PI / 60.0; //radians per second
             public static final boolean encoderInvert = true;
+
+            
+            public static final double maxModuleAngularSpeed = //radians per second
+                        Units.rotationsPerMinuteToRadiansPerSecond(
+                            11000.0             //NEO550 free speed (rpm)
+                            * 203.0 / 9424.0);  //gear ratio
+            public static final double KV = 12.0 / maxModuleAngularSpeed; //volts * seconds / radians
+
             public static final class PID {
                 public static final double P = 1.0;
                 public static final double I = 0.0;
