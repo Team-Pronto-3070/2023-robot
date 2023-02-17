@@ -15,8 +15,8 @@ import frc.robot.util.PathPlanningUtils;
 
 public class AutoScoringTrajectoryCommand extends DriveToPointCommand {
 
-    private static final Pose2d WALL_SIDE_MIDPOINT = new Pose2d(new Translation2d(2.32, 0.084), new Rotation2d(-0.593412));
-    private static final Pose2d LOADING_ZONE_MIDPOINT = new Pose2d(new Translation2d(2.32, 4.53), new Rotation2d(0.558505));
+    private static final Pose2d WALL_SIDE_MIDPOINT = new Pose2d(new Translation2d(2.4, 0.75), new Rotation2d(-0.523599));
+    private static final Pose2d LOADING_ZONE_MIDPOINT = new Pose2d(new Translation2d(2.4, 4.5), new Rotation2d(0.523599));
 
     private int scoringNode;
 
