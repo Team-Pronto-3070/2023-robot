@@ -20,6 +20,8 @@ public class Vision {
     private boolean is_enabled = true;
     private boolean can_enable = true;
 
+    private double lastTimestamp = -1;
+
     public Vision() {
         AprilTagFieldLayout aprilTagFieldLayout = null;
         try {
@@ -45,7 +47,16 @@ public class Vision {
             return Optional.empty();
         }
         poseEstimator.setReferencePose(prevEstimatedRobotPose);
-        return poseEstimator.update();
+        Optional<EstimatedRobotPose> newEstimate = poseEstimator.update();
+
+        if (newEstimate.isEmpty()) {
+            return newEstimate;
+        } else if (newEstimate.get().timestampSeconds == lastTimestamp) {
+            return Optional.empty();
+        } else {
+            lastTimestamp = newEstimate.get().timestampSeconds;
+            return newEstimate;
+        }
     }
 
     public void enable() {
