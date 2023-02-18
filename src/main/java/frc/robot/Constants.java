@@ -25,7 +25,7 @@ public final class Constants {
 
         public static final double maxSpeed = Units.feetToMeters(15.87); //meters per second
         public static final double maxAcceleration = 1.19 * 9.81; // traction limited: COF*g (TODO: this cof is for blue nitrile on carpet)
-        public static final double maxAngularSpeed = 2 * Math.PI;
+        public static final double maxAngularSpeed = maxSpeed / Math.hypot(wheelBase / 2.0, trackWidth / 2.0);
 
         //offsets are in radians
         public static final class FrontLeft {
