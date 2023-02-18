@@ -3,6 +3,7 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
@@ -94,5 +95,55 @@ public final class Constants {
             public static final IdleMode idleMode = IdleMode.kBrake;
             public static final int currentLimit = 20;
         }
+    }
+    public static enum GameObject {
+        NONE (0),
+        CUBE (0.653),
+        CONE (0.071);
+
+        private final double mass;
+        private GameObject(double mass) {
+            this.mass = mass;
+        }
+
+        public double getMass() {
+            return mass;
+        }
+    }
+
+    public static final class MassProperties {
+        public static final Translation3d elevatorCarriageCG = //relative to pivot point when fully retracted
+            new Translation3d(
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0)
+            );
+        public static final double elevatorCarriageMass = Units.lbsToKilograms(0.0);
+        public static final Translation3d gameObjectLocation = //relative to pivot point when fully retracted
+            new Translation3d(
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0)
+            );
+        public static final Translation3d elevatorStaticCG = //relative to pivot point
+            new Translation3d(
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0)
+            );
+        public static final double elevatorStaticMass = Units.lbsToKilograms(0.0);
+        public static final Translation3d pivotLocation = //location of the pivot point relative to the center of the robot
+            new Translation3d(
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0)
+            );
+        public static final Translation3d chassisCG = 
+            new Translation3d(
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0)
+            );
+        public static final double chassisMass = Units.lbsToKilograms(0.0);
     }
 }
