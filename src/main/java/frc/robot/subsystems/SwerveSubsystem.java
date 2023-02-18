@@ -84,6 +84,15 @@ public class SwerveSubsystem extends SubsystemBase {
         return odometry.getPoseMeters();
     }
 
+    public ChassisSpeeds getChassisSpeeds() {
+        return kinematics.toChassisSpeeds(
+            frontLeft.getState(),
+            frontRight.getState(),
+            rearLeft.getState(),
+            rearRight.getState()
+        );
+    }
+
     public void resetOdometry(Pose2d pose) {
         odometry.resetPosition(
             getYaw(),
