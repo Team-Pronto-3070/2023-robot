@@ -11,11 +11,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import frc.robot.Constants;
 
-enum Load {
-    None,
-    Cube,
-    Cone,
-}
+
 
 // file
 // this is a cmomment
@@ -23,6 +19,12 @@ enum Load {
 //Hello world x10000
 // okay 
 public class ElevatorArmSubsystem extends SubsystemBase {
+
+    enum Load {
+        None,
+        Cube,
+        Cone,
+    }
 
     double extention = 0.0;
     Rotation2d angle = new Rotation2d();
