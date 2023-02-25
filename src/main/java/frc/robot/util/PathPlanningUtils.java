@@ -1,8 +1,6 @@
 package frc.robot.util;
 
-import com.pathplanner.lib.PathPoint;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -38,17 +36,14 @@ public class PathPlanningUtils {
     }
 
     /**
-     * Gets the PathPoint for the robot to score on the target node
+     * Gets the translation that the robot should target to score on given node
      * 
-     * @param scoringNode node to score on
+     * @param scoringNode target node
      * @param alliance current alliance
-     * @return the PathPoint where the robot must be to score on given node
+     * @return
      */
-    public static PathPoint getScoringNodePathPoint(int scoringNode, Alliance alliance) {
-        return new PathPoint(
-            getScoringNodeTranslation(scoringNode, alliance).plus(new Translation2d(Constants.robotLengthWithBumpers / 2, 0)), 
-            new Rotation2d(Math.PI), 
-            new Rotation2d(Math.PI));
+    public static Translation2d getRobotScoringPosition(int scoringNode, Alliance alliance) {
+        return new Translation2d(Grid.outerX + Constants.robotLengthWithBumpers / 2, getScoringNodeTranslation(scoringNode, alliance).getY());
     }
 
     /**
