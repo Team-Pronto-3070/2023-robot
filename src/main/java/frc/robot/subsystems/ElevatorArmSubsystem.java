@@ -65,6 +65,9 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * @return the TrapezoidProfile for the vertical motor
      */
     private void calcVerticalTrapezoidProfile() {
+        //TODO convert from the angle to the target units
+        double targetPos = target_angle.getRadians();
+    
         //TODO fill in the constants
         verticalTProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(0.0, 0.0),
@@ -78,6 +81,9 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * @return the TrapezoidProfile for the elevator motor
      */
     private void calcElevatorTrapezoidProfile() {
+        //TODO convert from the extention amount to the target units
+        double targetPos = target_extention;
+
         //TODO fill in the constants
         elevatorTProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(0.0, 0.0),
@@ -107,6 +113,14 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         move(0.02);
+
+        // update state values
+
+        //TODO convert from raw sensor units to radians
+        angle = new Rotation2d(verticalTalon.getSelectedSensorPosition());
+
+        //TODO convert from raw sensor units to an extention amount
+        extention = elevatorTalon.getSelectedSensorPosition();
     }
 
     public void setTarget(Translation2d target) {
