@@ -35,6 +35,8 @@ public class ElevatorArmSubsystem extends SubsystemBase {
 
     Rotation2d target_angle = new Rotation2d();
     double target_extention = 0.0;
+    TrapezoidProfile verticalTProfile;
+    TrapezoidProfile elevatorTProfile;
 
     public ElevatorArmSubsystem() {
         verticalTalon = new WPI_TalonSRX(Constants.ElevatorArm.VerticalDrive.verticalTalonID);
@@ -50,7 +52,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     }
 
     /**
-     * the coordanates are absolute (not relative to arm base)
+     * the coordanates are relative to the robot's center
      * @param cartesian
      */
     private void calculateFromPolar(Translation2d cartesian) {
@@ -62,9 +64,9 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * 
      * @return the TrapezoidProfile for the vertical motor
      */
-    private TrapezoidProfile getVerticalTrapezoidProfile() {
+    private void calcVerticalTrapezoidProfile() {
         //TODO fill in the constants
-        return new TrapezoidProfile(
+        verticalTProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(0.0, 0.0),
             new TrapezoidProfile.State(0.0, 0.0),
             new TrapezoidProfile.State(0.0, 0.0)
@@ -75,9 +77,9 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * 
      * @return the TrapezoidProfile for the elevator motor
      */
-    private TrapezoidProfile getElevatorTrapezoidProfile() {
+    private void calcElevatorTrapezoidProfile() {
         //TODO fill in the constants
-        return new TrapezoidProfile(
+        elevatorTProfile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(0.0, 0.0),
             new TrapezoidProfile.State(0.0, 0.0),
             new TrapezoidProfile.State(0.0, 0.0)
@@ -86,15 +88,12 @@ public class ElevatorArmSubsystem extends SubsystemBase {
 
     /**
      * sets the output of the vertical and elevator motors
-     * to the values calculated by the TrapezoidProfile's
+     * to the values calculated by verticalTProfile and 
+     * elevatorTProfile
      * 
-     * @param verticalTProfile
-     * @param elevatorTProfile
-     * @param deltaT
+     * @param deltaT - delta time in seconds
      */
-    private void move(TrapezoidProfile verticalTProfile, TrapezoidProfile elevatorTProfile, double deltaT) {
-
-
+    private void move(double deltaT) {
         verticalTalon.set(
             ControlMode.Velocity,
             verticalTProfile.calculate(deltaT).velocity
@@ -103,6 +102,17 @@ public class ElevatorArmSubsystem extends SubsystemBase {
             ControlMode.Velocity,
             elevatorTProfile.calculate(deltaT).velocity
         );
+    }
+
+    @Override
+    public void periodic() {
+        move(0.02);
+    }
+
+    public void setTarget(Translation2d target) {
+        calculateFromPolar(target); // calculate the polar coords
+        calcVerticalTrapezoidProfile(); // calculate the vertical drive TrapezoidProfile
+        calcElevatorTrapezoidProfile(); // calculate the elevator drive TrapezoidProfile
     }
 
 
