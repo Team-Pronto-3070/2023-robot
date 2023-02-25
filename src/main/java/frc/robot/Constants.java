@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
+    public static final double loopDelay = 0.05;
     public static final class OI {
         public static final int driverPort = 1;
         public static final double deadband = 0.06;
@@ -93,19 +94,20 @@ public final class Constants {
         public static final Translation2d armOffset = new Translation2d();
         
         public static final class VerticalDrive {
-            public static final double gearRatio = 16;
+            public static final double maxVelocity = 0.0;
+            public static final double maxAcceleration = 0.0;
             public static final int verticalTalonID = 0;
-            public static final int verticalMotorID = 0;
             public static final double KS = 0.0;
             public static final double KV = 0.0;
             public static final double KA = 0.0;
             public static final double KG = 0.0;
         }
         public static final class ElevatorDrive {
+            public static final double maxVelocity = 0.0;
+            public static final double maxAcceleration = 0.0;
             public static final double gearRatio = 16; // 16:1
             public static final double wheelCircumference = 0.0; // in meters
             public static final int elevatorTalonID = 0;
-            public static final int elevatorMotorID = 0;
             public static final double KS = 0.0;
             public static final double KV = 0.0;
             public static final double KA = 0.0;
@@ -118,7 +120,7 @@ public final class Constants {
         public static final double coneWeight = 0.0;
 
         public static final class Positions {
-            public static final Translation2d reset = new Translation2d(0.0, 0.0);
+            public static final Translation2d home = new Translation2d(0.0, 0.0);
             public static final Translation2d level1 = new Translation2d(0.0, 0.0);
             public static final Translation2d level2 = new Translation2d(0.0, 0.0);
             public static final Translation2d level3 = new Translation2d(0.0, 0.0);
