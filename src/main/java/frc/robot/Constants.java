@@ -93,6 +93,7 @@ public final class Constants {
         public static final Translation2d armOffset = new Translation2d();
         
         public static final class VerticalDrive {
+            public static final double gearRatio = 16;
             public static final int verticalTalonID = 0;
             public static final int verticalMotorID = 0;
             public static final double KS = 0.0;
@@ -101,6 +102,8 @@ public final class Constants {
             public static final double KG = 0.0;
         }
         public static final class ElevatorDrive {
+            public static final double gearRatio = 16; // 16:1
+            public static final double wheelCircumference = 0.0; // in meters
             public static final int elevatorTalonID = 0;
             public static final int elevatorMotorID = 0;
             public static final double KS = 0.0;
@@ -113,6 +116,13 @@ public final class Constants {
         public static final double upperArmWeight = 0.0;
         public static final double cubeWeight = 0.0;
         public static final double coneWeight = 0.0;
+
+        public static final class Positions {
+            public static final Translation2d reset = new Translation2d(0.0, 0.0);
+            public static final Translation2d level1 = new Translation2d(0.0, 0.0);
+            public static final Translation2d level2 = new Translation2d(0.0, 0.0);
+            public static final Translation2d level3 = new Translation2d(0.0, 0.0);
+        }
 
     }
 

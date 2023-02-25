@@ -15,6 +15,10 @@ public class OI {
 
     public final Trigger gyroResetButton;
 
+    public final Trigger elevatorArmReset;
+    public final Trigger elevatorArmNextLevel;
+    public final Trigger elevatorArmRetract;
+
     public OI(int driverPort) {
         driver = new XboxController(driverPort);
 
@@ -23,6 +27,10 @@ public class OI {
         drive_rot = () -> -driver.getRightX();
 
         gyroResetButton = new JoystickButton(driver, XboxController.Button.kX.value);
+
+        elevatorArmReset = new JoystickButton(driver, XboxController.Button.kA.value);
+        elevatorArmNextLevel = new JoystickButton(driver, XboxController.Button.kB.value);
+        elevatorArmRetract = new JoystickButton(driver, XboxController.Button.kY.value);
     }
     
 }
