@@ -11,13 +11,12 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import frc.robot.Constants;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 
-// file
-// this is a cmomment
-// this is another cmomment
-//Hello world x10000
-// okay 
+
 public class ElevatorArmSubsystem extends SubsystemBase {
 
     enum Load {
@@ -30,9 +29,25 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     Rotation2d angle = new Rotation2d();
     Load load = Load.None;
 
+    private final WPI_TalonSRX verticalTalon;
+    private final WPI_TalonSRX elevatorTalon;
+
 
     Rotation2d target_angle = new Rotation2d();
     double target_extention = 0.0;
+
+    public ElevatorArmSubsystem() {
+        verticalTalon = new WPI_TalonSRX(Constants.ElevatorArm.verticalTalonID);
+        elevatorTalon = new WPI_TalonSRX(Constants.ElevatorArm.elevatorTalonID);
+
+        verticalTalon.configFactoryDefault();
+        elevatorTalon.configFactoryDefault();
+
+        verticalTalon.setNeutralMode(NeutralMode.Brake);
+        elevatorTalon.setNeutralMode(NeutralMode.Brake);
+
+
+    }
 
     /**
      * the coordanates are absolute (not relative to arm base)
@@ -42,6 +57,58 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         target_angle = cartesian.getAngle();
         target_extention = cartesian.getDistance(Constants.ElevatorArm.armOffset);
     }
+
+    /**
+     * 
+     * @return the TrapezoidProfile for the vertical motor
+     */
+    private TrapezoidProfile getVerticalTrapezoidProfile() {
+        //TODO fill in the constants
+        return new TrapezoidProfile(
+            new TrapezoidProfile.Constraints(0.0, 0.0),
+            new TrapezoidProfile.State(0.0, 0.0),
+            new TrapezoidProfile.State(0.0, 0.0)
+        );
+    }
+
+    /**
+     * 
+     * @return the TrapezoidProfile for the elevator motor
+     */
+    private TrapezoidProfile getElevatorTrapezoidProfile() {
+        //TODO fill in the constants
+        return new TrapezoidProfile(
+            new TrapezoidProfile.Constraints(0.0, 0.0),
+            new TrapezoidProfile.State(0.0, 0.0),
+            new TrapezoidProfile.State(0.0, 0.0)
+        );
+    }
+
+    /**
+     * sets the output of the vertical and elevator motors
+     * to the values calculated by the TrapezoidProfile's
+     * 
+     * @param verticalTProfile
+     * @param elevatorTProfile
+     * @param deltaT
+     */
+    private void move(TrapezoidProfile verticalTProfile, TrapezoidProfile elevatorTProfile, double deltaT) {
+        
+
+        verticalTalon.set(
+            ControlMode.Velocity,
+            verticalTProfile.calculate(deltaT).velocity
+        );
+        elevatorTalon.set(
+            ControlMode.Velocity,
+            elevatorTProfile.calculate(deltaT).velocity
+        );
+    }
+
+
+
+
+
 
     /**
      * Calculates the KG of the vertical drive.
@@ -76,6 +143,10 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         double z = cm.getX();
 
         return new Translation3d( 0.0, y, z);
+    }
+
+    public void setDesiredState(Translation2d desiredPos) {
+
     }
 
 }
