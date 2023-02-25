@@ -90,8 +90,10 @@ public final class Constants {
     public static final class ElevatorArm {
         public static final double initialArmLength = 1.0;
         public static final double maxExtention = 1.0;
-        public static final int extentionMotorID = 0;
-        public static final int verticalDriveMotorID = 0;
+        public static final int verticalMotorID = 0;
+        public static final int elevatorMotorID = 0;
+        public static final int verticalTalonID = 0;
+        public static final int elevatorTalonID = 0;
         public static final Translation2d armOffset = new Translation2d();
 
         public static final class VerticalDrive {
