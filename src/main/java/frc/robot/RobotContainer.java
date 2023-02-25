@@ -24,13 +24,14 @@ public class RobotContainer {
             true,
             true
         )));
+    elevatorArm.setDefaultCommand(elevatorArm.run(elevatorArm::move));
 
     configureBindings();
   }
 
   private void configureBindings() {
     oi.gyroResetButton.onTrue(swerve.runOnce(swerve::resetGryo));
-    oi.elevatorArmReset.onTrue(elevatorArm.runOnce(elevatorArm::targetReset));
+    oi.elevatorArmHome.onTrue(elevatorArm.runOnce(elevatorArm::targetHome));
     oi.elevatorArmNextLevel.onTrue(elevatorArm.runOnce(elevatorArm::nextLevel));
     oi.elevatorArmRetract.onTrue(elevatorArm.runOnce(elevatorArm::targetRetract));
   }

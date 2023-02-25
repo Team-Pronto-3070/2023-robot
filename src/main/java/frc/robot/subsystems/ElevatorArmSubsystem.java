@@ -27,36 +27,31 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     }
 
     enum Level {
-        Reset,
+        Home,
         Lv1,
         Lv2,
         Lv3
     }
 
-    Level lastLevel = Level.Reset;
-    double extention = 0.0;
-    Rotation2d angle = new Rotation2d();
-    Load load = Load.None;
+    private Level lastLevel = Level.Home;
 
     private final WPI_TalonSRX verticalTalon;
     private final WPI_TalonSRX elevatorTalon;
 
 
-    Rotation2d target_angle = new Rotation2d();
-    double target_extention = 0.0;
-    TrapezoidProfile verticalTProfile;
-    TrapezoidProfile elevatorTProfile;
+    private Rotation2d target_angle = new Rotation2d();
+    private double target_extention = 0.0;
+    private TrapezoidProfile verticalTProfile;
+    private TrapezoidProfile elevatorTProfile;
 
     public ElevatorArmSubsystem() {
         verticalTalon = new WPI_TalonSRX(Constants.ElevatorArm.VerticalDrive.verticalTalonID);
-        elevatorTalon = new WPI_TalonSRX(Constants.ElevatorArm.ElevatorDrive.elevatorTalonID);
-
         verticalTalon.configFactoryDefault();
-        elevatorTalon.configFactoryDefault();
-
         verticalTalon.setNeutralMode(NeutralMode.Brake);
+        
+        elevatorTalon = new WPI_TalonSRX(Constants.ElevatorArm.ElevatorDrive.elevatorTalonID);
+        elevatorTalon.configFactoryDefault();
         elevatorTalon.setNeutralMode(NeutralMode.Brake);
-
 
     }
 
@@ -64,7 +59,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * the coordanates are relative to the robot's center
      * @param cartesian
      */
-    private void calculateFromPolar(Translation2d cartesian) {
+    private void setTargetFromPolar(Translation2d cartesian) {
         target_angle = cartesian.getAngle();
         target_extention = cartesian.getDistance(Constants.ElevatorArm.armOffset);
     }
@@ -73,14 +68,14 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * 
      * @return the TrapezoidProfile for the vertical motor
      */
-    private void calcVerticalTrapezoidProfile() {
+    private TrapezoidProfile calcVerticalTrapezoidProfile(Rotation2d target_angle) {
         double targetPos = target_angle.getRadians();
     
         //TODO fill in the constants
-        verticalTProfile = new TrapezoidProfile(
-            new TrapezoidProfile.Constraints(0.0, 0.0),
+        return new TrapezoidProfile(
+            new TrapezoidProfile.Constraints(Constants.ElevatorArm.VerticalDrive.maxVelocity, Constants.ElevatorArm.VerticalDrive.maxAcceleration),
             new TrapezoidProfile.State(targetPos, 0.0),
-            new TrapezoidProfile.State(getAngle().getRadians(), 0.0)
+            new TrapezoidProfile.State(getAngle().getRadians(), getVerticalDriveVel())
         );
     }
 
@@ -88,14 +83,13 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * 
      * @return the TrapezoidProfile for the elevator motor
      */
-    private void calcElevatorTrapezoidProfile() {
-        double targetPos = target_extention;
+    private TrapezoidProfile calcElevatorTrapezoidProfile(double target_extention) {
 
         //TODO fill in the constants
-        elevatorTProfile = new TrapezoidProfile(
-            new TrapezoidProfile.Constraints(0.0, 0.0),
-            new TrapezoidProfile.State(targetPos, 0.0),
-            new TrapezoidProfile.State(getExtention(), 0.0)
+        return new TrapezoidProfile(
+            new TrapezoidProfile.Constraints(Constants.ElevatorArm.ElevatorDrive.maxVelocity, Constants.ElevatorArm.ElevatorDrive.maxAcceleration),
+            new TrapezoidProfile.State(target_extention, 0.0),
+            new TrapezoidProfile.State(getExtention(), getElevatorDriveVel())
         );
     }
 
@@ -106,26 +100,21 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * 
      * @param deltaT - delta time in seconds
      */
-    private void move(double deltaT) {
+    public void move() {
         verticalTalon.set(
             ControlMode.Velocity,
-            verticalTProfile.calculate(deltaT).velocity
+            verticalTProfile.calculate(Constants.loopDelay).velocity
         );
         elevatorTalon.set(
             ControlMode.Velocity,
-            elevatorTProfile.calculate(deltaT).velocity
+            elevatorTProfile.calculate(Constants.loopDelay).velocity
         );
     }
 
-    @Override
-    public void periodic() {
-        move(0.02);
-    }
-
     public void setTarget(Translation2d target) {
-        calculateFromPolar(target); // calculate the polar coords
-        calcVerticalTrapezoidProfile(); // calculate the vertical drive TrapezoidProfile
-        calcElevatorTrapezoidProfile(); // calculate the elevator drive TrapezoidProfile
+        setTargetFromPolar(target); // calculate the polar coords
+        verticalTProfile = calcVerticalTrapezoidProfile(target_angle); // calculate the vertical drive TrapezoidProfile
+        elevatorTProfile = calcElevatorTrapezoidProfile(target_extention); // calculate the elevator drive TrapezoidProfile
     }
 
     /**
@@ -136,8 +125,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         return new Rotation2d(
             Units.rotationsToRadians( // convert rotations to radians
                 verticalTalon.getSelectedSensorPosition() // raw sensor units
-                / 4096.0 // revolutions before gear ratio
-                / Constants.ElevatorArm.VerticalDrive.gearRatio // final revolutions
+                / 2048.0 // revolutions
         ));
     }
 
@@ -147,7 +135,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      */
     private double getExtention() {
         return elevatorTalon.getSelectedSensorPosition() // raw sensor units
-            / 4096.0 // revolutions before gear ratio
+            / 2048.0 // revolutions before gear ratio
             / Constants.ElevatorArm.ElevatorDrive.gearRatio // final revolutions
             * Constants.ElevatorArm.ElevatorDrive.wheelCircumference // extention distance in meters
             + Constants.ElevatorArm.initialArmLength; // full arm length
@@ -159,8 +147,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      */
     private double rawFromAngle(Rotation2d sAngle) {
         return sAngle.getRotations() // total revolutions
-            * Constants.ElevatorArm.VerticalDrive.gearRatio // revolutions before gear ratio
-            * 4096.0; // raw sensor units
+            * 2048.0; // raw sensor units
     }
 
     /**
@@ -172,16 +159,38 @@ public class ElevatorArmSubsystem extends SubsystemBase {
             - Constants.ElevatorArm.initialArmLength // extention distance in meters
             / Constants.ElevatorArm.ElevatorDrive.wheelCircumference// final revolutions
             * Constants.ElevatorArm.ElevatorDrive.gearRatio // revolutions before gear ratio
-            * 4096.0; // raw sensor units
+            * 2048.0; // raw sensor units
     }
 
     /**
-     * cycles from retracted -> Lv3 -> Lv2 -> Lv1 -> Retracted
+     * 
+     * @return velocity of the vertical drive motor in radians/s
+     */
+    private double getVerticalDriveVel() {
+        return Units.rotationsToRadians( // radians per second
+        verticalTalon.getSelectedSensorVelocity() // raw talon units
+        * (10.0 / 2048.0) // motor revolutions per second
+        );
+    }
+
+    /**
+     * 
+     * @return velocity of the vertical drive motor in radians/s
+     */
+    private double getElevatorDriveVel() {
+        return Units.rotationsToRadians( // radians per second
+        elevatorTalon.getSelectedSensorVelocity() // raw talon units
+        * (10.0 / 2048.0) // motor revolutions per second
+        );
+    }
+
+    /**
+     * cycles from home -> Lv3 -> Lv2 -> Lv1 -> Retracted
      */
     public void nextLevel() {
 
         switch (lastLevel) {
-            case Reset:
+            case Home:
                 targetLv3();
                 break;
             
@@ -207,13 +216,13 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     /**
      * sets the target to the retracted state
      */
-    public void targetReset() {
-        lastLevel = Level.Reset;
-        setTarget(Constants.ElevatorArm.Positions.reset);
+    public void targetHome() {
+        lastLevel = Level.Home;
+        setTarget(Constants.ElevatorArm.Positions.home);
     }
 
     /**
-     * sets the target to the retracted state
+     * sets the target to the Lv1 (ground) state
      */
     public void targetLv1() {
         lastLevel = Level.Lv1;
@@ -221,7 +230,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     }
 
     /**
-     * sets the target to the retracted state
+     * sets the target to the Lv2 state
      */
     public void targetLv2() {
         lastLevel = Level.Lv2;
@@ -229,7 +238,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     }
 
     /**
-     * sets the target to the retracted state
+     * sets the target to the Lv3 state
      */
     public void targetLv3() {
         lastLevel = Level.Lv3;
@@ -241,8 +250,8 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      */
     public void targetRetract() {
         target_extention = Constants.ElevatorArm.initialArmLength; // set the extention to fully retracted
-        calcVerticalTrapezoidProfile(); // calculate the vertical drive TrapezoidProfile
-        calcElevatorTrapezoidProfile(); // calculate the elevator drive TrapezoidProfile
+        verticalTProfile = calcVerticalTrapezoidProfile(target_angle); // calculate the vertical drive TrapezoidProfile
+        elevatorTProfile = calcElevatorTrapezoidProfile(target_extention); // calculate the elevator drive TrapezoidProfile
     }
 
     
@@ -250,44 +259,5 @@ public class ElevatorArmSubsystem extends SubsystemBase {
 
 
 
-
-    /**
-     * Calculates the KG of the vertical drive.
-     * This is not super straight forward as this
-     * changes with the extention of the arm and the load
-     */
-    private double getVerticalKG() {
-        // TODO replace with actual calculation
-        return Constants.ElevatorArm.lowerArmWeight + (Constants.ElevatorArm.upperArmWeight * extention);
-    }
-
-    private ArmFeedforward getVerticalFeedForward() {
-        return new ArmFeedforward(
-            Constants.ElevatorArm.VerticalDrive.KS,
-            getVerticalKG(),
-            Constants.ElevatorArm.VerticalDrive.KV
-        );
-    }
-
-    public Translation3d getCenterOfMass() {
-        double lw = 0.0;
-        if (load == Load.Cone) {lw = Constants.ElevatorArm.coneWeight;}
-        if (load == Load.Cube) {lw = Constants.ElevatorArm.cubeWeight;}
-
-        Translation2d cm = new Translation2d(((
-                (Constants.ElevatorArm.maxExtention / 2) * Constants.ElevatorArm.upperArmWeight) + 
-                ((Constants.ElevatorArm.initialArmLength / 2) * Constants.ElevatorArm.lowerArmWeight) + 
-                ((extention) * lw)) / 
-                (Constants.ElevatorArm.upperArmWeight + Constants.ElevatorArm.lowerArmWeight + lw), angle);
-        
-        double y = cm.getY();
-        double z = cm.getX();
-
-        return new Translation3d( 0.0, y, z);
-    }
-
-    public void setDesiredState(Translation2d desiredPos) {
-
-    }
 
 }
