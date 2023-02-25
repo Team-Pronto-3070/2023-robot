@@ -67,15 +67,6 @@ public class PathPlanningUtils {
             : transformTranslationForAlliance(Grid.scoringNodeTranslations[level][8 - slot], alliance);
     }
 
-    // TODO - remove
-    public static void main(String[] args) {
-        for (int i = 0; i < Grid.scoringNodeTranslations.length; i++) {
-            for (int j = 0; j < Grid.scoringNodeTranslations[i].length; j++) {
-                System.out.println("(" + Grid.scoringNodeTranslations[i][j].getX() + ", " + Grid.scoringNodeTranslations[i][j].getY() + ")");
-            }
-        }
-    }
-
     private static class Grid {
         // X Layout
         private static final double outerX = Units.inchesToMeters(54.25);
