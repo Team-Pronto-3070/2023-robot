@@ -37,8 +37,8 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     double target_extention = 0.0;
 
     public ElevatorArmSubsystem() {
-        verticalTalon = new WPI_TalonSRX(Constants.ElevatorArm.verticalTalonID);
-        elevatorTalon = new WPI_TalonSRX(Constants.ElevatorArm.elevatorTalonID);
+        verticalTalon = new WPI_TalonSRX(Constants.ElevatorArm.VerticalDrive.verticalTalonID);
+        elevatorTalon = new WPI_TalonSRX(Constants.ElevatorArm.ElevatorDrive.elevatorTalonID);
 
         verticalTalon.configFactoryDefault();
         elevatorTalon.configFactoryDefault();
@@ -93,7 +93,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * @param deltaT
      */
     private void move(TrapezoidProfile verticalTProfile, TrapezoidProfile elevatorTProfile, double deltaT) {
-        
+
 
         verticalTalon.set(
             ControlMode.Velocity,
