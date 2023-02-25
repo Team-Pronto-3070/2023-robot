@@ -27,13 +27,13 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     }
 
     enum Level {
-        Retracted,
+        Reset,
         Lv1,
         Lv2,
         Lv3
     }
 
-    Level lastLevel = Level.Retracted;
+    Level lastLevel = Level.Reset;
     double extention = 0.0;
     Rotation2d angle = new Rotation2d();
     Load load = Load.None;
@@ -175,10 +175,13 @@ public class ElevatorArmSubsystem extends SubsystemBase {
             * 4096.0; // raw sensor units
     }
 
+    /**
+     * cycles from retracted -> Lv3 -> Lv2 -> Lv1 -> Retracted
+     */
     public void nextLevel() {
 
         switch (lastLevel) {
-            case Retracted:
+            case Reset:
                 targetLv3();
                 break;
             
@@ -205,7 +208,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * sets the target to the retracted state
      */
     public void targetReset() {
-        lastLevel = Level.Retracted;
+        lastLevel = Level.Reset;
         setTarget(Constants.ElevatorArm.Positions.reset);
     }
 
@@ -213,6 +216,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * sets the target to the retracted state
      */
     public void targetLv1() {
+        lastLevel = Level.Lv1;
         setTarget(Constants.ElevatorArm.Positions.level1);
     }
 
@@ -220,6 +224,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * sets the target to the retracted state
      */
     public void targetLv2() {
+        lastLevel = Level.Lv2;
         setTarget(Constants.ElevatorArm.Positions.level2);
     }
 
@@ -227,6 +232,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * sets the target to the retracted state
      */
     public void targetLv3() {
+        lastLevel = Level.Lv3;
         setTarget(Constants.ElevatorArm.Positions.level3);
     }
 
@@ -234,7 +240,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * sets the target to retract the elevator all the way
      */
     public void targetRetract() {
-        target_extention = Constants.ElevatorArm.initialArmLength;
+        target_extention = Constants.ElevatorArm.initialArmLength; // set the extention to fully retracted
         calcVerticalTrapezoidProfile(); // calculate the vertical drive TrapezoidProfile
         calcElevatorTrapezoidProfile(); // calculate the elevator drive TrapezoidProfile
     }
