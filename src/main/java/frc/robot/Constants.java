@@ -7,7 +7,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
-    public static final double loopDelay = 0.05;
+    public static final double loopDelay = 0.05; // in seconds
+
     public static final class OI {
         public static final int driverPort = 1;
         public static final double deadband = 0.06;
@@ -89,13 +90,13 @@ public final class Constants {
         }
     }
     public static final class ElevatorArm {
-        public static final double initialArmLength = 1.0;
-        public static final double maxExtention = 1.0;
+        public static final double initialArmLength = 1.0; // in meters
+        public static final double maxExtention = 1.0; // in meters
         public static final Translation2d armOffset = new Translation2d();
         
         public static final class VerticalDrive {
-            public static final double maxVelocity = 0.0;
-            public static final double maxAcceleration = 0.0;
+            public static final double maxVelocity = 0.0; // in radians/s
+            public static final double maxAcceleration = 0.0; // in radians/s/s
             public static final int verticalTalonID = 0;
             public static final double KS = 0.0;
             public static final double KV = 0.0;
@@ -103,8 +104,8 @@ public final class Constants {
             public static final double KG = 0.0;
         }
         public static final class ElevatorDrive {
-            public static final double maxVelocity = 0.0;
-            public static final double maxAcceleration = 0.0;
+            public static final double maxVelocity = 0.0; // in radians/s
+            public static final double maxAcceleration = 0.0; // in radians/s/s
             public static final double gearRatio = 16; // 16:1
             public static final double wheelCircumference = 0.0; // in meters
             public static final int elevatorTalonID = 0;
