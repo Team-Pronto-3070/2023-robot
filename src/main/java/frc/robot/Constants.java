@@ -3,7 +3,11 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMax.IdleMode;
 
+<<<<<<< HEAD
 import edu.wpi.first.math.geometry.Translation2d;
+=======
+import edu.wpi.first.math.geometry.Translation3d;
+>>>>>>> accel-limiting
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
@@ -25,8 +29,9 @@ public final class Constants {
         private static final int drivingMotorPinionTeeth = 13; 
         public static final double gearRatio = (45.0 * 22) / (drivingMotorPinionTeeth * 15);
 
-        public static final double maxSpeed = 4.0; //meters per second
-        public static final double maxAngularSpeed = 2 * Math.PI;
+        public static final double maxSpeed = Units.feetToMeters(15.87); //meters per second
+        public static final double maxAcceleration = 1.19 * 9.81; // traction limited: COF*g (TODO: this cof is for blue nitrile on carpet)
+        public static final double maxAngularSpeed = maxSpeed / Math.hypot(wheelBase / 2.0, trackWidth / 2.0);
 
         //offsets are in radians
         public static final class FrontLeft {
@@ -56,10 +61,10 @@ public final class Constants {
                 public static final double D = 0.0;
                 public static final double F = 0.0;
             }
-            public static final class Feedforward { //TODO
+            public static final class Feedforward {
                 public static final double KS = 0.0;
-                public static final double KV = 0.0;
-                public static final double KA = 0.0;
+                public static final double KV = 12 / maxSpeed;
+                public static final double KA = 12 / maxAcceleration;
             }
             public static final int continuousCurrentLimit = 35;
             public static final int peakCurrentLimit = 60;
@@ -77,6 +82,14 @@ public final class Constants {
             public static final double encoderPositionFactor = 2 * Math.PI; //radians
             public static final double encoderVelocityFactor = 2 * Math.PI / 60.0; //radians per second
             public static final boolean encoderInvert = true;
+
+            
+            public static final double maxModuleAngularSpeed = //radians per second
+                        Units.rotationsPerMinuteToRadiansPerSecond(
+                            11000.0             //NEO550 free speed (rpm)
+                            * 203.0 / 9424.0);  //gear ratio
+            public static final double KV = 12.0 / maxModuleAngularSpeed; //volts * seconds / radians
+
             public static final class PID {
                 public static final double P = 1.0;
                 public static final double I = 0.0;
@@ -131,5 +144,54 @@ public final class Constants {
 
     public static final class Manipulator {
         public static final double weight = 0.0;
+    public static enum GameObject {
+        NONE (0),
+        CUBE (0.653),
+        CONE (0.071);
+
+        private final double mass;
+        private GameObject(double mass) {
+            this.mass = mass;
+        }
+
+        public double getMass() {
+            return mass;
+        }
+    }
+
+    public static final class MassProperties {
+        public static final Translation3d elevatorCarriageCG = //relative to pivot point when fully retracted
+            new Translation3d(
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0)
+            );
+        public static final double elevatorCarriageMass = Units.lbsToKilograms(0.0);
+        public static final Translation3d gameObjectLocation = //relative to pivot point when fully retracted
+            new Translation3d(
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0)
+            );
+        public static final Translation3d elevatorStaticCG = //relative to pivot point
+            new Translation3d(
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0)
+            );
+        public static final double elevatorStaticMass = Units.lbsToKilograms(0.0);
+        public static final Translation3d pivotLocation = //location of the pivot point relative to the center of the robot
+            new Translation3d(
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0)
+            );
+        public static final Translation3d chassisCG = 
+            new Translation3d(
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0),
+                Units.inchesToMeters(0.0)
+            );
+        public static final double chassisMass = Units.lbsToKilograms(0.0);
     }
 }

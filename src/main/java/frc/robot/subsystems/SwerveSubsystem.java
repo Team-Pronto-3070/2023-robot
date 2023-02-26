@@ -4,14 +4,14 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.ProntoSwerveModule;
+import frc.robot.util.SwerveDriveKinematics2;
+import frc.robot.util.SwerveModuleState2;
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -22,7 +22,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private final ADIS16470_IMU gyro;
 
-    public final SwerveDriveKinematics kinematics;
+    public final SwerveDriveKinematics2 kinematics;
     private final SwerveDriveOdometry odometry;
     
     public SwerveSubsystem() {
@@ -52,7 +52,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         gyro = new ADIS16470_IMU();
 
-        kinematics = new SwerveDriveKinematics(
+        kinematics = new SwerveDriveKinematics2(
             new Translation2d(Constants.Swerve.wheelBase / 2, Constants.Swerve.trackWidth / 2),
             new Translation2d(Constants.Swerve.wheelBase / 2, -Constants.Swerve.trackWidth / 2),
             new Translation2d(-Constants.Swerve.wheelBase / 2, Constants.Swerve.trackWidth / 2),
@@ -84,6 +84,15 @@ public class SwerveSubsystem extends SubsystemBase {
         return odometry.getPoseMeters();
     }
 
+    public ChassisSpeeds getChassisSpeeds() {
+        return kinematics.toChassisSpeeds(
+            frontLeft.getState(),
+            frontRight.getState(),
+            rearLeft.getState(),
+            rearRight.getState()
+        );
+    }
+
     public void resetOdometry(Pose2d pose) {
         odometry.resetPosition(
             getYaw(),
@@ -102,7 +111,7 @@ public class SwerveSubsystem extends SubsystemBase {
             fieldRelative
                 ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getYaw())
                 : new ChassisSpeeds(xSpeed, ySpeed, rot));
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
+        SwerveDriveKinematics2.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
 
         frontLeft.setDesiredState(swerveModuleStates[0], isOpenLoop);
         frontRight.setDesiredState(swerveModuleStates[1], isOpenLoop);
@@ -110,8 +119,8 @@ public class SwerveSubsystem extends SubsystemBase {
         rearRight.setDesiredState(swerveModuleStates[3], isOpenLoop);
     }
     
-    public void setModuleStates(SwerveModuleState[] desiredStates) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
+    public void setModuleStates(SwerveModuleState2[] desiredStates) {
+        SwerveDriveKinematics2.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
         frontLeft.setDesiredState(desiredStates[0], false);
         frontRight.setDesiredState(desiredStates[1], false);
         rearLeft.setDesiredState(desiredStates[2], false);
