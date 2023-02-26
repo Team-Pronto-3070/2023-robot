@@ -3,15 +3,12 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMax.IdleMode;
 
-<<<<<<< HEAD
 import edu.wpi.first.math.geometry.Translation2d;
-=======
 import edu.wpi.first.math.geometry.Translation3d;
->>>>>>> accel-limiting
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
-    public static final double loopDelay = 0.05; // in seconds
+    public static final double loopTime = 0.02; // in seconds
 
     public static final class OI {
         public static final int driverPort = 0;
@@ -120,7 +117,7 @@ public final class Constants {
             public static final double maxVelocity = 0.0; // in radians/s
             public static final double maxAcceleration = 0.0; // in radians/s/s
             public static final double gearRatio = 16; // 16:1
-            public static final double wheelCircumference = 0.0; // in meters
+            public static final double pulleyCircumference = 0.0; // in meters
             public static final int elevatorTalonID = 0;
             public static final double KS = 0.0;
             public static final double KV = 0.0;
@@ -128,28 +125,26 @@ public final class Constants {
             public static final double KG = 0.0;
         }
 
-        public static final double lowerArmWeight = 0.0;
-        public static final double upperArmWeight = 0.0;
-        public static final double cubeWeight = 0.0;
-        public static final double coneWeight = 0.0;
+        public static enum Position {
+            HOME (new Translation2d()),
+            L1 (new Translation2d()),
+            L2 (new Translation2d()),
+            L3 (new Translation2d());
 
-        public static final class Positions {
-            public static final Translation2d home = new Translation2d(0.0, 0.0);
-            public static final Translation2d level1 = new Translation2d(0.0, 0.0);
-            public static final Translation2d level2 = new Translation2d(0.0, 0.0);
-            public static final Translation2d level3 = new Translation2d(0.0, 0.0);
+            public final Translation2d translation;
+            private Position(Translation2d translation) {
+                this.translation = translation;
+            }
         }
 
     }
 
-    public static final class Manipulator {
-        public static final double weight = 0.0;
     public static enum GameObject {
         NONE (0),
         CUBE (0.653),
         CONE (0.071);
 
-        private final double mass;
+        private final double mass; //kilograms
         private GameObject(double mass) {
             this.mass = mass;
         }

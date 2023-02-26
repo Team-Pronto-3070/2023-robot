@@ -2,8 +2,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.fasterxml.jackson.databind.deser.std.ContainerDeserializerBase;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -16,28 +14,15 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import static frc.robot.Constants.ElevatorArm.Position;
 
 
 public class ElevatorArmSubsystem extends SubsystemBase {
 
-    enum Load {
-        None,
-        Cube,
-        Cone,
-    }
-
-    enum Level {
-        Home,
-        Lv1,
-        Lv2,
-        Lv3
-    }
-
-    private Level lastLevel = Level.Home;
+    private Position lastLevel = Position.HOME;
 
     private final WPI_TalonSRX verticalTalon;
     private final WPI_TalonSRX elevatorTalon;
-
 
     private Rotation2d target_angle = new Rotation2d();
     private double target_extention = 0.0;
@@ -103,11 +88,11 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     public void move() {
         verticalTalon.set(
             ControlMode.Velocity,
-            verticalTProfile.calculate(Constants.loopDelay).velocity
+            verticalTProfile.calculate(Constants.loopTime).velocity
         );
         elevatorTalon.set(
             ControlMode.Velocity,
-            elevatorTProfile.calculate(Constants.loopDelay).velocity
+            elevatorTProfile.calculate(Constants.loopTime).velocity
         );
     }
 
@@ -137,7 +122,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         return elevatorTalon.getSelectedSensorPosition() // raw sensor units
             / 2048.0 // revolutions before gear ratio
             / Constants.ElevatorArm.ElevatorDrive.gearRatio // final revolutions
-            * Constants.ElevatorArm.ElevatorDrive.wheelCircumference // extention distance in meters
+            * Constants.ElevatorArm.ElevatorDrive.pulleyCircumference // extention distance in meters
             + Constants.ElevatorArm.initialArmLength; // full arm length
     }
 
@@ -157,7 +142,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     private double rawFromExtention(double sExtention) {
         return sExtention // full arm length
             - Constants.ElevatorArm.initialArmLength // extention distance in meters
-            / Constants.ElevatorArm.ElevatorDrive.wheelCircumference// final revolutions
+            / Constants.ElevatorArm.ElevatorDrive.pulleyCircumference// final revolutions
             * Constants.ElevatorArm.ElevatorDrive.gearRatio // revolutions before gear ratio
             * 2048.0; // raw sensor units
     }
@@ -190,19 +175,19 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     public void nextLevel() {
 
         switch (lastLevel) {
-            case Home:
+            case HOME:
                 targetLv3();
                 break;
             
-            case Lv3:
+            case L3:
                 targetLv2();
                 break;
             
-            case Lv2:
+            case L2:
                 targetLv1();
                 break;
             
-            case Lv1:
+            case L1:
                 targetRetract();
                 break;
             
@@ -217,32 +202,32 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * sets the target to the retracted state
      */
     public void targetHome() {
-        lastLevel = Level.Home;
-        setTarget(Constants.ElevatorArm.Positions.home);
+        lastLevel = Position.HOME;
+        setTarget(Constants.ElevatorArm.Position.HOME.translation);
     }
 
     /**
      * sets the target to the Lv1 (ground) state
      */
     public void targetLv1() {
-        lastLevel = Level.Lv1;
-        setTarget(Constants.ElevatorArm.Positions.level1);
+        lastLevel = Position.L1;
+        setTarget(Constants.ElevatorArm.Position.L1.translation);
     }
 
     /**
      * sets the target to the Lv2 state
      */
     public void targetLv2() {
-        lastLevel = Level.Lv2;
-        setTarget(Constants.ElevatorArm.Positions.level2);
+        lastLevel = Position.L2;
+        setTarget(Constants.ElevatorArm.Position.L2.translation);
     }
 
     /**
      * sets the target to the Lv3 state
      */
     public void targetLv3() {
-        lastLevel = Level.Lv3;
-        setTarget(Constants.ElevatorArm.Positions.level3);
+        lastLevel = Position.L3;
+        setTarget(Constants.ElevatorArm.Position.L3.translation);
     }
 
     /**
@@ -253,11 +238,5 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         verticalTProfile = calcVerticalTrapezoidProfile(target_angle); // calculate the vertical drive TrapezoidProfile
         elevatorTProfile = calcElevatorTrapezoidProfile(target_extention); // calculate the elevator drive TrapezoidProfile
     }
-
-    
-
-
-
-
 
 }
