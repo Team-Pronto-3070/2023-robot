@@ -11,6 +11,7 @@ import frc.robot.Constants;
 import edu.wpi.first.math.util.Units;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -30,14 +31,20 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     private TrapezoidProfile elevatorTProfile;
 
     public ElevatorArmSubsystem() {
-        verticalTalon = new WPI_TalonSRX(Constants.ElevatorArm.VerticalDrive.verticalTalonID);
+        verticalTalon = new WPI_TalonSRX(Constants.ElevatorArm.VerticalDrive.ID);
         verticalTalon.configFactoryDefault();
+        verticalTalon.configAllSettings(Constants.ElevatorArm.VerticalDrive.config);
+        verticalTalon.setInverted(Constants.ElevatorArm.VerticalDrive.motorReversed);
         verticalTalon.setNeutralMode(NeutralMode.Brake);
+        verticalTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+        verticalTalon.setSelectedSensorPosition(verticalTalon.getSensorCollection().getPulseWidthPosition());
         
-        elevatorTalon = new WPI_TalonSRX(Constants.ElevatorArm.ElevatorDrive.elevatorTalonID);
+        elevatorTalon = new WPI_TalonSRX(Constants.ElevatorArm.ElevatorDrive.ID);
         elevatorTalon.configFactoryDefault();
+        elevatorTalon.configAllSettings(Constants.ElevatorArm.ElevatorDrive.config);
+        elevatorTalon.setInverted(Constants.ElevatorArm.ElevatorDrive.motorReversed);
         elevatorTalon.setNeutralMode(NeutralMode.Brake);
-
+        elevatorTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     }
 
     /**
@@ -58,7 +65,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     
         //TODO fill in the constants
         return new TrapezoidProfile(
-            new TrapezoidProfile.Constraints(Constants.ElevatorArm.VerticalDrive.maxVelocity, Constants.ElevatorArm.VerticalDrive.maxAcceleration),
+            Constants.ElevatorArm.VerticalDrive.trapConstraints,
             new TrapezoidProfile.State(targetPos, 0.0),
             new TrapezoidProfile.State(getAngle().getRadians(), getVerticalDriveVel())
         );
@@ -72,7 +79,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
 
         //TODO fill in the constants
         return new TrapezoidProfile(
-            new TrapezoidProfile.Constraints(Constants.ElevatorArm.ElevatorDrive.maxVelocity, Constants.ElevatorArm.ElevatorDrive.maxAcceleration),
+            Constants.ElevatorArm.ElevatorDrive.trapConstraints,
             new TrapezoidProfile.State(target_extention, 0.0),
             new TrapezoidProfile.State(getExtention(), getElevatorDriveVel())
         );

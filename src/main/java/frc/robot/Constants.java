@@ -1,10 +1,15 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
@@ -105,20 +110,79 @@ public final class Constants {
         public static final Translation2d armOffset = new Translation2d();
         
         public static final class VerticalDrive {
-            public static final double maxVelocity = 0.0; // in radians/s
-            public static final double maxAcceleration = 0.0; // in radians/s/s
-            public static final int verticalTalonID = 0;
+            //base units are radians, so velocity is rad/s and accel is rad/s^2
+            public static final TrapezoidProfile.Constraints trapConstraints = new TrapezoidProfile.Constraints(0.0, 0.0);
+            
+            public static final int ID = 0;
+
+            public static final boolean motorReversed = false;
+            public static final boolean sensorPhase = false;
+
+            public static final TalonSRXConfiguration config = new TalonSRXConfiguration();
+            static {
+                config.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
+
+                //TODO: pid constants
+                config.slot0 = new SlotConfiguration();
+                config.slot0.kP = 0.0;
+                config.slot0.kI = 0.0;
+                config.slot0.kD = 0.0;
+                //motion magic: "kF is multiplied by the runtime-calculated target and added to output" - presumambly calculated velocity
+
+                config.continuousCurrentLimit = 35; //amps
+                config.peakCurrentDuration = 100; //miliseconds
+                config.peakCurrentLimit = 60; //amps
+
+                config.forwardSoftLimitEnable = false; //TODO: set this to true once the threshold is filled in
+                config.forwardSoftLimitThreshold = 0.0;
+                config.reverseSoftLimitEnable = false; //TODO: set this to true once the threshold is filled in
+                config.reverseSoftLimitThreshold = 0.0;
+
+                config.motionCruiseVelocity = 0.0; //sensor units / 100 miliseconds
+                config.motionAcceleration = 0.0; //(sensor units / 100 miliseconds) / second
+                config.motionCurveStrength = 3; //arbitary smoothing value
+            }
+
             public static final double KS = 0.0;
             public static final double KV = 0.0;
             public static final double KA = 0.0;
             public static final double KG = 0.0;
         }
         public static final class ElevatorDrive {
-            public static final double maxVelocity = 0.0; // in radians/s
-            public static final double maxAcceleration = 0.0; // in radians/s/s
+            public static final int ID = 0;
+
+            //base units are radians, so velocity is rad/s and accel is rad/s^2
+            public static final TrapezoidProfile.Constraints trapConstraints = new TrapezoidProfile.Constraints(0.0, 0.0);
+
             public static final double gearRatio = 16; // 16:1
-            public static final double pulleyCircumference = 0.0; // in meters
-            public static final int elevatorTalonID = 0;
+            public static final double pulleyCircumference = 0.0; // meters //TODO
+
+            public static final boolean motorReversed = false;
+            public static final boolean sensorPhase = false;
+
+            public static final TalonSRXConfiguration config = new TalonSRXConfiguration();
+            static {
+                config.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
+
+                //TODO: pid constants
+                config.slot0 = new SlotConfiguration();
+                config.slot0.kP = 0.0;
+                config.slot0.kI = 0.0;
+                config.slot0.kD = 0.0;
+                //motion magic: "kF is multiplied by the runtime-calculated target and added to output" - presumambly calculated velocity
+
+                config.continuousCurrentLimit = 35; //amps
+                config.peakCurrentDuration = 100; //miliseconds
+                config.peakCurrentLimit = 60; //amps
+
+                config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
+                config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
+                config.clearPositionOnLimitR = true; //reset selected sensor position to 0 on falling edge of reverse limit switch
+
+                config.motionCruiseVelocity = 0.0; //sensor units / 100 miliseconds
+                config.motionAcceleration = 0.0; //(sensor units / 100 miliseconds) / second
+                config.motionCurveStrength = 3; //arbitary smoothing value
+            }
             public static final double KS = 0.0;
             public static final double KV = 0.0;
             public static final double KA = 0.0;
