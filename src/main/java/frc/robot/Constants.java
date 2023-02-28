@@ -138,8 +138,16 @@ public final class Constants {
                 config.reverseSoftLimitEnable = false; //TODO: set this to true once the threshold is filled in
                 config.reverseSoftLimitThreshold = 0.0;
 
-                config.motionCruiseVelocity = 0.0; //sensor units / 100 miliseconds
-                config.motionAcceleration = 0.0; //(sensor units / 100 miliseconds) / second
+                config.motionCruiseVelocity = 0.0                    // rad/s                             max velocity in radians per second
+                                              * (1 / (2 * Math.PI))  // * rot/rad -> rot/s                rotations per second
+                                              * 4096.0               // * sensor units / rot -> units/s   sensor units per second
+                                              * 10.0;                // * s/(100ms) -> units/100ms        sensor units per 100 miliseconds
+
+                config.motionAcceleration =   0.0                    // rad/s^2                           max acceleration in radians per s^2
+                                              * (1 / (2 * Math.PI))  // * rot/rad -> rot/s^2              rotations per second^2
+                                              * 4096.0               // * sensor units / rot -> units/s^2 sensor units per second^2
+                                              / 10.0;                // * s/(100ms) -> (units/100ms)/s    (sensor units / 100 miliseconds) / second
+
                 config.motionCurveStrength = 3; //arbitary smoothing value
             }
 
@@ -155,7 +163,8 @@ public final class Constants {
             public static final TrapezoidProfile.Constraints trapConstraints = new TrapezoidProfile.Constraints(0.0, 0.0);
 
             public static final double gearRatio = 16; // 16:1
-            public static final double pulleyCircumference = 0.0; // meters //TODO
+            public static final double pulleyCircumference = 2 * Math.PI
+                                                               * 0.023300; // radius in meters
 
             public static final boolean motorReversed = false;
             public static final boolean sensorPhase = false;
@@ -179,8 +188,18 @@ public final class Constants {
                 config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
                 config.clearPositionOnLimitR = true; //reset selected sensor position to 0 on falling edge of reverse limit switch
 
-                config.motionCruiseVelocity = 0.0; //sensor units / 100 miliseconds
-                config.motionAcceleration = 0.0; //(sensor units / 100 miliseconds) / second
+                config.motionCruiseVelocity = (0.0                   // m/s                               max velocity in m/s
+                                              / pulleyCircumference) // *(m/rot)^-1 = rot/m -> rot/s      pulley rotations per second
+                                              * gearRatio            // * unitless -> rot/s               sensor rotations per second
+                                              * 4096.0               // * sensor units / rot -> units/s   sensor units per second
+                                              / 10.0;                // * s/(100ms) -> units/100ms        sensor units / 100 miliseconds
+
+                config.motionAcceleration =   (0.0                   // m/s^2                             max acceleration in m/s^2
+                                              / pulleyCircumference) // *(m/rot)^-1 = rot/m -> rot/s^2    pulley rotations per second^2
+                                              * gearRatio            // * unitless -> rot/s^2             sensor rotations per second^2
+                                              * 4096.0               // * sensor units / rot -> units/s^2 sensor units per second^2
+                                              / 10.0;                // * s/(100ms) -> (units/100ms)/s    (sensor units / 100 miliseconds) / second
+
                 config.motionCurveStrength = 3; //arbitary smoothing value
             }
             public static final double KS = 0.0;
