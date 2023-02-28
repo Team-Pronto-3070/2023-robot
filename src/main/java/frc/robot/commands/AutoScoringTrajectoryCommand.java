@@ -62,7 +62,7 @@ public class AutoScoringTrajectoryCommand extends DriveToPointCommand {
 
         if (midPoint != null) {
             midPoint = PathPlanningUtils.transformTranslationForAlliance(midPoint, DriverStation.getAlliance());
-            points.add(new PathPoint(midPoint, startTranslation.minus(endTranslation).getAngle()).withControlLengths(0.25, midPoint.getDistance(endTranslation) / 4));
+            points.add(new PathPoint(midPoint, startTranslation.minus(endTranslation).getAngle(), null).withControlLengths(0.25, midPoint.getDistance(endTranslation) / 4));
         }
 
         Translation2d prevWaypoint = (midPoint == null) ? startTranslation : midPoint;
