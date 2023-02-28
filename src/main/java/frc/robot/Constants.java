@@ -49,6 +49,12 @@ public final class Constants {
         public static final double triggerDeadband = 0.1;
     }
 
+    public static final class Intake {
+        public static final int ID = 0;
+        public static final int closedSwitchPort = 0;
+        public static final int openedSwitchPort = 0;
+    }
+
     public static final class Swerve {
         public static final double wheelBase = Units.inchesToMeters(26.0 - 3.5); //distance between front and back wheels
         public static final double trackWidth = Units.inchesToMeters(24.0 - 3.5); //distance between left and right wheels
