@@ -9,7 +9,6 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.util.PathPlanningUtils;
@@ -17,7 +16,7 @@ import frc.robot.util.PathPlanningUtils;
 public class AutoScoringTrajectoryCommand extends DriveToPointCommand {
 
     private static final Translation2d WALL_SIDE_MIDPOINT = new Translation2d(2.25, 0.9);
-    private static final Translation2d LOADING_ZONE_MIDPOINT = new Translation2d(2.32, 4.53); // TODO the numbers are incorrect for LZ midpoint
+    private static final Translation2d LOADING_ZONE_MIDPOINT = new Translation2d(2.25, 4.59);
 
     private final int scoringNode;
 
@@ -38,59 +37,37 @@ public class AutoScoringTrajectoryCommand extends DriveToPointCommand {
     @Override
     public void initialize() {
         Translation2d midPoint = null;
-        Alliance alliance = DriverStation.getAlliance();
 
         Translation2d startTranslation = swerve.getPose().getTranslation(); // There might be a slight lag between initialize functions, could set current pose as a variable in super
         double x = startTranslation.getX();
         double y = startTranslation.getY();
 
-        // TODO handle case where robot would have to back track to reach midpoint but would crash into charge station if it took a normal path
-
-        if (x > 2.416 && x < 4.909) {
-            if (alliance == DriverStation.Alliance.Blue) {
-                if ( y > 0 && y < 1.509) {
+        if (x > 2.4 && x < 5) { // NOTE: it is currently janky when robot starts just above 2.4
+            if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
+                if ( y > 0 && y < 1.5) {
                     midPoint = WALL_SIDE_MIDPOINT;
-                } else if (y > 4.035 && y < 5.353) {
+                } else if (y > 4 && y < 5) {
                     midPoint = LOADING_ZONE_MIDPOINT;
                 }
             } else { // Red
-                if (y > Constants.fieldWidthMeters && y < Constants.fieldWidthMeters - 1.509) {
+                if (y > Constants.fieldWidthMeters && y < Constants.fieldWidthMeters - 1.5) {
                     midPoint = WALL_SIDE_MIDPOINT;
-                } else if (y > Constants.fieldWidthMeters - 4.035 && y < Constants.fieldWidthMeters - 5.353) {
+                } else if (y > Constants.fieldWidthMeters - 4 && y < Constants.fieldWidthMeters - 5) {
                     midPoint = LOADING_ZONE_MIDPOINT;
                 }
             }
         }
-        
-        if (midPoint != null) {
-            midPoint = PathPlanningUtils.transformTranslationForAlliance(midPoint, alliance);
-        }
 
-        Translation2d endTranslation = PathPlanningUtils.getRobotScoringPosition(scoringNode, alliance);
-        
-        Translation2d prevWaypoint = startTranslation;
+        Translation2d endTranslation = PathPlanningUtils.getRobotScoringPosition(scoringNode, DriverStation.getAlliance());
 
         if (midPoint != null) {
-            prevWaypoint = midPoint;
-            
-            // add mid point
-            points.add(new PathPoint(midPoint, angleFromPosition(endTranslation, startTranslation))); // Might have to add control lengths
+            midPoint = PathPlanningUtils.transformTranslationForAlliance(midPoint, DriverStation.getAlliance());
+            points.add(new PathPoint(midPoint, startTranslation.minus(endTranslation).getAngle()).withControlLengths(0.25, midPoint.getDistance(endTranslation) / 4));
         }
-        // add end point
-        points.add(0, new PathPoint(endTranslation, angleFromPosition(endTranslation, prevWaypoint), new Rotation2d(Math.PI)).withPrevControlLength(endTranslation.getDistance(prevWaypoint) / 2));
+
+        Translation2d prevWaypoint = (midPoint == null) ? startTranslation : midPoint;
+        points.add(0, new PathPoint(endTranslation, prevWaypoint.minus(endTranslation).getAngle(), new Rotation2d(Math.PI)).withPrevControlLength(endTranslation.getDistance(prevWaypoint) / 2));
         
         super.initialize();
-    }
-
-    /**
-     * Calculates the angle (relative to the first position) of the hypoteneuse between two positions
-     * 
-     * @param position translation that the angle is relative to
-     * @param other translation that determines the angle
-     * @return
-     */
-    private Rotation2d angleFromPosition(Translation2d position, Translation2d other) {
-        Translation2d translationDifference = other.minus(position);
-        return new Rotation2d(Math.atan2(translationDifference.getY(), translationDifference.getX()));
     }
 }
