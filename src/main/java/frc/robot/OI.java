@@ -22,9 +22,6 @@ public class OI {
 
     public final Trigger gyroResetButton;
 
-    public final Trigger elevatorArmHome;
-    public final Trigger elevatorArmNextLevel;
-    public final Trigger elevatorArmRetract;
 
     public OI(int driverPort) {
         driver = new CommandXboxController(driverPort);
@@ -42,8 +39,5 @@ public class OI {
 
         gyroResetButton = driver.x();
 
-        elevatorArmHome = driver.a();
-        elevatorArmNextLevel = driver.b();
-        elevatorArmRetract = driver.y();
     }
 }

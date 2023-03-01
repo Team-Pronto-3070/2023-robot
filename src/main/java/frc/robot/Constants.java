@@ -210,9 +210,14 @@ public final class Constants {
 
         public static enum Position {
             HOME (new Translation2d()),
-            L1 (new Translation2d()),
-            L2 (new Translation2d()),
-            L3 (new Translation2d());
+
+            L1CONE (new Translation2d()),
+            L2CONE (new Translation2d()),
+            L3CONE (new Translation2d()),
+
+            L1CUBE (new Translation2d()),
+            L2CUBE (new Translation2d()),
+            L3CUBE (new Translation2d());
 
             public final Translation2d translation;
             private Position(Translation2d translation) {

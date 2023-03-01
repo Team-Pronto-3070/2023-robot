@@ -31,9 +31,6 @@ public class RobotContainer {
 
   private void configureBindings() {
     oi.gyroResetButton.onTrue(swerve.runOnce(swerve::resetGryo));
-    oi.elevatorArmHome.onTrue(elevatorArm.runOnce(elevatorArm::targetHome));
-    oi.elevatorArmNextLevel.onTrue(elevatorArm.runOnce(elevatorArm::nextLevel));
-    oi.elevatorArmRetract.onTrue(elevatorArm.runOnce(elevatorArm::targetRetract));
   }
 
   public Command getAutonomousCommand() {

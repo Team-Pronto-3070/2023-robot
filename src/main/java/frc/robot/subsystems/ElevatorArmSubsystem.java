@@ -1,12 +1,11 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import frc.robot.Constants;
 import edu.wpi.first.math.util.Units;
 
@@ -15,12 +14,9 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import static frc.robot.Constants.ElevatorArm.Position;
 
 
 public class ElevatorArmSubsystem extends SubsystemBase {
-
-    private Position lastLevel = Position.HOME;
 
     private final WPI_TalonSRX verticalTalon;
     private final WPI_TalonSRX elevatorTalon;
@@ -47,14 +43,6 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         elevatorTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     }
 
-    /**
-     * the coordanates are relative to the robot's center
-     * @param cartesian
-     */
-    private void setTargetFromPolar(Translation2d cartesian) {
-        target_angle = cartesian.getAngle();
-        target_extention = cartesian.getDistance(Constants.ElevatorArm.armOffset);
-    }
 
     /**
      * 
@@ -94,30 +82,29 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      */
     public void move() {
         verticalTalon.set(
-            ControlMode.Velocity,
-            verticalTProfile.calculate(Constants.loopTime).velocity
+            ControlMode.MotionMagic,
+            rawFromAngle(new Rotation2d(verticalTProfile.calculate(Constants.loopTime).position))
         );
         elevatorTalon.set(
-            ControlMode.Velocity,
-            elevatorTProfile.calculate(Constants.loopTime).velocity
+            ControlMode.MotionMagic,
+            rawFromExtention(elevatorTProfile.calculate(Constants.loopTime).position)
         );
     }
 
-    public void setTarget(Translation2d target) {
-        setTargetFromPolar(target); // calculate the polar coords
-        verticalTProfile = calcVerticalTrapezoidProfile(target_angle); // calculate the vertical drive TrapezoidProfile
-        elevatorTProfile = calcElevatorTrapezoidProfile(target_extention); // calculate the elevator drive TrapezoidProfile
+    private void setTarget(Translation2d target) {
+        verticalTProfile = calcVerticalTrapezoidProfile(target.getAngle()); // calculate the vertical drive TrapezoidProfile
+        elevatorTProfile = calcElevatorTrapezoidProfile(target.getDistance(Constants.ElevatorArm.armOffset)); // calculate the elevator drive TrapezoidProfile
     }
 
     /**
      * 
      * @return Rotation2d - the angle of the arm
      */
-    private Rotation2d getAngle() {
+    public Rotation2d getAngle() {
         return new Rotation2d(
             Units.rotationsToRadians( // convert rotations to radians
                 verticalTalon.getSelectedSensorPosition() // raw sensor units
-                / 2048.0 // revolutions
+                / 4096.0 // revolutions
         ));
     }
 
@@ -125,9 +112,9 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * 
      * @return double - the extention of the elevator in meters
      */
-    private double getExtention() {
+    public double getExtention() {
         return elevatorTalon.getSelectedSensorPosition() // raw sensor units
-            / 2048.0 // revolutions before gear ratio
+            / 4096.0 // revolutions before gear ratio
             / Constants.ElevatorArm.ElevatorDrive.gearRatio // final revolutions
             * Constants.ElevatorArm.ElevatorDrive.pulleyCircumference // extention distance in meters
             + Constants.ElevatorArm.initialArmLength; // full arm length
@@ -139,7 +126,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      */
     private double rawFromAngle(Rotation2d sAngle) {
         return sAngle.getRotations() // total revolutions
-            * 2048.0; // raw sensor units
+            * 4096.0; // raw sensor units
     }
 
     /**
@@ -151,7 +138,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
             - Constants.ElevatorArm.initialArmLength // extention distance in meters
             / Constants.ElevatorArm.ElevatorDrive.pulleyCircumference// final revolutions
             * Constants.ElevatorArm.ElevatorDrive.gearRatio // revolutions before gear ratio
-            * 2048.0; // raw sensor units
+            * 4096.0; // raw sensor units
     }
 
     /**
@@ -160,8 +147,8 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      */
     private double getVerticalDriveVel() {
         return Units.rotationsToRadians( // radians per second
-        verticalTalon.getSelectedSensorVelocity() // raw talon units
-        * (10.0 / 2048.0) // motor revolutions per second
+            verticalTalon.getSelectedSensorVelocity() // raw talon units
+            * (10.0 / 4096.0) // motor revolutions per second
         );
     }
 
@@ -171,70 +158,9 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      */
     private double getElevatorDriveVel() {
         return Units.rotationsToRadians( // radians per second
-        elevatorTalon.getSelectedSensorVelocity() // raw talon units
-        * (10.0 / 2048.0) // motor revolutions per second
+            elevatorTalon.getSelectedSensorVelocity() // raw talon units
+            * (10.0 / 4096.0) // motor revolutions per second
         );
-    }
-
-    /**
-     * cycles from home -> Lv3 -> Lv2 -> Lv1 -> Retracted
-     */
-    public void nextLevel() {
-
-        switch (lastLevel) {
-            case HOME:
-                targetLv3();
-                break;
-            
-            case L3:
-                targetLv2();
-                break;
-            
-            case L2:
-                targetLv1();
-                break;
-            
-            case L1:
-                targetRetract();
-                break;
-            
-            default:
-                break;
-        }
-
-        
-    }
-
-    /**
-     * sets the target to the retracted state
-     */
-    public void targetHome() {
-        lastLevel = Position.HOME;
-        setTarget(Constants.ElevatorArm.Position.HOME.translation);
-    }
-
-    /**
-     * sets the target to the Lv1 (ground) state
-     */
-    public void targetLv1() {
-        lastLevel = Position.L1;
-        setTarget(Constants.ElevatorArm.Position.L1.translation);
-    }
-
-    /**
-     * sets the target to the Lv2 state
-     */
-    public void targetLv2() {
-        lastLevel = Position.L2;
-        setTarget(Constants.ElevatorArm.Position.L2.translation);
-    }
-
-    /**
-     * sets the target to the Lv3 state
-     */
-    public void targetLv3() {
-        lastLevel = Position.L3;
-        setTarget(Constants.ElevatorArm.Position.L3.translation);
     }
 
     /**
@@ -244,6 +170,17 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         target_extention = Constants.ElevatorArm.initialArmLength; // set the extention to fully retracted
         verticalTProfile = calcVerticalTrapezoidProfile(target_angle); // calculate the vertical drive TrapezoidProfile
         elevatorTProfile = calcElevatorTrapezoidProfile(target_extention); // calculate the elevator drive TrapezoidProfile
+    }
+
+    public Command setTargetCommand(Constants.ElevatorArm.Position target) {
+        return this.runOnce(() -> setTarget(target.translation));
+    }
+
+    public Command moveCommand(double verticalPower, double elevatorPower) {
+        return this.runOnce(() -> {
+            verticalTalon.set(verticalPower);
+            elevatorTalon.set(elevatorPower);
+        });
     }
 
 }
