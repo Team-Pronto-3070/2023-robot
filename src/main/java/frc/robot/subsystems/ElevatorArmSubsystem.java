@@ -23,8 +23,6 @@ public class ElevatorArmSubsystem extends SubsystemBase {
 
     private Rotation2d target_angle = new Rotation2d();
     private double target_extention = 0.0;
-    private TrapezoidProfile verticalTProfile;
-    private TrapezoidProfile elevatorTProfile;
 
     public ElevatorArmSubsystem() {
         verticalTalon = new WPI_TalonSRX(Constants.ElevatorArm.VerticalDrive.ID);
@@ -43,36 +41,6 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         elevatorTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     }
 
-
-    /**
-     * 
-     * @return the TrapezoidProfile for the vertical motor
-     */
-    private TrapezoidProfile calcVerticalTrapezoidProfile(Rotation2d target_angle) {
-        double targetPos = target_angle.getRadians();
-    
-        //TODO fill in the constants
-        return new TrapezoidProfile(
-            Constants.ElevatorArm.VerticalDrive.trapConstraints,
-            new TrapezoidProfile.State(targetPos, 0.0),
-            new TrapezoidProfile.State(getAngle().getRadians(), getVerticalDriveVel())
-        );
-    }
-
-    /**
-     * 
-     * @return the TrapezoidProfile for the elevator motor
-     */
-    private TrapezoidProfile calcElevatorTrapezoidProfile(double target_extention) {
-
-        //TODO fill in the constants
-        return new TrapezoidProfile(
-            Constants.ElevatorArm.ElevatorDrive.trapConstraints,
-            new TrapezoidProfile.State(target_extention, 0.0),
-            new TrapezoidProfile.State(getExtention(), getElevatorDriveVel())
-        );
-    }
-
     /**
      * sets the output of the vertical and elevator motors
      * to the values calculated by verticalTProfile and 
@@ -81,19 +49,33 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * @param deltaT - delta time in seconds
      */
     public void move() {
+        
         verticalTalon.set(
-            ControlMode.MotionMagic,
-            rawFromAngle(new Rotation2d(verticalTProfile.calculate(Constants.loopTime).position))
+            ControlMode.MotionMagic, // * not sure if just putting MotionMagic here in will work
+            rawFromAngle(target_angle) // motion magic should calculate the TProfile
         );
         elevatorTalon.set(
-            ControlMode.MotionMagic,
-            rawFromExtention(elevatorTProfile.calculate(Constants.loopTime).position)
+            ControlMode.MotionMagic, 
+            Math.min( // keep inside of the robot bounds
+                rawFromExtention(target_extention),
+                calcMaxExtention(target_angle))
+        );
+    }
+
+    /**
+     * @return the maximum extention of the arm at a certian 
+     * angle to respect the extention bounds
+     */
+    private double calcMaxExtention(Rotation2d angle) {
+        return Math.min(
+            angle.getSin() * (Constants.RobotBounds.horizontalPastBumper + Constants.RobotBounds.robotLength - Constants.MassProperties.pivotLocation.getZ()),
+            angle.getCos() * (Constants.RobotBounds.height - Constants.MassProperties.pivotLocation.getY())
         );
     }
 
     private void setTarget(Translation2d target) {
-        verticalTProfile = calcVerticalTrapezoidProfile(target.getAngle()); // calculate the vertical drive TrapezoidProfile
-        elevatorTProfile = calcElevatorTrapezoidProfile(target.getDistance(Constants.ElevatorArm.armOffset)); // calculate the elevator drive TrapezoidProfile
+        target_angle = target.getAngle(); // calculate the vertical drive TrapezoidProfile
+        target_extention = target.getDistance(Constants.ElevatorArm.armOffset); // calculate the elevator drive TrapezoidProfile
     }
 
     /**
@@ -168,15 +150,13 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      */
     public void targetRetract() {
         target_extention = Constants.ElevatorArm.initialArmLength; // set the extention to fully retracted
-        verticalTProfile = calcVerticalTrapezoidProfile(target_angle); // calculate the vertical drive TrapezoidProfile
-        elevatorTProfile = calcElevatorTrapezoidProfile(target_extention); // calculate the elevator drive TrapezoidProfile
     }
 
     public Command setTargetCommand(Constants.ElevatorArm.Position target) {
         return this.runOnce(() -> setTarget(target.translation));
     }
 
-    public Command moveCommand(double verticalPower, double elevatorPower) {
+    public Command manualMoveCommand(double verticalPower, double elevatorPower) {
         return this.runOnce(() -> {
             verticalTalon.set(verticalPower);
             elevatorTalon.set(elevatorPower);

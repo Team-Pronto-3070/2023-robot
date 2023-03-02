@@ -14,6 +14,11 @@ import edu.wpi.first.math.util.Units;
 
 public final class Constants {
     public static final double loopTime = 0.02; // in seconds
+    public static final class RobotBounds {
+        public static final double height = Units.inchesToMeters(78.0);
+        public static final double horizontalPastBumper = Units.inchesToMeters(48.0);
+        public static final double robotLength = Units.inchesToMeters(0.0); // TODO fill in constant
+    }
 
     public static final class OI {
         public static final int driverPort = 0;
