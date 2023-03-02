@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.Constants;
 import edu.wpi.first.math.util.Units;
 
@@ -68,14 +67,17 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      */
     private double calcMaxExtention(Rotation2d angle) {
         return Math.min(
-            angle.getSin() * (Constants.RobotBounds.horizontalPastBumper + Constants.RobotBounds.robotLength - Constants.MassProperties.pivotLocation.getZ()),
-            angle.getCos() * (Constants.RobotBounds.height - Constants.MassProperties.pivotLocation.getY())
+            angle.getSin() // calc max horizontal extention
+            * (Constants.RobotBounds.horizontalPastBumper + Constants.RobotBounds.robotLength - Constants.MassProperties.pivotLocation.getZ()),
+            
+            angle.getCos() // calc max vertical extention
+            * (Constants.RobotBounds.height - Constants.MassProperties.pivotLocation.getY())
         );
     }
 
     private void setTarget(Translation2d target) {
-        target_angle = target.getAngle(); // calculate the vertical drive TrapezoidProfile
-        target_extention = target.getDistance(Constants.ElevatorArm.armOffset); // calculate the elevator drive TrapezoidProfile
+        target_angle = (target.minus(Constants.ElevatorArm.armOffset)).getAngle(); // first gets the relative target to the arm
+        target_extention = target.getDistance(Constants.ElevatorArm.armOffset); // get the offset
     }
 
     /**
