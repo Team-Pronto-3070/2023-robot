@@ -1,10 +1,12 @@
 package frc.robot.subsystems;
 
+import java.util.Optional;
+import org.photonvision.EstimatedRobotPose;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,7 +25,8 @@ public class SwerveSubsystem extends SubsystemBase {
     private final ADIS16470_IMU gyro;
 
     public final SwerveDriveKinematics2 kinematics;
-    private final SwerveDriveOdometry odometry;
+    private final SwerveDrivePoseEstimator poseEstimator;
+
     
     public SwerveSubsystem() {
         frontLeft = new ProntoSwerveModule(
@@ -59,17 +62,15 @@ public class SwerveSubsystem extends SubsystemBase {
             new Translation2d(-Constants.Swerve.wheelBase / 2, -Constants.Swerve.trackWidth / 2)
         );
 
-        odometry = new SwerveDriveOdometry(
-            kinematics,
-            getYaw(),
+        poseEstimator = new SwerveDrivePoseEstimator(
+            kinematics, 
+            getYaw(), 
             new SwerveModulePosition[] {
-                frontLeft.getPosition(),
-                frontRight.getPosition(),
-                rearLeft.getPosition(),
-                rearRight.getPosition()
-            }
-        );
-        
+                    frontLeft.getPosition(),
+                    frontRight.getPosition(),
+                    rearLeft.getPosition(),
+                    rearRight.getPosition()
+                }, new Pose2d());
     }
 
     public Rotation2d getYaw() {
@@ -81,7 +82,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public Pose2d getPose() {
-        return odometry.getPoseMeters();
+        return poseEstimator.getEstimatedPosition();
     }
 
     public ChassisSpeeds getChassisSpeeds() {
@@ -94,7 +95,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        odometry.resetPosition(
+        poseEstimator.resetPosition(
             getYaw(),
             new SwerveModulePosition[] {
                 frontLeft.getPosition(),
@@ -127,9 +128,16 @@ public class SwerveSubsystem extends SubsystemBase {
         rearRight.setDesiredState(desiredStates[3], false);
     }
 
+    public void addPotentialVisionMeasurement(Optional<EstimatedRobotPose> potentialVisionEstimate) {
+        if (potentialVisionEstimate.isPresent()) {
+            EstimatedRobotPose camPose = potentialVisionEstimate.get();
+            poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+        }
+    }
+
     @Override
     public void periodic() {
-        odometry.update(
+        poseEstimator.update(
             getYaw(),
             new SwerveModulePosition[] {
                 frontLeft.getPosition(),

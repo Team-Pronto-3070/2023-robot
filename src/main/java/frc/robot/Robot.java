@@ -16,11 +16,14 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
+    m_robotContainer.initVision();
   }
 
   @Override
   public void robotPeriodic() {
+    m_robotContainer.initVision();
     CommandScheduler.getInstance().run();
+    m_robotContainer.periodic();
   }
 
   @Override
@@ -34,6 +37,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    m_robotContainer.initVision();
+
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
