@@ -5,13 +5,14 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
   private final OI oi = new OI(Constants.OI.driverPort);
-  private final Vision vision = new Vision();
+  private Vision vision = null;
 
   private final SwerveSubsystem swerve = new SwerveSubsystem();
 
@@ -31,8 +32,18 @@ public class RobotContainer {
     oi.gyroResetButton.onTrue(swerve.runOnce(swerve::resetGryo));
   }
 
+  public void initVision() {
+    if (vision == null) {
+      if (DriverStation.isFMSAttached()) {
+        vision = new Vision();
+      }
+    }
+  }
+
   public void periodic() {
-    swerve.addPotentialVisionMeasurement(vision.getEstimatedGlobalPose(swerve.getPose()));
+    if (vision != null) {
+      swerve.addPotentialVisionMeasurement(vision.getEstimatedGlobalPose(swerve.getPose()));
+    }
   }
 
   public Command getAutonomousCommand() {
