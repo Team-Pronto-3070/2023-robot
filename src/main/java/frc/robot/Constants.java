@@ -1,11 +1,17 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
@@ -27,6 +33,13 @@ public final class Constants {
             public static final double I = 0.0;
             public static final double D = 0.0;
         }
+    }
+    public static final double loopTime = 0.02; // in seconds
+
+    public static final class RobotBounds {
+        public static final double maxHeight = Units.inchesToMeters(78.0);
+        public static final double maxHorizontalExtention = Units.inchesToMeters(48.0);
+        public static final double robotLength = Units.inchesToMeters(26);
     }
 
     public static final class OI {
@@ -119,12 +132,137 @@ public final class Constants {
         }
     }
 
+    public static final class ElevatorArm {
+        public static final double initialArmLength = 1.0; // in meters
+        public static final double maxExtention = 1.0; // in meters
+        public static final Translation2d armOffset = new Translation2d();
+        
+        public static final class VerticalDrive {
+            //base units are radians, so velocity is rad/s and accel is rad/s^2
+            public static final TrapezoidProfile.Constraints trapConstraints = new TrapezoidProfile.Constraints(0.0, 0.0);
+            
+            public static final int ID = 0;
+
+            public static final boolean motorReversed = false;
+            public static final boolean sensorPhase = false;
+
+            public static final double absoluteEncoderOffset = 0.0; // TODO encoder units when arm is horizontal
+
+            public static final TalonSRXConfiguration config = new TalonSRXConfiguration();
+            static {
+                config.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
+
+                //TODO: pid constants
+                config.slot0 = new SlotConfiguration();
+                config.slot0.kP = 0.0;
+                config.slot0.kI = 0.0;
+                config.slot0.kD = 0.0;
+                //motion magic: "kF is multiplied by the runtime-calculated target and added to output" - presumambly calculated velocity
+
+                config.continuousCurrentLimit = 35; //amps
+                config.peakCurrentDuration = 100; //miliseconds
+                config.peakCurrentLimit = 60; //amps
+
+                config.forwardSoftLimitEnable = false; //TODO: set this to true once the threshold is filled in
+                config.forwardSoftLimitThreshold = 0.0;
+                config.reverseSoftLimitEnable = false; //TODO: set this to true once the threshold is filled in
+                config.reverseSoftLimitThreshold = 0.0;
+
+                config.motionCruiseVelocity = 0.0                    // rad/s                             max velocity in radians per second
+                                              * (1 / (2 * Math.PI))  // * rot/rad -> rot/s                rotations per second
+                                              * 4096.0               // * sensor units / rot -> units/s   sensor units per second
+                                              * 10.0;                // * s/(100ms) -> units/100ms        sensor units per 100 miliseconds
+
+                config.motionAcceleration =   0.0                    // rad/s^2                           max acceleration in radians per s^2
+                                              * (1 / (2 * Math.PI))  // * rot/rad -> rot/s^2              rotations per second^2
+                                              * 4096.0               // * sensor units / rot -> units/s^2 sensor units per second^2
+                                              / 10.0;                // * s/(100ms) -> (units/100ms)/s    (sensor units / 100 miliseconds) / second
+
+                config.motionCurveStrength = 3; //arbitary smoothing value
+            }
+
+            public static final double KS = 0.0;
+            public static final double KV = 0.0;
+            public static final double KA = 0.0;
+            public static final double KG = 0.0;
+        }
+        public static final class ElevatorDrive {
+            public static final int ID = 0;
+
+            //base units are radians, so velocity is rad/s and accel is rad/s^2
+            public static final TrapezoidProfile.Constraints trapConstraints = new TrapezoidProfile.Constraints(0.0, 0.0);
+
+            public static final double gearRatio = 16; // 16:1
+            public static final double pulleyCircumference = 2 * Math.PI
+                                                               * 0.023300; // radius in meters
+
+            public static final boolean motorReversed = false;
+            public static final boolean sensorPhase = false;
+
+            public static final TalonSRXConfiguration config = new TalonSRXConfiguration();
+            static {
+                config.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
+
+                //TODO: pid constants
+                config.slot0 = new SlotConfiguration();
+                config.slot0.kP = 0.0;
+                config.slot0.kI = 0.0;
+                config.slot0.kD = 0.0;
+                //motion magic: "kF is multiplied by the runtime-calculated target and added to output" - presumambly calculated velocity
+
+                config.continuousCurrentLimit = 35; //amps
+                config.peakCurrentDuration = 100; //miliseconds
+                config.peakCurrentLimit = 60; //amps
+
+                config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
+                config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
+                config.clearPositionOnLimitR = true; //reset selected sensor position to 0 on falling edge of reverse limit switch
+
+                config.motionCruiseVelocity = (0.0                   // m/s                               max velocity in m/s
+                                              / pulleyCircumference) // *(m/rot)^-1 = rot/m -> rot/s      pulley rotations per second
+                                              * gearRatio            // * unitless -> rot/s               sensor rotations per second
+                                              * 4096.0               // * sensor units / rot -> units/s   sensor units per second
+                                              / 10.0;                // * s/(100ms) -> units/100ms        sensor units / 100 miliseconds
+
+                config.motionAcceleration =   (0.0                   // m/s^2                             max acceleration in m/s^2
+                                              / pulleyCircumference) // *(m/rot)^-1 = rot/m -> rot/s^2    pulley rotations per second^2
+                                              * gearRatio            // * unitless -> rot/s^2             sensor rotations per second^2
+                                              * 4096.0               // * sensor units / rot -> units/s^2 sensor units per second^2
+                                              / 10.0;                // * s/(100ms) -> (units/100ms)/s    (sensor units / 100 miliseconds) / second
+
+                config.motionCurveStrength = 3; //arbitary smoothing value
+            }
+            public static final double KS = 0.0;
+            public static final double KV = 0.0;
+            public static final double KA = 0.0;
+            public static final double KG = 0.0;
+        }
+
+        public static enum Position {
+            HOME (new Translation2d()),
+
+            L1CONE (new Translation2d()),
+            L2CONE (new Translation2d()),
+            L3CONE (new Translation2d()),
+
+            L1CUBE (new Translation2d()),
+            L2CUBE (new Translation2d()),
+            L3CUBE (new Translation2d());
+
+            public final Translation2d translation;
+            private Position(Translation2d translation) {
+                this.translation = translation;
+            }
+        }
+
+    }
+
     public static enum GameObject {
         NONE (0),
         CUBE (0.653),
         CONE (0.071);
 
-        private final double mass;
+        private final double mass; //kilograms
         private GameObject(double mass) {
             this.mass = mass;
         }

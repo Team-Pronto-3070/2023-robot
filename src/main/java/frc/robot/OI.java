@@ -22,6 +22,7 @@ public class OI {
 
     public final Trigger gyroResetButton;
 
+
     public OI(int driverPort) {
         driver = new CommandXboxController(driverPort);
 
@@ -37,6 +38,6 @@ public class OI {
         absoluteHeadingVertical = () -> -driver.getRightY();
 
         gyroResetButton = driver.x();
+
     }
-    
 }

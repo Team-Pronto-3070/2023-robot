@@ -8,6 +8,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.Autos;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.ElevatorArmSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
@@ -15,6 +17,7 @@ public class RobotContainer {
   private Vision vision = null;
 
   private final SwerveSubsystem swerve = new SwerveSubsystem();
+  private final ElevatorArmSubsystem elevatorArm = new ElevatorArmSubsystem();
 
   private final Autos autos = new Autos(swerve);
 
@@ -26,6 +29,7 @@ public class RobotContainer {
             true,
             true
         )));
+    elevatorArm.setDefaultCommand(elevatorArm.run(elevatorArm::move));
 
     configureBindings();
   }
