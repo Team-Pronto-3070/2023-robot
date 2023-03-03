@@ -133,15 +133,16 @@ public final class Constants {
     }
 
     public static final class ElevatorArm {
-        public static final double initialArmLength = 1.0; // in meters
-        public static final double maxExtention = 1.0; // in meters
+        public static final double initialArmLength = 1.145180; // in meters
+        public static final double maxExtention = Units.inchesToMeters(41.0 - 0.9); // in meters
         
         public static final class VerticalDrive {
             //base units are radians, so velocity is rad/s and accel is rad/s^2
-            public static final TrapezoidProfile.Constraints trapConstraints = new TrapezoidProfile.Constraints(0.0, 0.0);
+            public static final TrapezoidProfile.Constraints trapConstraints = new TrapezoidProfile.Constraints(1, 1); //TODO
             
-            public static final int ID = 0;
+            public static final int ID = 12;
 
+            //TODO
             public static final boolean motorReversed = false;
             public static final boolean sensorPhase = false;
 
@@ -153,7 +154,7 @@ public final class Constants {
 
                 //TODO: pid constants
                 config.slot0 = new SlotConfiguration();
-                config.slot0.kP = 0.0;
+                config.slot0.kP = 0.0001;
                 config.slot0.kI = 0.0;
                 config.slot0.kD = 0.0;
                 //motion magic: "kF is multiplied by the runtime-calculated target and added to output" - presumambly calculated velocity
@@ -167,12 +168,13 @@ public final class Constants {
                 config.reverseSoftLimitEnable = false; //TODO: set this to true once the threshold is filled in
                 config.reverseSoftLimitThreshold = 0.0;
 
-                config.motionCruiseVelocity = 0.0                    // rad/s                             max velocity in radians per second
+                //TODO
+                config.motionCruiseVelocity = 1.0                    // rad/s                             max velocity in radians per second
                                               * (1 / (2 * Math.PI))  // * rot/rad -> rot/s                rotations per second
                                               * 4096.0               // * sensor units / rot -> units/s   sensor units per second
                                               * 10.0;                // * s/(100ms) -> units/100ms        sensor units per 100 miliseconds
 
-                config.motionAcceleration =   0.0                    // rad/s^2                           max acceleration in radians per s^2
+                config.motionAcceleration =   1.0                    // rad/s^2                           max acceleration in radians per s^2
                                               * (1 / (2 * Math.PI))  // * rot/rad -> rot/s^2              rotations per second^2
                                               * 4096.0               // * sensor units / rot -> units/s^2 sensor units per second^2
                                               / 10.0;                // * s/(100ms) -> (units/100ms)/s    (sensor units / 100 miliseconds) / second
@@ -186,15 +188,16 @@ public final class Constants {
             public static final double KG = 0.0;
         }
         public static final class ElevatorDrive {
-            public static final int ID = 0;
+            public static final int ID = 11;
 
-            //base units are radians, so velocity is rad/s and accel is rad/s^2
-            public static final TrapezoidProfile.Constraints trapConstraints = new TrapezoidProfile.Constraints(0.0, 0.0);
+            //base units are meters, so velocity is m/s and accel is m/s^2
+            public static final TrapezoidProfile.Constraints trapConstraints = new TrapezoidProfile.Constraints(1, 1); //TODO
 
             public static final double gearRatio = 16; // 16:1
             public static final double pulleyCircumference = 2 * Math.PI
                                                                * 0.023300; // radius in meters
 
+            //TODO
             public static final boolean motorReversed = false;
             public static final boolean sensorPhase = false;
 
@@ -204,7 +207,7 @@ public final class Constants {
 
                 //TODO: pid constants
                 config.slot0 = new SlotConfiguration();
-                config.slot0.kP = 0.0;
+                config.slot0.kP = 0.0001;
                 config.slot0.kI = 0.0;
                 config.slot0.kD = 0.0;
                 //motion magic: "kF is multiplied by the runtime-calculated target and added to output" - presumambly calculated velocity
@@ -217,13 +220,14 @@ public final class Constants {
                 config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
                 config.clearPositionOnLimitR = true; //reset selected sensor position to 0 on falling edge of reverse limit switch
 
-                config.motionCruiseVelocity = (0.0                   // m/s                               max velocity in m/s
+                //TODO
+                config.motionCruiseVelocity = (1.0                   // m/s                               max velocity in m/s
                                               / pulleyCircumference) // *(m/rot)^-1 = rot/m -> rot/s      pulley rotations per second
                                               * gearRatio            // * unitless -> rot/s               sensor rotations per second
                                               * 4096.0               // * sensor units / rot -> units/s   sensor units per second
                                               / 10.0;                // * s/(100ms) -> units/100ms        sensor units / 100 miliseconds
 
-                config.motionAcceleration =   (0.0                   // m/s^2                             max acceleration in m/s^2
+                config.motionAcceleration =   (1.0                   // m/s^2                             max acceleration in m/s^2
                                               / pulleyCircumference) // *(m/rot)^-1 = rot/m -> rot/s^2    pulley rotations per second^2
                                               * gearRatio            // * unitless -> rot/s^2             sensor rotations per second^2
                                               * 4096.0               // * sensor units / rot -> units/s^2 sensor units per second^2
@@ -294,9 +298,9 @@ public final class Constants {
         public static final double elevatorStaticMass = Units.lbsToKilograms(0.0);
         public static final Translation3d pivotLocation = //location of the pivot point relative to the center of the robot
             new Translation3d(
+                Units.inchesToMeters(8.5),
                 Units.inchesToMeters(0.0),
-                Units.inchesToMeters(0.0),
-                Units.inchesToMeters(0.0)
+                Units.inchesToMeters(8.0)
             );
         public static final Translation3d chassisCG = 
             new Translation3d(
@@ -322,7 +326,7 @@ public final class Constants {
             public static final double stopAngle = Units.degreesToRadians(3);
             public static final double balanceSetpoint = 0.0;
             public static final class PID {
-                public static final double P = 0.0;
+                public static final double P = 1.0;
                 public static final double I = 0.0;
                 public static final double D = 0.0;
             }
