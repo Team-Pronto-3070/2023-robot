@@ -135,7 +135,6 @@ public final class Constants {
     public static final class ElevatorArm {
         public static final double initialArmLength = 1.0; // in meters
         public static final double maxExtention = 1.0; // in meters
-        public static final Translation2d armOffset = new Translation2d();
         
         public static final class VerticalDrive {
             //base units are radians, so velocity is rad/s and accel is rad/s^2

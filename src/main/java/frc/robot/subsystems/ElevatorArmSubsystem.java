@@ -23,6 +23,9 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     private Rotation2d target_angle = new Rotation2d();
     private double target_extention = 0.0; //meters from pivot point to top of elevator
 
+    private Translation2d pivotOffset = new Translation2d(Constants.MassProperties.pivotLocation.getX(),
+                                                          Constants.MassProperties.pivotLocation.getZ());
+
     public ElevatorArmSubsystem() {
         verticalTalon = new WPI_TalonSRX(Constants.ElevatorArm.VerticalDrive.ID);
         verticalTalon.configFactoryDefault();
@@ -78,8 +81,8 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     }
 
     private void setTarget(Translation2d target) {
-        target_angle = (target.minus(Constants.ElevatorArm.armOffset)).getAngle(); // first gets the relative target to the arm
-        target_extention = target.getDistance(Constants.ElevatorArm.armOffset); // get the offset
+        target_angle = target.minus(pivotOffset).getAngle(); // first gets the relative target to the arm
+        target_extention = target.getDistance(pivotOffset); // get the offset
     }
 
     /**
