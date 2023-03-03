@@ -11,6 +11,7 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
     public static final double fieldWidthMeters = 8.02;
+    public static final double robotLengthWithBumpers = Units.inchesToMeters(32.5);
 
     public static final class Auto {
         public static final double maxVelocity = 4.0; //meters per second
