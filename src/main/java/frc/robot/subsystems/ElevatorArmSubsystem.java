@@ -84,12 +84,11 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * @return Rotation2d - the angle of the arm
      */
     public Rotation2d getAngle() {
-        return new Rotation2d(
-            Units.rotationsToRadians( // convert rotations to radians
-                verticalTalon.getSelectedSensorPosition() // raw sensor units
-                - Constants.ElevatorArm.VerticalDrive.absoluteEncoderOffset // the offset of the encoder in raw units
+        return Rotation2d.fromRotations(
+                (verticalTalon.getSelectedSensorPosition() // raw sensor units
+                - Constants.ElevatorArm.VerticalDrive.absoluteEncoderOffset) // the offset of the encoder in raw units
                 / 4096.0 // revolutions
-        ));
+            );
     }
 
     /**
@@ -110,12 +109,8 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      */
     private double rawFromAngle(Rotation2d sAngle) {
         return sAngle.getRotations() // total revolutions
-            * 4096.0; // raw sensor units
-    }
-
-    private double rawFromTargetAngle() {
-        return rawFromAngle(target_angle)
-            + Constants.ElevatorArm.VerticalDrive.absoluteEncoderOffset; // add the offset
+                * 4096.0 // raw sensor units
+                + Constants.ElevatorArm.VerticalDrive.absoluteEncoderOffset;
     }
 
     /**
