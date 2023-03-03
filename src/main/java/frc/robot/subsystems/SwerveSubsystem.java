@@ -77,6 +77,11 @@ public class SwerveSubsystem extends SubsystemBase {
         return Rotation2d.fromDegrees(gyro.getAngle());
     }
 
+    public double getPitch() {
+        // TODO check to see if this is correct method for pitch
+        return gyro.getYComplementaryAngle();
+    }
+
     public void resetGryo() {
         gyro.reset();
     }
@@ -118,6 +123,10 @@ public class SwerveSubsystem extends SubsystemBase {
         frontRight.setDesiredState(swerveModuleStates[1], isOpenLoop);
         rearLeft.setDesiredState(swerveModuleStates[2], isOpenLoop);
         rearRight.setDesiredState(swerveModuleStates[3], isOpenLoop);
+    }
+
+    public void setChassisSpeeds(ChassisSpeeds speeds) {
+        setModuleStates(kinematics.toSwerveModuleStates(speeds));
     }
     
     public void setModuleStates(SwerveModuleState2[] desiredStates) {

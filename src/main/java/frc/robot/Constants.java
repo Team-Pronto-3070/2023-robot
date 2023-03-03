@@ -9,6 +9,25 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
+
+    public static final double fieldWidthMeters = 8.02;
+
+    public static final class Auto {
+        public static final double maxVelocity = 4.0; //meters per second
+        public static final double maxAcceleration = 3.0; //meters per second squared
+        public static final double velocityDeadband = 0.05; //meters per second
+        public static final class TranslationPID {
+            public static final double P = 5.0;
+            public static final double I = 0.0;
+            public static final double D = 0.0;
+        }
+        public static final class RotationPID {
+            public static final double P = 0.5;
+            public static final double I = 0.0;
+            public static final double D = 0.0;
+        }
+    }
+
     public static final class OI {
         public static final int driverPort = 0;
         public static final double deadband = 0.06;
@@ -156,5 +175,19 @@ public final class Constants {
             new Translation3d(0, 0, 0),
             new Rotation3d(0, 0, 0)
         );
+    }
+
+    public static final class DriveCommands {
+        public static final class AutoBalance {
+            public static final double driveUpRampSpeed = 0.5;
+            public static final double onRampAngle = Units.degreesToRadians(6);
+            public static final double stopAngle = Units.degreesToRadians(3);
+            public static final double balanceSetpoint = 0.0;
+            public static final class PID {
+                public static final double P = 0.0;
+                public static final double I = 0.0;
+                public static final double D = 0.0;
+            }
+        }
     }
 }
