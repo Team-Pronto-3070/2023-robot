@@ -38,6 +38,9 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         elevatorTalon.setInverted(Constants.ElevatorArm.ElevatorDrive.motorReversed);
         elevatorTalon.setNeutralMode(NeutralMode.Brake);
         elevatorTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+
+        target_angle = getAngle();
+        target_extention = getExtention();
     }
 
     /**
