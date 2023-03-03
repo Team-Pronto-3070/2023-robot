@@ -131,8 +131,9 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      */
     private double getVerticalDriveVel() {
         return Units.rotationsToRadians( // radians per second
-            verticalTalon.getSelectedSensorVelocity() // raw talon units
-            * (10.0 / 4096.0) // motor revolutions per second
+            verticalTalon.getSelectedSensorVelocity() // raw talon units per 100ms
+            * 10.0 // raw units per second
+            / 4096.0 // motor revolutions per second
         );
     }
 
@@ -142,8 +143,9 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      */
     private double getElevatorDriveVel() {
         return Units.rotationsToRadians( // radians per second
-            elevatorTalon.getSelectedSensorVelocity() // raw talon units
-            * (10.0 / 4096.0) // motor revolutions per second
+            elevatorTalon.getSelectedSensorVelocity() // raw talon units per 100ms
+            * 10.0 // raw units per second
+            / 4096.0 // motor revolutions per second
         );
     }
 
