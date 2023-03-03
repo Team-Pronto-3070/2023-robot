@@ -51,8 +51,11 @@ public final class Constants {
 
     public static final class Intake {
         public static final int ID = 0;
-        public static final int closedSwitchPort = 0;
         public static final int openedSwitchPort = 0;
+        public static final double closeVelocity = 1;
+        public static final double openVelocity = -1;
+        public static final boolean inverted = false;
+        public static final double closeDuration = 0.0;
     }
 
     public static final class Swerve {
