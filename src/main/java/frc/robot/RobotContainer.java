@@ -7,11 +7,12 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.ElevatorArmSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
-  private final OI oi = new OI(Constants.OI.driverPort);
+  private final OI oi = new OI(Constants.OI.driverPort, Constants.OI.operatorPort);
 
   private final SwerveSubsystem swerve = new SwerveSubsystem();
   private final ElevatorArmSubsystem elevatorArm = new ElevatorArmSubsystem();
@@ -31,6 +32,9 @@ public class RobotContainer {
 
   private void configureBindings() {
     oi.gyroResetButton.onTrue(swerve.runOnce(swerve::resetGryo));
+    
+    Trigger manualArmTrigger = new Trigger(() -> oi.manualArmElevatorPower.getAsDouble() != 0 || oi.manualArmVerticalPower.getAsDouble() != 0);
+    oi.manualArmButton.and(manualArmTrigger).whileTrue(elevatorArm.manualMoveCommand(oi.manualArmVerticalPower, oi.manualArmElevatorPower));
   }
 
   public Command getAutonomousCommand() {

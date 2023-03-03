@@ -6,8 +6,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.revrobotics.CANSparkMax.IdleMode;
-
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -23,7 +21,9 @@ public final class Constants {
 
     public static final class OI {
         public static final int driverPort = 0;
+        public static final int operatorPort = 0;
         public static final double deadband = 0.06;
+        public static final double triggerDeadband = 0.1;
     }
 
     public static final class Swerve {
@@ -114,6 +114,9 @@ public final class Constants {
         public static final double initialArmLength = 1.0; // in meters
         public static final double maxExtention = 1.0; // in meters
         public static final Translation2d armOffset = new Translation2d();
+
+        public static final double maxManualExtensionSpeed = .3;
+        public static final double maxManualRotationSpeed = .3;
         
         public static final class VerticalDrive {
             //base units are radians, so velocity is rad/s and accel is rad/s^2
