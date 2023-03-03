@@ -21,7 +21,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     private final WPI_TalonSRX elevatorTalon;
 
     private Rotation2d target_angle = new Rotation2d();
-    private double target_extention = 0.0;
+    private double target_extention = 0.0; //meters from pivot point to top of elevator
 
     public ElevatorArmSubsystem() {
         verticalTalon = new WPI_TalonSRX(Constants.ElevatorArm.VerticalDrive.ID);
@@ -48,7 +48,6 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * @param deltaT - delta time in seconds
      */
     public void move() {
-        
         verticalTalon.set(
             ControlMode.MotionMagic, // * not sure if just putting MotionMagic here in will work
             rawFromAngle(target_angle) // motion magic should calculate the TProfile
@@ -68,10 +67,10 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     private double calcMaxExtention(Rotation2d angle) {
         return Math.min(
             angle.getSin() // calc max horizontal extention
-            * (Constants.RobotBounds.horizontalPastBumper + Constants.RobotBounds.robotLength - Constants.MassProperties.pivotLocation.getZ()),
+            * (Constants.RobotBounds.maxHorizontalExtention + Constants.RobotBounds.robotLength - Constants.MassProperties.pivotLocation.getX()),
             
             angle.getCos() // calc max vertical extention
-            * (Constants.RobotBounds.height - Constants.MassProperties.pivotLocation.getY())
+            * (Constants.RobotBounds.maxHeight - Constants.MassProperties.pivotLocation.getZ())
         );
     }
 
@@ -88,6 +87,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         return new Rotation2d(
             Units.rotationsToRadians( // convert rotations to radians
                 verticalTalon.getSelectedSensorPosition() // raw sensor units
+                - Constants.ElevatorArm.VerticalDrive.absoluteEncoderOffset // the offset of the encoder in raw units
                 / 4096.0 // revolutions
         ));
     }
@@ -113,13 +113,18 @@ public class ElevatorArmSubsystem extends SubsystemBase {
             * 4096.0; // raw sensor units
     }
 
+    private double rawFromTargetAngle() {
+        return rawFromAngle(target_angle)
+            + Constants.ElevatorArm.VerticalDrive.absoluteEncoderOffset; // add the offset
+    }
+
     /**
      * @param sExtention
      * @return raw sensor units for TalonSRX of extention
      */
     private double rawFromExtention(double sExtention) {
-        return sExtention // full arm length
-            - Constants.ElevatorArm.initialArmLength // extention distance in meters
+        return (sExtention // full arm length
+            - Constants.ElevatorArm.initialArmLength) // extention distance in meters
             / Constants.ElevatorArm.ElevatorDrive.pulleyCircumference// final revolutions
             * Constants.ElevatorArm.ElevatorDrive.gearRatio // revolutions before gear ratio
             * 4096.0; // raw sensor units

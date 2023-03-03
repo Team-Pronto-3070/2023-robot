@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -15,9 +16,9 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
     public static final double loopTime = 0.02; // in seconds
     public static final class RobotBounds {
-        public static final double height = Units.inchesToMeters(78.0);
-        public static final double horizontalPastBumper = Units.inchesToMeters(48.0);
-        public static final double robotLength = Units.inchesToMeters(0.0); // TODO fill in constant
+        public static final double maxHeight = Units.inchesToMeters(78.0);
+        public static final double maxHorizontalExtention = Units.inchesToMeters(48.0);
+        public static final double robotLength = Units.inchesToMeters(26);
     }
 
     public static final class OI {
@@ -122,6 +123,8 @@ public final class Constants {
 
             public static final boolean motorReversed = false;
             public static final boolean sensorPhase = false;
+
+            public static final double absoluteEncoderOffset = 0.0; // TODO encoder units when arm is horizontal
 
             public static final TalonSRXConfiguration config = new TalonSRXConfiguration();
             static {
