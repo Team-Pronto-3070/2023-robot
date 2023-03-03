@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class OI {
     private CommandXboxController driver;
+    private CommandXboxController operator;
 
     public final DoubleSupplier drive_x;
     public final DoubleSupplier drive_y;
@@ -22,8 +23,13 @@ public class OI {
 
     public final Trigger gyroResetButton;
 
+    public final DoubleSupplier manualArmVerticalPower;
+    public final DoubleSupplier manualArmElevatorPower;
 
-    public OI(int driverPort) {
+    public final Trigger manualArmButton;
+
+
+    public OI(int driverPort, int operatorPort) {
         driver = new CommandXboxController(driverPort);
 
         drive_x = () -> -driver.getLeftY();
@@ -39,5 +45,11 @@ public class OI {
 
         gyroResetButton = driver.x();
 
+        operator = new CommandXboxController(operatorPort);
+
+        manualArmVerticalPower = () -> MathUtil.applyDeadband(-operator.getLeftY(), Constants.OI.deadband, Constants.ElevatorArm.maxManualRotationSpeed);
+        manualArmElevatorPower = () -> MathUtil.applyDeadband(-operator.getRightY(), Constants.OI.deadband, Constants.ElevatorArm.maxManualExtensionSpeed);
+
+        manualArmButton = operator.rightTrigger(Constants.OI.triggerDeadband);
     }
 }

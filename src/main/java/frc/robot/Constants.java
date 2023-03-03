@@ -44,7 +44,9 @@ public final class Constants {
 
     public static final class OI {
         public static final int driverPort = 0;
+        public static final int operatorPort = 0;
         public static final double deadband = 0.06;
+        public static final double triggerDeadband = 0.1;
     }
 
     public static final class Swerve {
@@ -135,6 +137,9 @@ public final class Constants {
     public static final class ElevatorArm {
         public static final double initialArmLength = 1.145180; // in meters
         public static final double maxExtention = Units.inchesToMeters(41.0 - 0.9); // in meters
+
+        public static final double maxManualExtensionSpeed = .3;
+        public static final double maxManualRotationSpeed = .3;
         
         public static final class VerticalDrive {
             //base units are radians, so velocity is rad/s and accel is rad/s^2

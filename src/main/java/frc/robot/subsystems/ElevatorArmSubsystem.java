@@ -8,6 +8,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants;
 import edu.wpi.first.math.util.Units;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -166,10 +168,14 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         return this.runOnce(() -> setTarget(target.translation));
     }
 
-    public Command manualMoveCommand(double verticalPower, double elevatorPower) {
-        return this.runOnce(() -> {
-            verticalTalon.set(verticalPower);
-            elevatorTalon.set(elevatorPower);
+    public Command manualMoveCommand(DoubleSupplier verticalPower, DoubleSupplier elevatorPower) {
+
+        return this.run(() -> {
+            verticalTalon.set(verticalPower.getAsDouble());
+            elevatorTalon.set(elevatorPower.getAsDouble());
+
+            target_angle = getAngle();
+            target_extention = getExtention();
         });
     }
 
