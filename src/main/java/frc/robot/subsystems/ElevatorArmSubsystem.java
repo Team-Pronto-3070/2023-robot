@@ -164,6 +164,14 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         target_extention = Constants.ElevatorArm.initialArmLength; // set the extention to fully retracted
     }
 
+    public void stop() {
+        verticalTalon.set(0);
+        elevatorTalon.set(0);
+        
+        target_angle = getAngle();
+        target_extention = getExtention();
+    }
+
     public Command setTargetCommand(Constants.ElevatorArm.Position target) {
         return this.runOnce(() -> setTarget(target.translation));
     }

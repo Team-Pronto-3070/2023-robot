@@ -112,6 +112,10 @@ public class SwerveSubsystem extends SubsystemBase {
         );
     }
 
+    public void stop() {
+        drive(0, 0, 0, false, false);
+    }
+
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isOpenLoop) {
         var swerveModuleStates = kinematics.toSwerveModuleStates(
             fieldRelative
