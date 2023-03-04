@@ -82,7 +82,7 @@ public class SwerveSubsystem extends SubsystemBase {
         return gyro.getYComplementaryAngle();
     }
 
-    public void resetGryo() {
+    public void resetGyro() {
         gyro.reset();
     }
 

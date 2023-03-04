@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.ElevatorArm.Position;
 import frc.robot.commands.AutoScoringTrajectoryCommand;
 import frc.robot.commands.Autos;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.ElevatorArmSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -47,13 +46,20 @@ public class RobotContainer {
     //oi.closeIntakeButton.onTrue(intake.closeCommand());
     //oi.openIntakeButton.onTrue(intake.openCommand());
 
+    //TODO - check for cones vs cubes for arm positions
+
     oi.armToNextTargetPositionButton.onTrue(elevatorArm.setTargetCommand(nextArmPosition));
     oi.armToShelfIntakePositionButton.onTrue(elevatorArm.setTargetCommand(Position.SHELF));
     oi.armToGroundIntakePositionButton.onTrue(elevatorArm.setTargetCommand(Position.L1CONE)); 
     oi.armToHomePositionButton.onTrue(elevatorArm.setTargetCommand(Position.HOME));
 
+    oi.fullAutoScore.onTrue(
+      new AutoScoringTrajectoryCommand(nextScoringSlot, new PathConstraints(4, 3), autos.autoBuilder, swerve)
+      .alongWith(elevatorArm.setTargetCommand(nextArmPosition))
+      //.andThen(intake.openCommand())
+    );
     oi.driveToScoringNodeButton.onTrue(new AutoScoringTrajectoryCommand(nextScoringSlot, new PathConstraints(4, 3), autos.autoBuilder, swerve)); //TODO determine path constraints
-    oi.gyroResetButton.onTrue(swerve.runOnce(swerve::resetGryo));
+    oi.gyroResetButton.onTrue(swerve.runOnce(swerve::resetGyro));
     oi.interruptButton.onTrue(new InstantCommand(elevatorArm::stop, elevatorArm))
                       .onTrue(new InstantCommand(swerve::stop, swerve));
 
@@ -61,8 +67,7 @@ public class RobotContainer {
     oi.targetLvl2ArmPosition.onTrue(new InstantCommand(() -> nextArmPosition = Position.L2CONE));
     oi.targetLvl3ArmPosition.onTrue(new InstantCommand(() -> nextArmPosition = Position.L3CONE));
     
-    Trigger manualArmTrigger = new Trigger(() -> oi.manualArmElevatorPower.getAsDouble() != 0 || oi.manualArmVerticalPower.getAsDouble() != 0);
-    oi.manualArmButton.and(manualArmTrigger).whileTrue(elevatorArm.manualMoveCommand(oi.manualArmVerticalPower, oi.manualArmElevatorPower));
+    oi.manualArmButton.whileTrue(elevatorArm.manualMoveCommand(oi.manualArmVerticalPower, oi.manualArmElevatorPower));
 
     oi.targetSlot1.onTrue(new InstantCommand(() -> nextScoringSlot = 0));
     oi.targetSlot2.onTrue(new InstantCommand(() -> nextScoringSlot = 1));

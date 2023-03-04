@@ -22,7 +22,7 @@ public class OI {
     public final DoubleSupplier absoluteHeadingHorizontal;
     public final DoubleSupplier absoluteHeadingVertical;
 
-    public final BooleanSupplier driveSlow;
+    public final Trigger driveSlow;
 
     public final Trigger armToNextTargetPositionButton;
     public final Trigger armToShelfIntakePositionButton;
@@ -32,6 +32,7 @@ public class OI {
     public final Trigger closeIntakeButton;
     public final Trigger openIntakeButton;
 
+    public final Trigger fullAutoScore;
     public final Trigger driveToScoringNodeButton;
     public final Trigger gyroResetButton;
     public final Trigger interruptButton;
@@ -41,7 +42,6 @@ public class OI {
     public final Trigger targetLvl3ArmPosition;
 
     public final Trigger manualArmButton;
-    public final Trigger manualArmTrigger;
     public final DoubleSupplier manualArmVerticalPower;
     public final DoubleSupplier manualArmElevatorPower;
 
@@ -70,15 +70,17 @@ public class OI {
         absoluteHeadingHorizontal = () -> -driver.getRightX();
         absoluteHeadingVertical = () -> -driver.getRightY();
 
-        openIntakeButton = driver.leftTrigger();
-        closeIntakeButton = driver.rightTrigger();
+        openIntakeButton = driver.leftTrigger(Constants.OI.triggerDeadband);
+        closeIntakeButton = driver.rightTrigger(Constants.OI.triggerDeadband);
 
         armToNextTargetPositionButton = driver.y();
         armToShelfIntakePositionButton = driver.b();
         armToGroundIntakePositionButton = driver.a();
         armToHomePositionButton = driver.x();
 
-        driveSlow = () -> driver.rightBumper().getAsBoolean();
+        driveSlow = driver.rightBumper();
+        
+        fullAutoScore = driver.povLeft();
         driveToScoringNodeButton = driver.leftBumper();
         gyroResetButton = driver.povRight();
         interruptButton = driver.start();
@@ -92,8 +94,7 @@ public class OI {
         manualArmVerticalPower = () -> MathUtil.applyDeadband(-operator.getLeftY(), Constants.OI.deadband, Constants.OI.maxManualRotationSpeed);
         manualArmElevatorPower = () -> MathUtil.applyDeadband(-operator.getRightY(), Constants.OI.deadband, Constants.OI.maxManualExtensionSpeed);
 
-        manualArmTrigger = new Trigger(() -> manualArmElevatorPower.getAsDouble() != 0 || manualArmVerticalPower.getAsDouble() != 0);
-        manualArmButton = operator.rightTrigger(Constants.OI.triggerDeadband);
+        manualArmButton = operator.rightTrigger(Constants.OI.triggerDeadband).and(() -> manualArmElevatorPower.getAsDouble() != 0 || manualArmVerticalPower.getAsDouble() != 0);
 
         BooleanSupplier leftGrid = () -> operator.leftBumper().getAsBoolean() && !operator.rightBumper().getAsBoolean();
         BooleanSupplier centerGrid = () -> operator.rightBumper().getAsBoolean() && operator.leftBumper().getAsBoolean();
