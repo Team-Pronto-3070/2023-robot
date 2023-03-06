@@ -14,7 +14,6 @@ import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.util.SwerveModuleState2;
 
 public class DriveCommands extends CommandBase{
-
     /**
      * Command for driving onto charge station and balancing using PID control
      * 
@@ -24,12 +23,12 @@ public class DriveCommands extends CommandBase{
      * @param swerve the swerve subsystem
      */
     public static SequentialCommandGroup autoBalancePID(SwerveSubsystem swerve) {
-
         return new SequentialCommandGroup(
             // drive onto ramp
             new ParallelRaceGroup(
                 swerve.run(() -> swerve.drive(Constants.DriveCommands.AutoBalance.driveUpRampSpeed * ((swerve.getPose().getX() < 4) ? 1 : -1), 0, 0, true, false)),
-                new WaitUntilCommand(() -> swerve.getPitch() >= Constants.DriveCommands.AutoBalance.onRampAngle)
+                new WaitUntilCommand(() -> swerve.getPitch() >= Constants.DriveCommands.AutoBalance.onRampAngle),
+                new WaitUntilCommand(5.0)
             ),
 
             // balance
@@ -62,7 +61,6 @@ public class DriveCommands extends CommandBase{
             new SwerveModuleState2(0, new Rotation2d(Units.degreesToRadians(-45)), 0), // rear left
             new SwerveModuleState2(0, new Rotation2d(Units.degreesToRadians(45)), 0), // rear right
         };
-
         return new SequentialCommandGroup(
             new ParallelRaceGroup(
                 swerve.run(
@@ -70,7 +68,8 @@ public class DriveCommands extends CommandBase{
                 new SequentialCommandGroup(
                     new WaitUntilCommand(() -> swerve.getPitch() > Constants.DriveCommands.AutoBalance.onRampAngle),
                     new WaitUntilCommand(() -> swerve.getPitch() < Constants.DriveCommands.AutoBalance.stopAngle)
-                )
+                ),
+                new WaitUntilCommand(5.0)
             ),
             swerve.run(() -> swerve.setModuleStates(stopStates))
         );
