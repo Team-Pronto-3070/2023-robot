@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -149,6 +150,8 @@ public final class Constants {
             
             public static final int ID = 12;
 
+            public static final Rotation2d tolerance = new Rotation2d();
+
             //TODO
             public static final boolean motorReversed = false;
             public static final boolean sensorPhase = false;
@@ -203,6 +206,8 @@ public final class Constants {
             public static final double gearRatio = 16; // 16:1
             public static final double pulleyCircumference = 2 * Math.PI
                                                                * 0.023300; // radius in meters
+            
+            public static final double tolerance = 0.0; // meters
 
             //TODO
             public static final boolean motorReversed = false;

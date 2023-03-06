@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -44,8 +45,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         elevatorTalon.setNeutralMode(NeutralMode.Brake);
         elevatorTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
-        target_angle = getAngle();
-        target_extention = getExtention();
+        resetTarget();
     }
 
     /**
@@ -167,13 +167,14 @@ public class ElevatorArmSubsystem extends SubsystemBase {
     public void stop() {
         verticalTalon.set(0);
         elevatorTalon.set(0);
-        
-        target_angle = getAngle();
-        target_extention = getExtention();
     }
 
-    public Command setTargetCommand(Constants.ElevatorArm.Position target) {
-        return this.runOnce(() -> setTarget(target.translation));
+    public Command goToTargetCommand(Constants.ElevatorArm.Position target) {
+        return this.runOnce(() -> this.setTarget(target.translation))
+                   .andThen(
+                       this.run(this::move)
+                       .until(this::atTarget)
+                   );
     }
 
     public Command manualMoveCommand(DoubleSupplier verticalPower, DoubleSupplier elevatorPower) {
@@ -182,9 +183,19 @@ public class ElevatorArmSubsystem extends SubsystemBase {
             verticalTalon.set(verticalPower.getAsDouble());
             elevatorTalon.set(elevatorPower.getAsDouble());
 
-            target_angle = getAngle();
-            target_extention = getExtention();
+            resetTarget();
         });
+    }
+
+    public void resetTarget() {
+        target_angle = getAngle();
+        target_extention = getExtention();
+    }
+
+    public boolean atTarget() {
+        return 
+            (Math.abs(getAngle().minus(target_angle).getRadians()) < Constants.ElevatorArm.VerticalDrive.tolerance.getRadians()) &&
+            (Math.abs(getExtention() - target_extention) < Constants.ElevatorArm.ElevatorDrive.tolerance);
     }
 
 }
