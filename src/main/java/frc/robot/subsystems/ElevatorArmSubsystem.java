@@ -164,11 +164,18 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         target_extention = Constants.ElevatorArm.initialArmLength; // set the extention to fully retracted
     }
 
+    /**
+     * sets both of the motors to 0
+     */
     public void stop() {
         verticalTalon.set(0);
         elevatorTalon.set(0);
     }
 
+    /**
+     * 
+     * @return command that moves to the target then stops
+     */
     public Command goToTargetCommand(Constants.ElevatorArm.Position target) {
         return this.runOnce(() -> this.setTarget(target.translation))
                    .andThen(
@@ -177,6 +184,9 @@ public class ElevatorArmSubsystem extends SubsystemBase {
                    );
     }
 
+    /**
+     * @return command to power the motors directlty
+     */
     public Command manualMoveCommand(DoubleSupplier verticalPower, DoubleSupplier elevatorPower) {
 
         return this.run(() -> {
@@ -187,6 +197,9 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         });
     }
 
+    /**
+     * resets target_angle & target_extention to current angle & extention
+     */
     public void resetTarget() {
         target_angle = getAngle();
         target_extention = getExtention();
