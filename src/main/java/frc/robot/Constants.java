@@ -55,7 +55,8 @@ public final class Constants {
         public static final double closeVelocity = 1;
         public static final double openVelocity = -1;
         public static final boolean inverted = false;
-        public static final double closeDuration = 0.0;
+        public static final double closeDuration = 2.0;
+        public static final double openTimeout = 3.0;
     }
 
     public static final class Swerve {

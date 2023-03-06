@@ -48,6 +48,6 @@ public class Intake extends SubsystemBase {
     }
 
     public Command openCommand() {
-        return run(() -> set(Constants.Intake.openVelocity)).until(() -> openedSwitch.get());
+        return run(() -> set(Constants.Intake.openVelocity)).until(() -> openedSwitch.get()).withTimeout(Constants.Intake.openTimeout);
     }
 }
