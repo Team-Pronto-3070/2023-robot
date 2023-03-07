@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.function.DoubleSupplier;
 
@@ -36,6 +37,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         verticalTalon.setInverted(Constants.ElevatorArm.VerticalDrive.motorReversed);
         verticalTalon.setNeutralMode(NeutralMode.Brake);
         verticalTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+        verticalTalon.setSensorPhase(Constants.ElevatorArm.VerticalDrive.sensorPhase);
         verticalTalon.setSelectedSensorPosition(verticalTalon.getSensorCollection().getPulseWidthPosition());
         
         elevatorTalon = new WPI_TalonSRX(Constants.ElevatorArm.ElevatorDrive.ID);
@@ -43,6 +45,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         elevatorTalon.configAllSettings(Constants.ElevatorArm.ElevatorDrive.config);
         elevatorTalon.setInverted(Constants.ElevatorArm.ElevatorDrive.motorReversed);
         elevatorTalon.setNeutralMode(NeutralMode.Brake);
+        elevatorTalon.setSensorPhase(Constants.ElevatorArm.ElevatorDrive.sensorPhase);
         elevatorTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
         resetTarget();
@@ -210,5 +213,17 @@ public class ElevatorArmSubsystem extends SubsystemBase {
             (Math.abs(getAngle().minus(target_angle).getRadians()) < Constants.ElevatorArm.VerticalDrive.tolerance.getRadians()) &&
             (Math.abs(getExtention() - target_extention) < Constants.ElevatorArm.ElevatorDrive.tolerance);
     }
+    
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("extention distance meters", getExtention());
+        SmartDashboard.putNumber("extention distance sensor units", elevatorTalon.getSelectedSensorPosition());
+        SmartDashboard.putNumber("pivot distance degrees", getAngle().getDegrees());
+        SmartDashboard.putNumber("pivot distance sensor units", verticalTalon.getSelectedSensorPosition());
 
+        SmartDashboard.putNumber("pivot absolute position sensor units", verticalTalon.getSensorCollection().getPulseWidthPosition());
+
+        SmartDashboard.putBoolean("lower limit switch", elevatorTalon.isRevLimitSwitchClosed() == 1);
+        SmartDashboard.putBoolean("upper limit switch", elevatorTalon.isFwdLimitSwitchClosed() == 1);
+    }
 }

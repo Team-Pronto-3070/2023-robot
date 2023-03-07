@@ -46,8 +46,8 @@ public final class Constants {
     public static final class OI {
         public static final int driverPort = 0;
         public static final int operatorPort = 1;
-        public static final double deadband = 0.06;
-        public static final double triggerDeadband = 0.1;
+        public static final double deadband = 0.30;
+        public static final double triggerDeadband = 0.5;
 
         public static final double slowSpeed = 0.5;
 
@@ -56,9 +56,9 @@ public final class Constants {
     }
 
     public static final class Intake {
-        public static final int ID = 0;
-        public static final int leftSwitchPort = 0;
-        public static final int rightSwitchPort = 0;
+        public static final int ID = 13;
+        public static final int leftSwitchPort = 4;
+        public static final int rightSwitchPort = 3;
         public static final double closeVelocity = 1;
         public static final double openVelocity = -1;
         public static final boolean inverted = false;
@@ -164,10 +164,11 @@ public final class Constants {
             public static final Rotation2d tolerance = Rotation2d.fromDegrees(1);
 
             //TODO
-            public static final boolean motorReversed = false;
+            public static final boolean motorReversed = true;
             public static final boolean sensorPhase = false;
 
-            public static final double absoluteEncoderOffset = 0.0; // TODO encoder units when arm is horizontal
+            //public static final double absoluteEncoderOffset = 3337.0; // TODO encoder units when arm is horizontal
+            public static final double absoluteEncoderOffset = 4584.0; // TODO encoder units when arm is horizontal
 
             public static final TalonSRXConfiguration config = new TalonSRXConfiguration();
             static {
@@ -222,7 +223,7 @@ public final class Constants {
 
             //TODO
             public static final boolean motorReversed = false;
-            public static final boolean sensorPhase = false;
+            public static final boolean sensorPhase = true;
 
             public static final TalonSRXConfiguration config = new TalonSRXConfiguration();
             static {
@@ -241,7 +242,7 @@ public final class Constants {
 
                 config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
                 config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
-                config.clearPositionOnLimitR = true; //reset selected sensor position to 0 on falling edge of reverse limit switch
+                config.clearPositionOnLimitR = false; //reset selected sensor position to 0 on falling edge of reverse limit switch
 
                 //TODO
                 config.motionCruiseVelocity = (1.0                   // m/s                               max velocity in m/s
