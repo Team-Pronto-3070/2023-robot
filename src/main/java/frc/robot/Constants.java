@@ -45,7 +45,7 @@ public final class Constants {
 
     public static final class OI {
         public static final int driverPort = 0;
-        public static final int operatorPort = 0;
+        public static final int operatorPort = 1;
         public static final double deadband = 0.06;
         public static final double triggerDeadband = 0.1;
 
