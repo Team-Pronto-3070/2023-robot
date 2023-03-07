@@ -14,6 +14,7 @@ import frc.robot.Constants.ElevatorArm.Position;
 import frc.robot.commands.AutoScoringTrajectoryCommand;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.ElevatorArmSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
@@ -23,6 +24,7 @@ public class RobotContainer {
 
   private final SwerveSubsystem swerve = new SwerveSubsystem();
   private final ElevatorArmSubsystem elevatorArm = new ElevatorArmSubsystem();
+  private final IntakeSubsystem intake = new IntakeSubsystem();
 
   private final Autos autos = new Autos(swerve);
 
@@ -38,6 +40,7 @@ public class RobotContainer {
             true
         )));
     elevatorArm.setDefaultCommand(elevatorArm.run(elevatorArm::stop));
+    intake.setDefaultCommand(intake.run(intake::stop));
 
     configureBindings();
   }
@@ -61,7 +64,8 @@ public class RobotContainer {
     oi.driveToScoringNodeButton.onTrue(new AutoScoringTrajectoryCommand(nextScoringSlot, new PathConstraints(4, 3), autos.autoBuilder, swerve)); //TODO determine path constraints
     oi.gyroResetButton.onTrue(swerve.runOnce(swerve::resetGyro));
     oi.interruptButton.onTrue(new InstantCommand(elevatorArm::stop, elevatorArm))
-                      .onTrue(new InstantCommand(swerve::stop, swerve));
+                      .onTrue(new InstantCommand(swerve::stop, swerve))
+                      .onTrue(new InstantCommand(intake::stop, intake));
 
     oi.targetLvl1ArmPosition.onTrue(new InstantCommand(() -> nextArmPosition = Position.L1CONE));
     oi.targetLvl2ArmPosition.onTrue(new InstantCommand(() -> nextArmPosition = Position.L2CONE));

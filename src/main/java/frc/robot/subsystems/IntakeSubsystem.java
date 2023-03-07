@@ -37,6 +37,10 @@ public class IntakeSubsystem extends SubsystemBase {
         talIntake.set(velocity);
     }
 
+    public void stop() {
+        talIntake.set(0);
+    }
+
     public GameObject getGameObject() {
         return gameObject;
     }
