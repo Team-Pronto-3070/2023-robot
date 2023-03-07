@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.GameObject;
 
-public class Intake extends SubsystemBase {
+public class IntakeSubsystem extends SubsystemBase {
     
     private final WPI_TalonSRX talIntake;
 
@@ -18,7 +18,7 @@ public class Intake extends SubsystemBase {
 
     private GameObject gameObject = GameObject.NONE;
 
-    public Intake() {
+    public IntakeSubsystem() {
         talIntake = new WPI_TalonSRX(Constants.Intake.ID);
         talIntake.configFactoryDefault();
         talIntake.setInverted(Constants.Intake.inverted);
