@@ -161,7 +161,7 @@ public final class Constants {
             
             public static final int ID = 12;
 
-            public static final Rotation2d tolerance = new Rotation2d();
+            public static final Rotation2d tolerance = Rotation2d.fromDegrees(1);
 
             //TODO
             public static final boolean motorReversed = false;
@@ -218,7 +218,7 @@ public final class Constants {
             public static final double pulleyCircumference = 2 * Math.PI
                                                                * 0.023300; // radius in meters
             
-            public static final double tolerance = 0.0; // meters
+            public static final double tolerance = Units.inchesToMeters(1); // meters
 
             //TODO
             public static final boolean motorReversed = false;
