@@ -32,7 +32,8 @@ public class Vision {
         }
 
         camera = new PhotonCamera(Constants.Vision.cameraName);
-        poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camera, Constants.Vision.robotToCamera);
+        poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP, camera, Constants.Vision.robotToCamera);
+        poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
     }
 
      /**

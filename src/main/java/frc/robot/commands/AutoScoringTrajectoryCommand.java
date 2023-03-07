@@ -1,81 +1,73 @@
 package frc.robot.commands;
 
+import java.util.List;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.util.PathPlanningUtils;
 
 public class AutoScoringTrajectoryCommand extends DriveToPointCommand {
 
-    private static final Pose2d WALL_SIDE_MIDPOINT = new Pose2d(new Translation2d(2.32, 0.084), new Rotation2d(-0.593412));
-    private static final Pose2d LOADING_ZONE_MIDPOINT = new Pose2d(new Translation2d(2.32, 4.53), new Rotation2d(0.558505));
+    private static final Translation2d WALL_SIDE_MIDPOINT = new Translation2d(2.25, 0.9);
+    private static final Translation2d LOADING_ZONE_MIDPOINT = new Translation2d(2.25, 4.59);
 
-    private int scoringNode;
+    private final int scoringSlot;
 
     /**
      * Constructs an AutoScoringTrajectoryCommand that will create and follow a trajectory 
      * bringing the robot to the given scoring node
      * 
-     * @param scoringNode target node
+     * @param scoringSlot target slot
      * @param constraints PathConstraints for the trajectory (maximum velocity and maximum acceleration)
      * @param autoBuilder the autobuilder that will be used to follow the trajectory
      * @param swerve the swerve subsystem
      */
-    public AutoScoringTrajectoryCommand(int scoringNode, PathConstraints constraints, SwerveAutoBuilder autoBuilder, SwerveSubsystem swerve) {
-        super(PathPlanningUtils.getScoringNodePathPoint(scoringNode, DriverStation.getAlliance()), constraints, autoBuilder, swerve);
-        this.scoringNode = scoringNode;
+    public AutoScoringTrajectoryCommand(int scoringSlot, PathConstraints constraints, SwerveAutoBuilder autoBuilder, SwerveSubsystem swerve) {
+        super(List.of(), constraints, autoBuilder, swerve);
+        this.scoringSlot = scoringSlot;
     }
 
     @Override
     public void initialize() {
-        Pose2d currentPose = swerve.getPose();
-        double x = currentPose.getX();
-        double y = currentPose.getY();
+        Translation2d midPoint = null;
 
-        Pose2d midPoint = null;
-        Alliance alliance = DriverStation.getAlliance();
+        Translation2d startTranslation = swerve.getPose().getTranslation(); // There might be a slight lag between initialize functions, could set current pose as a variable in super
+        double x = startTranslation.getX();
+        double y = startTranslation.getY();
 
-        if (x > 2.416 && x < 4.909) { // check y position on field
-            if (alliance == DriverStation.Alliance.Blue) {
-                if ( y > 0 && y < 1.509) {
-                    // wall side
-                    if (scoringNode % 9 < 7) {
-                        midPoint = WALL_SIDE_MIDPOINT;
-                    }
-                } else if (y > 4.035 && y < 5.353) {
-                    // loading zone side
-                    if (scoringNode % 9 > 1) {
-                        midPoint = LOADING_ZONE_MIDPOINT;
-                    }
+        if (x > 2.4 && x < 5) { // NOTE: it is currently jerky when robot starts just above 2.4
+            if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
+                if ( y > 0 && y < 1.5) {
+                    midPoint = WALL_SIDE_MIDPOINT;
+                } else if (y > 4 && y < 5) {
+                    midPoint = LOADING_ZONE_MIDPOINT;
                 }
             } else { // Red
-                if (y > Constants.fieldWidthMeters && y < Constants.fieldWidthMeters - 1.509) {
-                    // wall side
-                    if (scoringNode % 9 > 1) {
-                        midPoint = WALL_SIDE_MIDPOINT;
-                    }
-                } else if (y > Constants.fieldWidthMeters - 4.035 && y < Constants.fieldWidthMeters - 5.353) {
-                    // loading zone side
-                    if (scoringNode % 9 < 7) {
-                        midPoint = LOADING_ZONE_MIDPOINT;
-                    }
+                if (y > Constants.fieldWidthMeters && y < Constants.fieldWidthMeters - 1.5) {
+                    midPoint = WALL_SIDE_MIDPOINT;
+                } else if (y > Constants.fieldWidthMeters - 4 && y < Constants.fieldWidthMeters - 5) {
+                    midPoint = LOADING_ZONE_MIDPOINT;
                 }
             }
         }
-        
+
+        Translation2d endTranslation = PathPlanningUtils.getRobotScoringPosition(scoringSlot, DriverStation.getAlliance());
+
         if (midPoint != null) {
-            Pose2d transformedPose = PathPlanningUtils.transformPoseForAlliance(midPoint, alliance);
-            points.add(0, new PathPoint(transformedPose.getTranslation(), transformedPose.getRotation()));
+            midPoint = PathPlanningUtils.transformTranslationForAlliance(midPoint, DriverStation.getAlliance());
+            points.add(new PathPoint(midPoint, startTranslation.minus(endTranslation).getAngle(), null).withControlLengths(0.25, midPoint.getDistance(endTranslation) / 4));
         }
 
+        Translation2d prevWaypoint = (midPoint == null) ? startTranslation : midPoint;
+        points.add(0, new PathPoint(endTranslation, prevWaypoint.minus(endTranslation).getAngle(), new Rotation2d(Math.PI)).withPrevControlLength(endTranslation.getDistance(prevWaypoint) / 2));
+        
         super.initialize();
     }
 }

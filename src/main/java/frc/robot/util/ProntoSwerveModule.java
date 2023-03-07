@@ -80,7 +80,7 @@ public class ProntoSwerveModule {
         );
     }
 
-    public void setDesiredState(SwerveModuleState rawDesiredState, boolean isOpenLoop) {
+    public void setDesiredState(SwerveModuleState2 rawDesiredState, boolean isOpenLoop) {
         SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(
             new SwerveModuleState(
                 rawDesiredState.speedMetersPerSecond,
@@ -99,11 +99,13 @@ public class ProntoSwerveModule {
                            DemandType.ArbitraryFeedForward, driveFeedforward.calculate(optimizedDesiredState.speedMetersPerSecond));
         }
 
-        //Prevent rotating module if speed is less then 1%. Prevents Jittering.
+        //Prevent rotating module if speed is less then 1% in order to prevent jittering
         Rotation2d angle = (Math.abs(optimizedDesiredState.speedMetersPerSecond) <= (Constants.Swerve.maxSpeed * 0.01)) ? 
                                 lastAngle : optimizedDesiredState.angle;
         lastAngle = angle;
-        turningPID.setReference(angle.getRadians(), CANSparkMax.ControlType.kPosition);
+        turningPID.setReference(angle.getRadians(), CANSparkMax.ControlType.kPosition,
+                                0,
+                                Constants.Swerve.Turn.KV * rawDesiredState.omegaRadPerSecond);
     }
 
     public SwerveModulePosition getPosition() {
@@ -113,14 +115,15 @@ public class ProntoSwerveModule {
         );
     }
 
-    public SwerveModuleState getState() {
-        return new SwerveModuleState(
+    public SwerveModuleState2 getState() {
+        return new SwerveModuleState2(
             ((driveMotor.getSelectedSensorVelocity() //raw falcon units
                 * (600.0 / 2048.0) //motor RPM
                 / Constants.Swerve.gearRatio) //wheel RPM
                 * Constants.Swerve.wheelCircumference) //wheel surface speed in meters per minute
                 / 60.0, //wheel surface speed in meters per second
-            new Rotation2d(turningAbsoluteEncoder.getPosition() - chassisAngularOffset)
+            new Rotation2d(turningAbsoluteEncoder.getPosition() - chassisAngularOffset),
+            turningAbsoluteEncoder.getVelocity()
         );
     }
 }
