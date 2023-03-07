@@ -4,10 +4,10 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Command;
+import static edu.wpi.first.wpilibj2.command.Commands.*;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -23,11 +23,11 @@ public class DriveCommands extends CommandBase{
      * 
      * @param swerve the swerve subsystem
      */
-    public static SequentialCommandGroup autoBalancePID(SwerveSubsystem swerve) {
+    private static Command autoBalancePID(SwerveSubsystem swerve) {
 
-        return new SequentialCommandGroup(
+        return sequence(
             // drive onto ramp
-            new ParallelRaceGroup(
+            parallel(
                 swerve.run(() -> swerve.drive(Constants.DriveCommands.AutoBalance.driveUpRampSpeed * ((swerve.getPose().getX() < 4) ? 1 : -1), 0, 0, true, false)),
                 new WaitUntilCommand(() -> swerve.getPitch() >= Constants.DriveCommands.AutoBalance.onRampAngle)
             ),
@@ -55,7 +55,7 @@ public class DriveCommands extends CommandBase{
      * @param swerve the swerve subsystem
      * @return
      */
-    public static SequentialCommandGroup autoBalanceBangBang(SwerveSubsystem swerve) {
+    private static Command autoBalanceBangBang(SwerveSubsystem swerve) {
         SwerveModuleState2[] stopStates = {
             new SwerveModuleState2(0, new Rotation2d(Units.degreesToRadians(45)), 0), // front left
             new SwerveModuleState2(0, new Rotation2d(Units.degreesToRadians(-45)), 0), // front right
@@ -63,16 +63,21 @@ public class DriveCommands extends CommandBase{
             new SwerveModuleState2(0, new Rotation2d(Units.degreesToRadians(45)), 0), // rear right
         };
 
-        return new SequentialCommandGroup(
-            new ParallelRaceGroup(
+        return sequence(
+            parallel(
                 swerve.run(
                     () -> swerve.drive(Constants.DriveCommands.AutoBalance.driveUpRampSpeed * ((swerve.getPose().getX() < 4) ? 1 : -1), 0, 0, true, false)),
-                new SequentialCommandGroup(
+                sequence(
                     new WaitUntilCommand(() -> swerve.getPitch() > Constants.DriveCommands.AutoBalance.onRampAngle),
                     new WaitUntilCommand(() -> swerve.getPitch() < Constants.DriveCommands.AutoBalance.stopAngle)
                 )
             ),
             swerve.run(() -> swerve.setModuleStates(stopStates))
         );
+    }
+
+    public static Command autoBalance(SwerveSubsystem swerve) {
+        // return autoBalanceBangBang(swerve);
+        return autoBalancePID(swerve);
     }
 }

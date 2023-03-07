@@ -26,7 +26,7 @@ public class RobotContainer {
   private final ElevatorArmSubsystem elevatorArm = new ElevatorArmSubsystem();
   private final IntakeSubsystem intake = new IntakeSubsystem();
 
-  private final Autos autos = new Autos(swerve);
+  private final Autos autos = new Autos(swerve, elevatorArm, intake);
 
   private Position nextArmPosition;
   private int nextScoringSlot;
