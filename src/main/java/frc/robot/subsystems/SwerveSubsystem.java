@@ -1,7 +1,9 @@
 package frc.robot.subsystems;
 
 import java.util.Optional;
+
 import org.photonvision.EstimatedRobotPose;
+
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -9,6 +11,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.ProntoSwerveModule;
@@ -27,6 +31,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public final SwerveDriveKinematics2 kinematics;
     private final SwerveDrivePoseEstimator poseEstimator;
 
+    private final Field2d field;
     
     public SwerveSubsystem() {
         frontLeft = new ProntoSwerveModule(
@@ -71,6 +76,9 @@ public class SwerveSubsystem extends SubsystemBase {
                     rearLeft.getPosition(),
                     rearRight.getPosition()
                 }, new Pose2d());
+
+        field = new Field2d();
+        SmartDashboard.putData("field", field);
     }
 
     public Rotation2d getYaw() {
@@ -145,6 +153,9 @@ public class SwerveSubsystem extends SubsystemBase {
         if (potentialVisionEstimate.isPresent()) {
             EstimatedRobotPose camPose = potentialVisionEstimate.get();
             poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+            field.getObject("vision estimate").setPose(camPose.estimatedPose.toPose2d());
+        } else {
+            field.getObject("vision estimate").setPose(new Pose2d(-100, -100, new Rotation2d()));
         }
     }
 
@@ -159,5 +170,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 rearRight.getPosition()
             }
         );
+
+        field.setRobotPose(getPose());
     }
 }
