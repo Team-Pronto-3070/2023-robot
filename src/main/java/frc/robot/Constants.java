@@ -51,7 +51,8 @@ public final class Constants {
 
     public static final class Intake {
         public static final int ID = 0;
-        public static final int openedSwitchPort = 0;
+        public static final int leftSwitchPort = 0;
+        public static final int rightSwitchPort = 0;
         public static final double closeVelocity = 1;
         public static final double openVelocity = -1;
         public static final boolean inverted = false;

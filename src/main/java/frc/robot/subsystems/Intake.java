@@ -13,7 +13,8 @@ public class Intake extends SubsystemBase {
     
     private final WPI_TalonSRX talIntake;
 
-    private final DigitalInput openedSwitch;
+    private final DigitalInput leftSwitch;
+    private final DigitalInput rightSwitch;
 
     private GameObject gameObject = GameObject.NONE;
 
@@ -23,7 +24,8 @@ public class Intake extends SubsystemBase {
         talIntake.setInverted(Constants.Intake.inverted);
         talIntake.setNeutralMode(NeutralMode.Brake);
 
-        openedSwitch = new DigitalInput(Constants.Intake.openedSwitchPort);
+        leftSwitch = new DigitalInput(Constants.Intake.leftSwitchPort);
+        rightSwitch = new DigitalInput(Constants.Intake.rightSwitchPort);
     }
 
     /**
@@ -48,6 +50,6 @@ public class Intake extends SubsystemBase {
     }
 
     public Command openCommand() {
-        return run(() -> set(Constants.Intake.openVelocity)).until(() -> openedSwitch.get()).withTimeout(Constants.Intake.openTimeout);
+        return run(() -> set(Constants.Intake.openVelocity)).until(() -> !leftSwitch.get() || !rightSwitch.get()).withTimeout(Constants.Intake.openTimeout);
     }
 }
