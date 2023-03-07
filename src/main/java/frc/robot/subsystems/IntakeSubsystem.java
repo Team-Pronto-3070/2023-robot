@@ -51,11 +51,16 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public Command closeCommand() {
-        return run(() -> set(Constants.Intake.closeVelocity)).withTimeout(Constants.Intake.closeDuration);
+        return run(() -> set(Constants.Intake.closeVelocity))
+               .withTimeout(Constants.Intake.closeDuration)
+               .andThen(this::stop, this);
     }
 
     public Command openCommand() {
-        return run(() -> set(Constants.Intake.openVelocity)).until(() -> leftSwitch.get() || rightSwitch.get()).withTimeout(Constants.Intake.openTimeout);
+        return run(() -> set(Constants.Intake.openVelocity))
+               .until(() -> leftSwitch.get() || rightSwitch.get())
+               .withTimeout(Constants.Intake.openTimeout)
+               .andThen(this::stop, this);
     }
 
     @Override
