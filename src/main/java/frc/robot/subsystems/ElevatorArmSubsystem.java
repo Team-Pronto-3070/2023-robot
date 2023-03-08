@@ -9,7 +9,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -225,18 +224,6 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      */
     public Command goToTargetCommand(Constants.ElevatorArm.Position target) {
         return this.runOnce(() -> this.setTarget(target.translation))
-                   .andThen(
-                       this.run(this::move)
-                       .until(this::atTarget)
-                   );
-    }
-
-    /**
-     * 
-     * @return command that moves to the target then stops
-     */
-    public Command goToTargetCommand(Supplier<Constants.ElevatorArm.Position> targetSupplier) {
-        return this.runOnce(() -> this.setTarget(targetSupplier.get().translation))
                    .andThen(
                        this.run(this::move)
                        .until(this::atTarget)

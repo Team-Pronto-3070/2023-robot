@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import java.util.List;
-import java.util.function.IntSupplier;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPoint;
@@ -19,7 +18,7 @@ public class AutoScoringTrajectoryCommand extends DriveToPointCommand {
     private static final Translation2d WALL_SIDE_MIDPOINT = new Translation2d(2.25, 0.9);
     private static final Translation2d LOADING_ZONE_MIDPOINT = new Translation2d(2.25, 4.59);
 
-    private final IntSupplier scoringSlotSupplier;
+    private final int scoringSlot;
 
     /**
      * Constructs an AutoScoringTrajectoryCommand that will create and follow a trajectory 
@@ -32,21 +31,7 @@ public class AutoScoringTrajectoryCommand extends DriveToPointCommand {
      */
     public AutoScoringTrajectoryCommand(int scoringSlot, PathConstraints constraints, SwerveAutoBuilder autoBuilder, SwerveSubsystem swerve) {
         super(List.of(), constraints, autoBuilder, swerve);
-        this.scoringSlotSupplier = () -> scoringSlot;
-    }
-
-    /**
-     * Constructs an AutoScoringTrajectoryCommand that will create and follow a trajectory 
-     * bringing the robot to the given scoring node
-     * 
-     * @param scoringSlot target slot
-     * @param constraints PathConstraints for the trajectory (maximum velocity and maximum acceleration)
-     * @param autoBuilder the autobuilder that will be used to follow the trajectory
-     * @param swerve the swerve subsystem
-     */
-    public AutoScoringTrajectoryCommand(IntSupplier scoringSlotSupplier, PathConstraints constraints, SwerveAutoBuilder autoBuilder, SwerveSubsystem swerve) {
-        super(List.of(), constraints, autoBuilder, swerve);
-        this.scoringSlotSupplier = scoringSlotSupplier;
+        this.scoringSlot = scoringSlot;
     }
 
     @Override
@@ -73,7 +58,7 @@ public class AutoScoringTrajectoryCommand extends DriveToPointCommand {
             }
         }
 
-        Translation2d endTranslation = PathPlanningUtils.getRobotScoringPosition(scoringSlotSupplier.getAsInt(), DriverStation.getAlliance());
+        Translation2d endTranslation = PathPlanningUtils.getRobotScoringPosition(scoringSlot, DriverStation.getAlliance());
 
         if (midPoint != null) {
             midPoint = PathPlanningUtils.transformTranslationForAlliance(midPoint, DriverStation.getAlliance());
