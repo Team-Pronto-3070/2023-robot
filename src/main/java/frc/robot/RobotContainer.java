@@ -43,6 +43,7 @@ public class RobotContainer {
     intake.setDefaultCommand(intake.run(intake::stop));
 
     nextArmPosition = Position.HOME;
+    nextScoringSlot = 0;
 
     configureBindings();
   }
@@ -57,17 +58,16 @@ public class RobotContainer {
 
     //TODO - check for cones vs cubes for arm positions
 
-    oi.armToNextTargetPositionButton.onTrue(elevatorArm.goToTargetCommand(nextArmPosition));
+    oi.armToNextTargetPositionButton.onTrue(elevatorArm.goToTargetCommand(() -> nextArmPosition));
     oi.armToShelfIntakePositionButton.onTrue(elevatorArm.goToTargetCommand(Position.SHELF));
     oi.armToGroundIntakePositionButton.onTrue(elevatorArm.goToTargetCommand(Position.L1CONE)); 
     oi.armToHomePositionButton.onTrue(elevatorArm.goToTargetCommand(Position.HOME));
 
     oi.fullAutoScore.onTrue(
-      new AutoScoringTrajectoryCommand(nextScoringSlot, new PathConstraints(4, 3), autos.autoBuilder, swerve)
-      .alongWith(elevatorArm.goToTargetCommand(nextArmPosition))
-      //.andThen(intake.openCommand())
+      new AutoScoringTrajectoryCommand(() -> nextScoringSlot, new PathConstraints(4, 3), autos.autoBuilder, swerve)
+      .alongWith(elevatorArm.goToTargetCommand(() -> nextArmPosition))
     );
-    oi.driveToScoringNodeButton.onTrue(new AutoScoringTrajectoryCommand(nextScoringSlot, new PathConstraints(4, 3), autos.autoBuilder, swerve)); //TODO determine path constraints
+    oi.driveToScoringNodeButton.onTrue(new AutoScoringTrajectoryCommand(() -> nextScoringSlot, new PathConstraints(4, 3), autos.autoBuilder, swerve)); //TODO determine path constraints
     oi.gyroResetButton.onTrue(swerve.runOnce(swerve::resetGyro));
     oi.interruptButton.onTrue(new InstantCommand(elevatorArm::stop, elevatorArm))
                       .onTrue(new InstantCommand(swerve::stop, swerve))
