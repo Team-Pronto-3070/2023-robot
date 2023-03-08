@@ -42,12 +42,18 @@ public class RobotContainer {
     elevatorArm.setDefaultCommand(elevatorArm.run(elevatorArm::stop));
     intake.setDefaultCommand(intake.run(intake::stop));
 
+    nextArmPosition = Position.HOME;
+
     configureBindings();
   }
 
+  private void setNextArmPosition(Position pos) {
+    nextArmPosition = pos;
+  }
+
   private void configureBindings() {
-    //oi.closeIntakeButton.onTrue(intake.closeCommand());
-    //oi.openIntakeButton.onTrue(intake.openCommand());
+    oi.closeIntakeButton.onTrue(intake.closeCommand());
+    oi.openIntakeButton.onTrue(intake.openCommand());
 
     //TODO - check for cones vs cubes for arm positions
 
@@ -67,9 +73,9 @@ public class RobotContainer {
                       .onTrue(new InstantCommand(swerve::stop, swerve))
                       .onTrue(new InstantCommand(intake::stop, intake));
 
-    oi.targetLvl1ArmPosition.onTrue(new InstantCommand(() -> nextArmPosition = Position.L1CONE));
-    oi.targetLvl2ArmPosition.onTrue(new InstantCommand(() -> nextArmPosition = Position.L2CONE));
-    oi.targetLvl3ArmPosition.onTrue(new InstantCommand(() -> nextArmPosition = Position.L3CONE));
+    oi.targetLvl1ArmPosition.onTrue(new InstantCommand(() -> setNextArmPosition(Position.L1CONE)));
+    oi.targetLvl2ArmPosition.onTrue(new InstantCommand(() -> setNextArmPosition(Position.L2CONE)));
+    oi.targetLvl3ArmPosition.onTrue(new InstantCommand(() -> setNextArmPosition(Position.L3CONE)));
     
     oi.manualArmButton.whileTrue(elevatorArm.manualMoveCommand(oi.manualArmVerticalPower, oi.manualArmElevatorPower));
 

@@ -46,12 +46,12 @@ public final class Constants {
     public static final class OI {
         public static final int driverPort = 0;
         public static final int operatorPort = 1;
-        public static final double deadband = 0.30;
+        public static final double deadband = 0.20;
         public static final double triggerDeadband = 0.5;
 
         public static final double slowSpeed = 0.5;
 
-        public static final double maxManualExtensionSpeed = .3;
+        public static final double maxManualExtensionSpeed = .21;
         public static final double maxManualRotationSpeed = .3;
     }
 
@@ -59,10 +59,10 @@ public final class Constants {
         public static final int ID = 13;
         public static final int leftSwitchPort = 4;
         public static final int rightSwitchPort = 3;
-        public static final double closeVelocity = 1;
-        public static final double openVelocity = -1;
-        public static final boolean inverted = false;
-        public static final double closeDuration = 2.0;
+        public static final double closeVelocity = 1.0;
+        public static final double openVelocity = -1.0;
+        public static final boolean inverted = true;
+        public static final double closeDuration = 1.0;
         public static final double openTimeout = 3.0;
     }
 
@@ -157,7 +157,7 @@ public final class Constants {
         
         public static final class VerticalDrive {
             //base units are radians, so velocity is rad/s and accel is rad/s^2
-            public static final TrapezoidProfile.Constraints trapConstraints = new TrapezoidProfile.Constraints(1, 1); //TODO
+            //public static final TrapezoidProfile.Constraints trapConstraints = new TrapezoidProfile.Constraints(1, 1); //TODO
             
             public static final int ID = 12;
 
@@ -167,8 +167,7 @@ public final class Constants {
             public static final boolean motorReversed = true;
             public static final boolean sensorPhase = false;
 
-            //public static final double absoluteEncoderOffset = 3337.0; // TODO encoder units when arm is horizontal
-            public static final double absoluteEncoderOffset = 4584.0; // TODO encoder units when arm is horizontal
+            public static final double absoluteEncoderOffset = 3219.0; // encoder units when arm is horizontal
 
             public static final TalonSRXConfiguration config = new TalonSRXConfiguration();
             static {
@@ -176,7 +175,7 @@ public final class Constants {
 
                 //TODO: pid constants
                 config.slot0 = new SlotConfiguration();
-                config.slot0.kP = 0.0001;
+                config.slot0.kP = 30.0;
                 config.slot0.kI = 0.0;
                 config.slot0.kD = 0.0;
                 //motion magic: "kF is multiplied by the runtime-calculated target and added to output" - presumambly calculated velocity
@@ -185,18 +184,18 @@ public final class Constants {
                 config.peakCurrentDuration = 100; //miliseconds
                 config.peakCurrentLimit = 60; //amps
 
-                config.forwardSoftLimitEnable = false; //TODO: set this to true once the threshold is filled in
-                config.forwardSoftLimitThreshold = 0.0;
-                config.reverseSoftLimitEnable = false; //TODO: set this to true once the threshold is filled in
-                config.reverseSoftLimitThreshold = 0.0;
+                config.forwardSoftLimitEnable = true; //TODO: set this to true once the threshold is filled in
+                config.forwardSoftLimitThreshold = 870.0;
+                config.reverseSoftLimitEnable = true; //TODO: set this to true once the threshold is filled in
+                config.reverseSoftLimitThreshold = 77.0;
 
                 //TODO
-                config.motionCruiseVelocity = 1.0                    // rad/s                             max velocity in radians per second
+                config.motionCruiseVelocity = 2.0                    // rad/s                             max velocity in radians per second
                                               * (1 / (2 * Math.PI))  // * rot/rad -> rot/s                rotations per second
                                               * 4096.0               // * sensor units / rot -> units/s   sensor units per second
                                               * 10.0;                // * s/(100ms) -> units/100ms        sensor units per 100 miliseconds
 
-                config.motionAcceleration =   1.0                    // rad/s^2                           max acceleration in radians per s^2
+                config.motionAcceleration =   3.0                    // rad/s^2                           max acceleration in radians per s^2
                                               * (1 / (2 * Math.PI))  // * rot/rad -> rot/s^2              rotations per second^2
                                               * 4096.0               // * sensor units / rot -> units/s^2 sensor units per second^2
                                               / 10.0;                // * s/(100ms) -> (units/100ms)/s    (sensor units / 100 miliseconds) / second
@@ -213,7 +212,7 @@ public final class Constants {
             public static final int ID = 11;
 
             //base units are meters, so velocity is m/s and accel is m/s^2
-            public static final TrapezoidProfile.Constraints trapConstraints = new TrapezoidProfile.Constraints(1, 1); //TODO
+            //public static final TrapezoidProfile.Constraints trapConstraints = new TrapezoidProfile.Constraints(1, 1); //TODO
 
             public static final double gearRatio = 16; // 16:1
             public static final double pulleyCircumference = 2 * Math.PI
@@ -231,7 +230,7 @@ public final class Constants {
 
                 //TODO: pid constants
                 config.slot0 = new SlotConfiguration();
-                config.slot0.kP = 0.0001;
+                config.slot0.kP = 0.01;
                 config.slot0.kI = 0.0;
                 config.slot0.kD = 0.0;
                 //motion magic: "kF is multiplied by the runtime-calculated target and added to output" - presumambly calculated velocity
@@ -241,17 +240,18 @@ public final class Constants {
                 config.peakCurrentLimit = 60; //amps
 
                 config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
-                config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
+                //config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
+                config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
                 config.clearPositionOnLimitR = false; //reset selected sensor position to 0 on falling edge of reverse limit switch
 
                 //TODO
-                config.motionCruiseVelocity = (1.0                   // m/s                               max velocity in m/s
+                config.motionCruiseVelocity = (0.2                   // m/s                               max velocity in m/s
                                               / pulleyCircumference) // *(m/rot)^-1 = rot/m -> rot/s      pulley rotations per second
                                               * gearRatio            // * unitless -> rot/s               sensor rotations per second
                                               * 4096.0               // * sensor units / rot -> units/s   sensor units per second
                                               / 10.0;                // * s/(100ms) -> units/100ms        sensor units / 100 miliseconds
 
-                config.motionAcceleration =   (1.0                   // m/s^2                             max acceleration in m/s^2
+                config.motionAcceleration =   (0.2                   // m/s^2                             max acceleration in m/s^2
                                               / pulleyCircumference) // *(m/rot)^-1 = rot/m -> rot/s^2    pulley rotations per second^2
                                               * gearRatio            // * unitless -> rot/s^2             sensor rotations per second^2
                                               * 4096.0               // * sensor units / rot -> units/s^2 sensor units per second^2
@@ -266,17 +266,18 @@ public final class Constants {
         }
 
         public static enum Position {
-            HOME (new Translation2d()),
+            HOME (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(75))),
 
-            L1CONE (new Translation2d()),
+            L1CONE (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(5))),
             L2CONE (new Translation2d()),
-            L3CONE (new Translation2d()),
+            L3CONE (new Translation2d(1.9, Rotation2d.fromDegrees(35.6))),
 
             L1CUBE (new Translation2d()),
             L2CUBE (new Translation2d()),
             L3CUBE (new Translation2d()),
 
-            SHELF (new Translation2d());
+            //SHELF (new Translation2d(1.8, 1.8));
+            SHELF (new Translation2d(Constants.ElevatorArm.initialArmLength + 0.5, Rotation2d.fromDegrees(45)));
 
             public final Translation2d translation;
             private Position(Translation2d translation) {

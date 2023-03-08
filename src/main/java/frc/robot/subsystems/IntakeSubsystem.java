@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.GameObject;
+import frc.robot.util.PicoColorSensor;
 
 public class IntakeSubsystem extends SubsystemBase {
     
@@ -19,6 +20,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private GameObject gameObject = GameObject.NONE;
 
+    private final PicoColorSensor colorSensor;
+
     public IntakeSubsystem() {
         talIntake = new WPI_TalonSRX(Constants.Intake.ID);
         talIntake.configFactoryDefault();
@@ -27,6 +30,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
         leftSwitch = new DigitalInput(Constants.Intake.leftSwitchPort);
         rightSwitch = new DigitalInput(Constants.Intake.rightSwitchPort);
+
+        colorSensor = new PicoColorSensor();
     }
 
     /**
@@ -67,5 +72,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putBoolean("left intake limit switch", leftSwitch.get());
         SmartDashboard.putBoolean("right intake limit switch", rightSwitch.get());
+
+        SmartDashboard.putNumber("color sensor distance", colorSensor.getProximity0());
     }
 }

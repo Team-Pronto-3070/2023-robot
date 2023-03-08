@@ -1,9 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants;
@@ -34,18 +32,39 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         verticalTalon = new WPI_TalonSRX(Constants.ElevatorArm.VerticalDrive.ID);
         verticalTalon.configFactoryDefault();
         verticalTalon.configAllSettings(Constants.ElevatorArm.VerticalDrive.config);
-        verticalTalon.setInverted(Constants.ElevatorArm.VerticalDrive.motorReversed);
         verticalTalon.setNeutralMode(NeutralMode.Brake);
         verticalTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+        SmartDashboard.putNumber("initial pivot absolute sensor units", verticalTalon.getSensorCollection().getPulseWidthPosition());
+        SmartDashboard.putNumber("initial pivot relative sensor units 1", verticalTalon.getSelectedSensorPosition());
+        SmartDashboard.putNumber("initial pivot relative sensor units 2", verticalTalon.getSelectedSensorPosition());
+        //verticalTalon.setSelectedSensorPosition(Constants.ElevatorArm.VerticalDrive.absoluteEncoderOffset - verticalTalon.getSensorCollection().getPulseWidthPosition());
+        verticalTalon.setSelectedSensorPosition(verticalTalon.getSensorCollection().getPulseWidthPosition() - Constants.ElevatorArm.VerticalDrive.absoluteEncoderOffset);
+        SmartDashboard.putNumber("initial pivot relative sensor units 3", verticalTalon.getSelectedSensorPosition());
+        SmartDashboard.putNumber("initial pivot relative sensor units 4", verticalTalon.getSelectedSensorPosition());
+        SmartDashboard.putNumber("initial pivot relative sensor units 5", verticalTalon.getSelectedSensorPosition());
         verticalTalon.setSensorPhase(Constants.ElevatorArm.VerticalDrive.sensorPhase);
-        verticalTalon.setSelectedSensorPosition(verticalTalon.getSensorCollection().getPulseWidthPosition());
+        verticalTalon.setInverted(Constants.ElevatorArm.VerticalDrive.motorReversed);
+        SmartDashboard.putNumber("initial pivot relative sensor units 6", verticalTalon.getSelectedSensorPosition());
+        SmartDashboard.putNumber("initial pivot relative sensor units 7", verticalTalon.getSelectedSensorPosition());
+        SmartDashboard.putNumber("initial pivot relative sensor units 8", verticalTalon.getSelectedSensorPosition());
+        SmartDashboard.putNumber("initial pivot relative sensor units 9", verticalTalon.getSelectedSensorPosition());
+        SmartDashboard.putNumber("initial pivot relative sensor units 10", verticalTalon.getSelectedSensorPosition());
+        SmartDashboard.putNumber("initial pivot relative sensor units 11", verticalTalon.getSelectedSensorPosition());
+        SmartDashboard.putNumber("initial pivot relative sensor units 12", verticalTalon.getSelectedSensorPosition());
+        SmartDashboard.putNumber("initial pivot relative sensor units from sensor collection", verticalTalon.getSensorCollection().getQuadraturePosition());
+       // verticalTalon.getSensorCollection().syncQuadratureWithPulseWidth(
+       //                     3148,
+       //                     2305,
+       //                     false,
+       //                     -((int) Constants.ElevatorArm.VerticalDrive.absoluteEncoderOffset),
+       //                     0);
         
         elevatorTalon = new WPI_TalonSRX(Constants.ElevatorArm.ElevatorDrive.ID);
         elevatorTalon.configFactoryDefault();
         elevatorTalon.configAllSettings(Constants.ElevatorArm.ElevatorDrive.config);
+        elevatorTalon.setSensorPhase(Constants.ElevatorArm.ElevatorDrive.sensorPhase);
         elevatorTalon.setInverted(Constants.ElevatorArm.ElevatorDrive.motorReversed);
         elevatorTalon.setNeutralMode(NeutralMode.Brake);
-        elevatorTalon.setSensorPhase(Constants.ElevatorArm.ElevatorDrive.sensorPhase);
         elevatorTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
         resetTarget();
@@ -65,9 +84,20 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         );
         elevatorTalon.set(
             ControlMode.MotionMagic, 
-            Math.min( // keep inside of the robot bounds
-                rawFromExtention(target_extention),
-                calcMaxExtention(target_angle))
+            rawFromExtention(
+                Math.min( // keep inside of the robot bounds
+                    target_extention,
+                    calcMaxExtention(target_angle)
+                )
+            )
+        );
+        SmartDashboard.putNumber("motion magic extention setpoint",
+            rawFromExtention(
+                Math.min( // keep inside of the robot bounds
+                    target_extention,
+                    calcMaxExtention(target_angle)
+                )
+            )
         );
     }
 
@@ -76,18 +106,31 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * angle to respect the extention bounds
      */
     private double calcMaxExtention(Rotation2d angle) {
+        return 1000.0;
+/*
         return Math.min(
-            angle.getSin() // calc max horizontal extention
-            * (Constants.RobotBounds.maxHorizontalExtention + Constants.RobotBounds.robotLength - Constants.MassProperties.pivotLocation.getX()),
-            
-            angle.getCos() // calc max vertical extention
-            * (Constants.RobotBounds.maxHeight - Constants.MassProperties.pivotLocation.getZ())
+            (Constants.RobotBounds.maxHorizontalExtention + (Constants.RobotBounds.robotLength / 2.0) + Constants.MassProperties.pivotLocation.getX())
+            / angle.getCos(),
+
+            (Constants.RobotBounds.maxHeight - Constants.MassProperties.pivotLocation.getZ())
+            / angle.getSin()
         );
+*/
+
+//        return Math.min(
+//            angle.getSin() // calc max horizontal extention
+//            * (Constants.RobotBounds.maxHorizontalExtention + Constants.RobotBounds.robotLength - Constants.MassProperties.pivotLocation.getX()),
+//            
+//            angle.getCos() // calc max vertical extention
+//            * (Constants.RobotBounds.maxHeight - Constants.MassProperties.pivotLocation.getZ())
+//        );
     }
 
     private void setTarget(Translation2d target) {
-        target_angle = target.minus(pivotOffset).getAngle(); // first gets the relative target to the arm
-        target_extention = target.getDistance(pivotOffset); // get the offset
+        //target_angle = target.minus(pivotOffset).getAngle(); // first gets the relative target to the arm
+        //target_extention = target.getDistance(pivotOffset); // get the offset
+        target_angle = target.getAngle();
+        target_extention = target.getNorm();
     }
 
     /**
@@ -96,8 +139,8 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      */
     public Rotation2d getAngle() {
         return Rotation2d.fromRotations(
-                (verticalTalon.getSelectedSensorPosition() // raw sensor units
-                - Constants.ElevatorArm.VerticalDrive.absoluteEncoderOffset) // the offset of the encoder in raw units
+                verticalTalon.getSelectedSensorPosition() // raw sensor units
+//                - Constants.ElevatorArm.VerticalDrive.absoluteEncoderOffset) // the offset of the encoder in raw units
                 / 4096.0 // revolutions
             );
     }
@@ -107,10 +150,10 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * @return double - the extention of the elevator in meters
      */
     public double getExtention() {
-        return elevatorTalon.getSelectedSensorPosition() // raw sensor units
-            / 4096.0 // revolutions before gear ratio
-            / Constants.ElevatorArm.ElevatorDrive.gearRatio // final revolutions
-            * Constants.ElevatorArm.ElevatorDrive.pulleyCircumference // extention distance in meters
+        return (((elevatorTalon.getSelectedSensorPosition() // raw sensor units
+            / 4096.0) // revolutions before gear ratio
+            / Constants.ElevatorArm.ElevatorDrive.gearRatio) // final revolutions
+            * Constants.ElevatorArm.ElevatorDrive.pulleyCircumference) // extention distance in meters
             + Constants.ElevatorArm.initialArmLength; // full arm length
     }
 
@@ -120,8 +163,8 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      */
     private double rawFromAngle(Rotation2d sAngle) {
         return sAngle.getRotations() // total revolutions
-                * 4096.0 // raw sensor units
-                + Constants.ElevatorArm.VerticalDrive.absoluteEncoderOffset;
+                * 4096.0; // raw sensor units
+//                + Constants.ElevatorArm.VerticalDrive.absoluteEncoderOffset;
     }
 
     /**
@@ -225,5 +268,9 @@ public class ElevatorArmSubsystem extends SubsystemBase {
 
         SmartDashboard.putBoolean("lower limit switch", elevatorTalon.isRevLimitSwitchClosed() == 1);
         SmartDashboard.putBoolean("upper limit switch", elevatorTalon.isFwdLimitSwitchClosed() == 1);
+
+        SmartDashboard.putNumber("target_extention", target_extention);
+        SmartDashboard.putNumber("target_angle", target_angle.getDegrees());
+        SmartDashboard.putNumber("max extention", calcMaxExtention(getAngle()));
     }
 }
