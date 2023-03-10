@@ -79,7 +79,7 @@ public final class Constants {
 
         public static final double maxSpeed = Units.feetToMeters(15.87); //meters per second
         public static final double maxAcceleration = 1.19 * 9.81; // traction limited: COF*g (TODO: this cof is for blue nitrile on carpet)
-        public static final double maxAngularSpeed = maxSpeed / Math.hypot(wheelBase / 2.0, trackWidth / 2.0);
+        public static final double maxAngularSpeed = 10.0 * maxSpeed / Math.hypot(wheelBase / 2.0, trackWidth / 2.0);
 
         //offsets are in radians
         public static final class FrontLeft {
@@ -277,7 +277,7 @@ public final class Constants {
             L3CUBE (new Translation2d()),
 
             //SHELF (new Translation2d(1.8, 1.8));
-            SHELF (new Translation2d(Constants.ElevatorArm.initialArmLength + 0.5, Rotation2d.fromDegrees(45)));
+            SHELF (new Translation2d(1.453, Rotation2d.fromDegrees(55.5)));
 
             public final Translation2d translation;
             private Position(Translation2d translation) {
@@ -339,10 +339,10 @@ public final class Constants {
     }
 
     public static final class Vision {
-        public static final String cameraName = "";
+        public static final String cameraName = "OV9281_1";
         public static final Transform3d robotToCamera = new Transform3d(
-            new Translation3d(0, 0, 0),
-            new Rotation3d(0, 0, 0)
+            new Translation3d(Units.inchesToMeters(4), Units.inchesToMeters(10), Units.inchesToMeters(6)),
+            new Rotation3d(0, -Units.degreesToRadians(20), 0)
         );
     }
 

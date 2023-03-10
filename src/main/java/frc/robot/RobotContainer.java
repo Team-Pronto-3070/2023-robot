@@ -39,12 +39,12 @@ public class RobotContainer {
             MathUtil.applyDeadband(oi.drive_y.getAsDouble(), Constants.OI.deadband, Constants.Swerve.maxSpeed) * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
             MathUtil.applyDeadband(oi.drive_rot.getAsDouble(), Constants.OI.deadband, Constants.Swerve.maxAngularSpeed) * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
             true,
-            true
+            false
         )));
     elevatorArm.setDefaultCommand(elevatorArm.run(elevatorArm::stop));
     intake.setDefaultCommand(intake.run(intake::stop));
 
-    nextArmPosition = Position.HOME;
+    nextArmPosition = Position.L3CONE;
     nextScoringSlot = 0;
 
     configureBindings();
@@ -94,7 +94,7 @@ public class RobotContainer {
 
   public void initVision() {
     if (vision == null) {
-      if (DriverStation.isFMSAttached()) {
+      if (DriverStation.isFMSAttached() || true) {
         vision = new Vision();
       }
     }

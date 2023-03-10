@@ -125,11 +125,15 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isOpenLoop) {
+        SmartDashboard.putNumber("chassis omega", rot);
         var swerveModuleStates = kinematics.toSwerveModuleStates(
             fieldRelative
                 ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getYaw())
                 : new ChassisSpeeds(xSpeed, ySpeed, rot));
+        SmartDashboard.putNumber("front left pre desaturate target mps", swerveModuleStates[0].speedMetersPerSecond);
         SwerveDriveKinematics2.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
+
+        SmartDashboard.putNumber("front left target mps", swerveModuleStates[0].speedMetersPerSecond);
 
         frontLeft.setDesiredState(swerveModuleStates[0], isOpenLoop);
         frontRight.setDesiredState(swerveModuleStates[1], isOpenLoop);
@@ -172,5 +176,14 @@ public class SwerveSubsystem extends SubsystemBase {
         );
 
         field.setRobotPose(getPose());
+
+        SmartDashboard.putNumber("front left speed", frontLeft.getState().speedMetersPerSecond);
+        SmartDashboard.putNumber("front right speed", frontRight.getState().speedMetersPerSecond);
+        SmartDashboard.putNumber("rear left speed", rearLeft.getState().speedMetersPerSecond);
+        SmartDashboard.putNumber("rear right speed", rearRight.getState().speedMetersPerSecond);
+        SmartDashboard.putNumber("front left angle", frontLeft.getState().angle.getDegrees());
+        SmartDashboard.putNumber("front right angle", frontRight.getState().angle.getDegrees());
+        SmartDashboard.putNumber("rear left angle", rearLeft.getState().angle.getDegrees());
+        SmartDashboard.putNumber("rear right angle", rearRight.getState().angle.getDegrees());
     }
 }
