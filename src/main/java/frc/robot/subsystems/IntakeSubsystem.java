@@ -26,6 +26,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem() {
         talIntake = new WPI_TalonSRX(Constants.Intake.ID);
         talIntake.configFactoryDefault();
+        talIntake.configAllSettings(Constants.Intake.config);
         talIntake.setInverted(Constants.Intake.inverted);
         talIntake.setNeutralMode(NeutralMode.Brake);
 

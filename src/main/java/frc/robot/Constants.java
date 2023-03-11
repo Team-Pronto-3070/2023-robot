@@ -64,6 +64,12 @@ public final class Constants {
         public static final boolean inverted = true;
         public static final double closeDuration = 1.0;
         public static final double openTimeout = 3.0;
+        public static final TalonSRXConfiguration config = new TalonSRXConfiguration();
+        static {
+            config.continuousCurrentLimit = 20; //amps
+            config.peakCurrentDuration = 100; //miliseconds
+            config.peakCurrentLimit = 25; //amps
+        }
     }
 
     public static final class Swerve {
