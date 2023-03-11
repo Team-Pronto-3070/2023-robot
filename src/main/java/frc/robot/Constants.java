@@ -161,7 +161,7 @@ public final class Constants {
             
             public static final int ID = 12;
 
-            public static final Rotation2d tolerance = Rotation2d.fromDegrees(1);
+            public static final Rotation2d tolerance = Rotation2d.fromDegrees(0.5);
 
             //TODO
             public static final boolean motorReversed = true;
@@ -185,7 +185,8 @@ public final class Constants {
                 config.peakCurrentLimit = 60; //amps
 
                 config.forwardSoftLimitEnable = true; //TODO: set this to true once the threshold is filled in
-                config.forwardSoftLimitThreshold = 870.0;
+                //config.forwardSoftLimitThreshold = 870.0;
+                config.forwardSoftLimitThreshold = 928.0;
                 config.reverseSoftLimitEnable = true; //TODO: set this to true once the threshold is filled in
                 config.reverseSoftLimitThreshold = 77.0;
 
@@ -218,7 +219,7 @@ public final class Constants {
             public static final double pulleyCircumference = 2 * Math.PI
                                                                * 0.023300; // radius in meters
             
-            public static final double tolerance = Units.inchesToMeters(1); // meters
+            public static final double tolerance = Units.inchesToMeters(0.5); // meters
 
             //TODO
             public static final boolean motorReversed = false;
@@ -230,7 +231,7 @@ public final class Constants {
 
                 //TODO: pid constants
                 config.slot0 = new SlotConfiguration();
-                config.slot0.kP = 0.01;
+                config.slot0.kP = 0.5;
                 config.slot0.kI = 0.0;
                 config.slot0.kD = 0.0;
                 //motion magic: "kF is multiplied by the runtime-calculated target and added to output" - presumambly calculated velocity
@@ -242,10 +243,10 @@ public final class Constants {
                 config.forwardLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
                 //config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyClosed;
                 config.reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen;
-                config.clearPositionOnLimitR = false; //reset selected sensor position to 0 on falling edge of reverse limit switch
+                config.clearPositionOnLimitR = true; //reset selected sensor position to 0 on falling edge of reverse limit switch
 
                 //TODO
-                config.motionCruiseVelocity = (0.2                   // m/s                               max velocity in m/s
+                config.motionCruiseVelocity = (0.4                   // m/s                               max velocity in m/s
                                               / pulleyCircumference) // *(m/rot)^-1 = rot/m -> rot/s      pulley rotations per second
                                               * gearRatio            // * unitless -> rot/s               sensor rotations per second
                                               * 4096.0               // * sensor units / rot -> units/s   sensor units per second
@@ -266,18 +267,20 @@ public final class Constants {
         }
 
         public static enum Position {
-            HOME (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(75))),
+            //HOME (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(75))),
+            HOME (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(81.5))),
 
-            L1CONE (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(5))),
-            L2CONE (new Translation2d()),
-            L3CONE (new Translation2d(1.9, Rotation2d.fromDegrees(35.6))),
+            //L1CONE (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(5))),
+            L1CONE (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(11))),
+            L2CONE (new Translation2d(1.48, Rotation2d.fromDegrees(50.3))),
+            //L3CONE (new Translation2d(1.9, Rotation2d.fromDegrees(35.6))),
+            L3CONE (new Translation2d(1.9, Rotation2d.fromDegrees(46))),
 
-            L1CUBE (new Translation2d()),
-            L2CUBE (new Translation2d()),
-            L3CUBE (new Translation2d()),
+            L1CUBE (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(11))),
+            L2CUBE (new Translation2d(1.4, Rotation2d.fromDegrees(37))),
+            L3CUBE (new Translation2d(1.9, Rotation2d.fromDegrees(38.5))),
 
-            //SHELF (new Translation2d(1.8, 1.8));
-            SHELF (new Translation2d(1.453, Rotation2d.fromDegrees(55.5)));
+            SHELF (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(61.25)));
 
             public final Translation2d translation;
             private Position(Translation2d translation) {

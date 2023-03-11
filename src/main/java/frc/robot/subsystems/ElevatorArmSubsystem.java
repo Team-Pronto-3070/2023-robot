@@ -82,23 +82,25 @@ public class ElevatorArmSubsystem extends SubsystemBase {
             ControlMode.MotionMagic, // * not sure if just putting MotionMagic here in will work
             rawFromAngle(target_angle) // motion magic should calculate the TProfile
         );
-        elevatorTalon.set(
-            ControlMode.MotionMagic, 
-            rawFromExtention(
-                Math.min( // keep inside of the robot bounds
-                    target_extention,
-                    calcMaxExtention(target_angle)
-                )
-            )
-        );
-        SmartDashboard.putNumber("motion magic extention setpoint",
-            rawFromExtention(
-                Math.min( // keep inside of the robot bounds
-                    target_extention,
-                    calcMaxExtention(target_angle)
-                )
-            )
-        );
+
+        double raw_extension_setpoint = rawFromExtention(
+                                            Math.min( // keep inside of the robot bounds
+                                                target_extention,
+                                                calcMaxExtention(target_angle)
+                                            )
+                                        );
+
+        SmartDashboard.putNumber("motion magic extention setpoint", raw_extension_setpoint);
+        if (raw_extension_setpoint > 0 && elevatorTalon.isRevLimitSwitchClosed() == 1) {
+            elevatorTalon.set(ControlMode.PercentOutput, 0.1);
+            SmartDashboard.putBoolean("extension workaround", true);
+        } else {
+            elevatorTalon.set(
+                ControlMode.MotionMagic, 
+                raw_extension_setpoint
+            );
+            SmartDashboard.putBoolean("extension workaround", false);
+        }
     }
 
     /**

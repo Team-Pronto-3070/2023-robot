@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.GameObject;
 import frc.robot.util.PicoColorSensor;
+import frc.robot.util.PicoColorSensor.RawColor;
 
 public class IntakeSubsystem extends SubsystemBase {
     
@@ -74,5 +75,11 @@ public class IntakeSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("right intake limit switch", rightSwitch.get());
 
         SmartDashboard.putNumber("color sensor distance", colorSensor.getProximity0());
+
+        RawColor color = colorSensor.getRawColor0();
+        SmartDashboard.putNumber("color sensor red", color.red);
+        SmartDashboard.putNumber("color sensor green", color.green);
+        SmartDashboard.putNumber("color sensor blue", color.blue);
+        SmartDashboard.putNumber("color sensor ir", color.ir);
     }
 }
