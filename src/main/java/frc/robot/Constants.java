@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.function.Function;
+
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -14,6 +16,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.robot.util.PicoColorSensor.RawColor;
 
 public final class Constants {
 
@@ -70,6 +73,12 @@ public final class Constants {
             config.peakCurrentDuration = 100; //miliseconds
             config.peakCurrentLimit = 25; //amps
         }
+        public static final int distanceThreshold = 60; //arbitrary units, greater is closer
+        public static final double distanceDebounceTime = 0.5; //seconds
+        public static final Function<RawColor, Boolean> isCube = 
+            (color) -> false;
+        public static final Function<RawColor, Boolean> isCone = 
+            (color) -> false;
     }
 
     public static final class Swerve {

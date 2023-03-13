@@ -6,7 +6,10 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import static edu.wpi.first.wpilibj2.command.Commands.*;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.GameObject;
 import frc.robot.util.PicoColorSensor;
@@ -18,10 +21,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private final DigitalInput leftSwitch;
     private final DigitalInput rightSwitch;
+    private final PicoColorSensor colorSensor;
+    private final Trigger hasObject;
 
     private GameObject gameObject = GameObject.NONE;
-
-    private final PicoColorSensor colorSensor;
 
     public IntakeSubsystem() {
         talIntake = new WPI_TalonSRX(Constants.Intake.ID);
@@ -34,6 +37,8 @@ public class IntakeSubsystem extends SubsystemBase {
         rightSwitch = new DigitalInput(Constants.Intake.rightSwitchPort);
 
         colorSensor = new PicoColorSensor();
+        hasObject = new Trigger(() -> colorSensor.getProximity0() > Constants.Intake.distanceThreshold)
+                        .debounce(Constants.Intake.distanceDebounceTime);
     }
 
     /**
@@ -57,6 +62,16 @@ public class IntakeSubsystem extends SubsystemBase {
         gameObject = object;
     }
 
+    public void autoSetGameObject() {
+        if (Constants.Intake.isCone.apply(colorSensor.getRawColor0())) {
+            setGameObject(GameObject.CONE);
+        } else if (Constants.Intake.isCube.apply(colorSensor.getRawColor0())) {
+            setGameObject(GameObject.CUBE);
+        } else {
+            setGameObject(GameObject.NONE);
+        }
+    }
+
     public Command closeCommand() {
         return run(() -> set(Constants.Intake.closeVelocity))
                .withTimeout(Constants.Intake.closeDuration)
@@ -68,6 +83,14 @@ public class IntakeSubsystem extends SubsystemBase {
                .until(() -> leftSwitch.get() || rightSwitch.get())
                .withTimeout(Constants.Intake.openTimeout)
                .andThen(this::stop, this);
+    }
+
+    public Command autoCloseCommand() {
+        return sequence(
+            waitUntil(hasObject),
+            new InstantCommand(this::autoSetGameObject),
+            closeCommand()
+        );
     }
 
     @Override
@@ -82,5 +105,18 @@ public class IntakeSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("color sensor green", color.green);
         SmartDashboard.putNumber("color sensor blue", color.blue);
         SmartDashboard.putNumber("color sensor ir", color.ir);
+
+        switch (gameObject) {
+            case CUBE:
+                SmartDashboard.putString("intake contents", "cube");
+                break;
+            case CONE:
+                SmartDashboard.putString("intake contents", "cone");
+                break;
+            default:
+            case NONE:
+                SmartDashboard.putString("intake contents", "none");
+                break;
+        }
     }
 }

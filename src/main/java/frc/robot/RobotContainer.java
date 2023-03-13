@@ -53,6 +53,7 @@ public class RobotContainer {
   private void configureBindings() {
     oi.closeIntakeButton.onTrue(intake.closeCommand());
     oi.openIntakeButton.onTrue(intake.openCommand());
+    //oi.openIntakeButton.onTrue(intake.openCommand().andThen(intake.autoCloseCommand()));
 
     //TODO - check for cones vs cubes for arm positions
 
