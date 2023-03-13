@@ -76,9 +76,9 @@ public final class Constants {
         public static final int distanceThreshold = 60; //arbitrary units, greater is closer
         public static final double distanceDebounceTime = 0.5; //seconds
         public static final Function<RawColor, Boolean> isCube = 
-            (color) -> false;
+            (color) -> color.red <= color.green;
         public static final Function<RawColor, Boolean> isCone = 
-            (color) -> false;
+            (color) -> color.red > color.green;
     }
 
     public static final class Swerve {
@@ -261,13 +261,13 @@ public final class Constants {
                 config.clearPositionOnLimitR = true; //reset selected sensor position to 0 on falling edge of reverse limit switch
 
                 //TODO
-                config.motionCruiseVelocity = (0.4                   // m/s                               max velocity in m/s
+                config.motionCruiseVelocity = (0.45                  // m/s                               max velocity in m/s
                                               / pulleyCircumference) // *(m/rot)^-1 = rot/m -> rot/s      pulley rotations per second
                                               * gearRatio            // * unitless -> rot/s               sensor rotations per second
                                               * 4096.0               // * sensor units / rot -> units/s   sensor units per second
                                               / 10.0;                // * s/(100ms) -> units/100ms        sensor units / 100 miliseconds
 
-                config.motionAcceleration =   (0.2                   // m/s^2                             max acceleration in m/s^2
+                config.motionAcceleration =   (1.0                   // m/s^2                             max acceleration in m/s^2
                                               / pulleyCircumference) // *(m/rot)^-1 = rot/m -> rot/s^2    pulley rotations per second^2
                                               * gearRatio            // * unitless -> rot/s^2             sensor rotations per second^2
                                               * 4096.0               // * sensor units / rot -> units/s^2 sensor units per second^2
@@ -295,7 +295,7 @@ public final class Constants {
             L2CUBE (new Translation2d(1.4, Rotation2d.fromDegrees(37))),
             L3CUBE (new Translation2d(1.9, Rotation2d.fromDegrees(38.5))),
 
-            SHELF (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(61.25)));
+            SHELF (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(58.1)));
 
             public final Translation2d translation;
             private Position(Translation2d translation) {

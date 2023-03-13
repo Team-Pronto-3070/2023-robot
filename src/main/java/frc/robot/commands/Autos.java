@@ -8,6 +8,7 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.robot.Constants;
@@ -35,6 +36,8 @@ public class Autos {
         autoChooser = new SendableChooser<Command>();
         autoChooser.setDefaultOption("none", new PrintCommand("no auto option selected"));
         autoChooser.addOption("test1", buildAuto("test1"));
+
+        SmartDashboard.putData("auto chooser", autoChooser);
     }
 
     public Command buildAuto(String name) {

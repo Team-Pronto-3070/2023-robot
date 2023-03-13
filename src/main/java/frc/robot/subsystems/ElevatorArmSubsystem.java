@@ -108,8 +108,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
      * angle to respect the extention bounds
      */
     private double calcMaxExtention(Rotation2d angle) {
-        return 1000.0;
-/*
+        //return 1000.0;
         return Math.min(
             (Constants.RobotBounds.maxHorizontalExtention + (Constants.RobotBounds.robotLength / 2.0) + Constants.MassProperties.pivotLocation.getX())
             / angle.getCos(),
@@ -117,7 +116,6 @@ public class ElevatorArmSubsystem extends SubsystemBase {
             (Constants.RobotBounds.maxHeight - Constants.MassProperties.pivotLocation.getZ())
             / angle.getSin()
         );
-*/
 
 //        return Math.min(
 //            angle.getSin() // calc max horizontal extention

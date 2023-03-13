@@ -9,6 +9,8 @@ import com.pathplanner.lib.PathConstraints;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+
 import static edu.wpi.first.wpilibj2.command.Commands.*;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
@@ -53,8 +55,8 @@ public class RobotContainer {
 
   private void configureBindings() {
     oi.closeIntakeButton.onTrue(intake.closeCommand());
-    oi.openIntakeButton.onTrue(intake.openCommand());
-    //oi.openIntakeButton.onTrue(intake.openCommand().andThen(intake.autoCloseCommand()));
+    //oi.openIntakeButton.onTrue(intake.openCommand());
+    oi.openIntakeButton.whileTrue(intake.openCommand().andThen(intake.autoCloseCommand()));
 
     //TODO - check for cones vs cubes for arm positions
 
@@ -77,9 +79,21 @@ public class RobotContainer {
                       .onTrue(new InstantCommand(swerve::stop, swerve))
                       .onTrue(new InstantCommand(intake::stop, intake));
 
-    oi.targetLvl1ArmPosition.onTrue(new InstantCommand(() -> nextArmPosition = Position.L1CONE));
-    oi.targetLvl2ArmPosition.onTrue(new InstantCommand(() -> nextArmPosition = Position.L2CONE));
-    oi.targetLvl3ArmPosition.onTrue(new InstantCommand(() -> nextArmPosition = Position.L3CONE));
+    //oi.targetLvl1ArmPosition.onTrue(new InstantCommand(() -> nextArmPosition = Position.L1CONE));
+    //oi.targetLvl2ArmPosition.onTrue(new InstantCommand(() -> nextArmPosition = Position.L2CONE));
+    //oi.targetLvl3ArmPosition.onTrue(new InstantCommand(() -> nextArmPosition = Position.L3CONE));
+    oi.targetLvl1ArmPosition.onTrue(new ConditionalCommand(
+          new InstantCommand(() -> nextArmPosition = Position.L1CONE),
+          new InstantCommand(() -> nextArmPosition = Position.L1CUBE),
+          () -> intake.getGameObject() == GameObject.CONE));
+    oi.targetLvl2ArmPosition.onTrue(new ConditionalCommand(
+          new InstantCommand(() -> nextArmPosition = Position.L2CONE),
+          new InstantCommand(() -> nextArmPosition = Position.L2CUBE),
+          () -> intake.getGameObject() == GameObject.CONE));
+    oi.targetLvl3ArmPosition.onTrue(new ConditionalCommand(
+          new InstantCommand(() -> nextArmPosition = Position.L3CONE),
+          new InstantCommand(() -> nextArmPosition = Position.L3CUBE),
+          () -> intake.getGameObject() == GameObject.CONE));
     
     oi.manualArmButton.whileTrue(elevatorArm.manualMoveCommand(oi.manualArmVerticalPower, oi.manualArmElevatorPower));
 
