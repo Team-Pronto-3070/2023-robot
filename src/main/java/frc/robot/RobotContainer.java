@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import static edu.wpi.first.wpilibj2.command.Commands.*;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
+import frc.robot.Constants.GameObject;
 import frc.robot.Constants.ElevatorArm.Position;
 import frc.robot.commands.AutoScoringTrajectoryCommand;
 import frc.robot.commands.Autos;
@@ -81,6 +82,10 @@ public class RobotContainer {
     oi.targetLvl3ArmPosition.onTrue(new InstantCommand(() -> nextArmPosition = Position.L3CONE));
     
     oi.manualArmButton.whileTrue(elevatorArm.manualMoveCommand(oi.manualArmVerticalPower, oi.manualArmElevatorPower));
+
+    oi.setGameObjectCone.onTrue(intake.runOnce(() -> intake.setGameObject(GameObject.CONE)));
+    oi.setGameObjectCube.onTrue(intake.runOnce(() -> intake.setGameObject(GameObject.CUBE)));
+    oi.setGameObjectNone.onTrue(intake.runOnce(() -> intake.setGameObject(GameObject.NONE)));
 
     oi.targetSlot1.onTrue(new InstantCommand(() -> nextScoringSlot = 0));
     oi.targetSlot2.onTrue(new InstantCommand(() -> nextScoringSlot = 1));

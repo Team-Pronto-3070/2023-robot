@@ -45,6 +45,10 @@ public class OI {
     public final DoubleSupplier manualArmVerticalPower;
     public final DoubleSupplier manualArmElevatorPower;
 
+    public final Trigger setGameObjectCone;
+    public final Trigger setGameObjectCube;
+    public final Trigger setGameObjectNone;
+
     public final Trigger targetSlot1;
     public final Trigger targetSlot2;
     public final Trigger targetSlot3;
@@ -95,6 +99,11 @@ public class OI {
         manualArmElevatorPower = () -> MathUtil.applyDeadband(-operator.getRightY(), Constants.OI.deadband, Constants.OI.maxManualExtensionSpeed);
 
         manualArmButton = operator.rightTrigger(Constants.OI.triggerDeadband).and(() -> manualArmElevatorPower.getAsDouble() != 0 || manualArmVerticalPower.getAsDouble() != 0);
+
+        BooleanSupplier noBumperPressed = () -> !operator.rightBumper().getAsBoolean() && !operator.leftBumper().getAsBoolean();
+        setGameObjectCone = operator.y().and(noBumperPressed);
+        setGameObjectCube = operator.x().and(noBumperPressed);
+        setGameObjectNone = operator.a().and(noBumperPressed);
 
         BooleanSupplier leftGrid = () -> operator.leftBumper().getAsBoolean() && !operator.rightBumper().getAsBoolean();
         BooleanSupplier centerGrid = () -> operator.rightBumper().getAsBoolean() && operator.leftBumper().getAsBoolean();
