@@ -21,6 +21,7 @@ import frc.robot.Constants.ElevatorArm.Position;
 import frc.robot.subsystems.ElevatorArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import static frc.robot.commands.DriveCommands.driveToAngleCommand;
 
 public class Autos {
     public final SwerveAutoBuilder autoBuilder;
@@ -98,21 +99,17 @@ public class Autos {
             swerve.runOnce(() -> swerve.resetOdometry(new Pose2d(1.81, 3.28, Rotation2d.fromDegrees(-180.0)))), 
             arm.goToTargetCommand(Position.L3CONE),
             intake.openCommand(),
-            race(
-                parallel(
-                    swerve.run(() -> swerve.drive(Constants.DriveCommands.AutoBalance.driveUpRampSpeed, 0, 0, true, true)),
-                    arm.goToTargetCommand(Position.HOME),
-                    intake.closeCommand()
-                ),
+            parallel(
+                arm.goToTargetCommand(Position.HOME),
+                intake.closeCommand(),
                 sequence(
-                    new WaitUntilCommand(() -> swerve.getPitch() < -1 * Constants.DriveCommands.AutoBalance.onRampAngle),
-                    new WaitUntilCommand(() -> swerve.getPitch() > Constants.DriveCommands.AutoBalance.onRampAngle),
-                    new WaitUntilCommand(() -> swerve.getPitch() < 2),
-                    new WaitCommand(0.5)
-                ),
-                new WaitCommand(5)
-            ),
-            swerve.runOnce(swerve::stop)
+                    driveToAngleCommand(swerve, 1.0, -12, false),
+                    driveToAngleCommand(swerve, 0.3, 12, true),
+                    driveToAngleCommand(swerve, 0.3, 1, false),
+                    swerve.run(() -> swerve.drive(0.3, 0, 0, true, false)).withTimeout(1),
+                    swerve.run(swerve::stop)
+                )
+            ).withTimeout(5)
         );
     }
 

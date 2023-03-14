@@ -80,9 +80,26 @@ public class DriveCommands extends CommandBase{
         );
     }
 
+    private static Command autoBalance2(SwerveSubsystem swerve) {
+        return sequence(
+            print("started auto balance v2"),
+            driveToAngleCommand(swerve, -1.0, 12, true),
+            driveToAngleCommand(swerve, -0.3, 5, false),
+            waitSeconds(1),
+            driveToAngleCommand(swerve, 0.1, 0, true),
+            swerve.runOnce(() -> swerve.setModuleStates(new SwerveModuleState2[] {
+                new SwerveModuleState2(0, new Rotation2d(Units.degreesToRadians(45)), 0), // front left
+                new SwerveModuleState2(0, new Rotation2d(Units.degreesToRadians(-45)), 0), // front right
+                new SwerveModuleState2(0, new Rotation2d(Units.degreesToRadians(-45)), 0), // rear left
+                new SwerveModuleState2(0, new Rotation2d(Units.degreesToRadians(45)), 0), // rear right
+            }))
+        ).withTimeout(5);
+    }
+
     public static Command autoBalance(SwerveSubsystem swerve) {
-        return autoBalanceBangBang(swerve);
+        //return autoBalanceBangBang(swerve);
         //return autoBalancePID(swerve);
+        return autoBalance2(swerve);
     }
 
     public static Command driveToAngleCommand(SwerveSubsystem swerve, double speed, double angle, boolean increasing) {
