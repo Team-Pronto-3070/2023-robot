@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -82,5 +83,11 @@ public class DriveCommands extends CommandBase{
     public static Command autoBalance(SwerveSubsystem swerve) {
         return autoBalanceBangBang(swerve);
         //return autoBalancePID(swerve);
+    }
+
+    public static Command driveToAngleCommand(SwerveSubsystem swerve, double speed, double angle, boolean increasing) {
+        Debouncer debounce = new Debouncer(Constants.DriveCommands.AutoBalance.angleDebounceTime);
+        return swerve.run(() -> swerve.drive(speed, 0, 0, true, false))
+               .until(() -> debounce.calculate((swerve.getPitch() > angle) ^ !increasing));
     }
 }

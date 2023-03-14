@@ -370,6 +370,7 @@ public final class Constants {
             public static final double onRampAngle = 12.0;
             public static final double stopAngle = 15.0;
             public static final double balanceSetpoint = 0.0;
+            public static final double angleDebounceTime = 0.2;
             public static final class PID {
                 public static final double P = 1.0;
                 public static final double I = 0.0;
