@@ -1,0 +1,106 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 1.8,
+        "y": 4.98
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.1737528222115734,
+        "y": 4.6684655654807505
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "scoreLevel3Cone"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.35,
+        "y": 4.6
+      },
+      "prevControl": {
+        "x": 5.427607550232893,
+        "y": 4.671471449348593
+      },
+      "nextControl": {
+        "x": 5.427607550232893,
+        "y": 4.671471449348593
+      },
+      "holonomicAngle": 0,
+      "isReversal": true,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "intakeCube"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.8,
+        "y": 4.42
+      },
+      "prevControl": {
+        "x": 2.9178750433836753,
+        "y": 4.892266095709829
+      },
+      "nextControl": null,
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "scoreLevel3Cube",
+          "resetArm"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "markers": [
+    {
+      "position": 0.05,
+      "names": [
+        "resetArm"
+      ]
+    },
+    {
+      "position": 0.5,
+      "names": [
+        "armToGroundIntake"
+      ]
+    },
+    {
+      "position": 1.5,
+      "names": [
+        "armToLevel3Cube"
+      ]
+    },
+    {
+      "position": 1.05,
+      "names": [
+        "resetArm"
+      ]
+    }
+  ]
+}
