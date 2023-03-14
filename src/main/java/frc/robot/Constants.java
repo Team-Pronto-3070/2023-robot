@@ -295,7 +295,7 @@ public final class Constants {
             L2CUBE (new Translation2d(1.4, Rotation2d.fromDegrees(37))),
             L3CUBE (new Translation2d(1.9, Rotation2d.fromDegrees(38.5))),
 
-            SHELF (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(58.1)));
+            SHELF (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(59.0)));
 
             public final Translation2d translation;
             private Position(Translation2d translation) {
