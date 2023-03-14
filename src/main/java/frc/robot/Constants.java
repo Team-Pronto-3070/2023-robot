@@ -366,9 +366,9 @@ public final class Constants {
 
     public static final class DriveCommands {
         public static final class AutoBalance {
-            public static final double driveUpRampSpeed = 0.5;
-            public static final double onRampAngle = Units.degreesToRadians(6);
-            public static final double stopAngle = Units.degreesToRadians(3);
+            public static final double driveUpRampSpeed = 1.0;
+            public static final double onRampAngle = 12.0;
+            public static final double stopAngle = 15.0;
             public static final double balanceSetpoint = 0.0;
             public static final class PID {
                 public static final double P = 1.0;

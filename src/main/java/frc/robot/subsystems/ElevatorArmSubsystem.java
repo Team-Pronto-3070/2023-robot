@@ -34,24 +34,24 @@ public class ElevatorArmSubsystem extends SubsystemBase {
         verticalTalon.configAllSettings(Constants.ElevatorArm.VerticalDrive.config);
         verticalTalon.setNeutralMode(NeutralMode.Brake);
         verticalTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-        SmartDashboard.putNumber("initial pivot absolute sensor units", verticalTalon.getSensorCollection().getPulseWidthPosition());
-        SmartDashboard.putNumber("initial pivot relative sensor units 1", verticalTalon.getSelectedSensorPosition());
-        SmartDashboard.putNumber("initial pivot relative sensor units 2", verticalTalon.getSelectedSensorPosition());
+        //SmartDashboard.putNumber("initial pivot absolute sensor units", verticalTalon.getSensorCollection().getPulseWidthPosition());
+        //SmartDashboard.putNumber("initial pivot relative sensor units 1", verticalTalon.getSelectedSensorPosition());
+        //SmartDashboard.putNumber("initial pivot relative sensor units 2", verticalTalon.getSelectedSensorPosition());
         //verticalTalon.setSelectedSensorPosition(Constants.ElevatorArm.VerticalDrive.absoluteEncoderOffset - verticalTalon.getSensorCollection().getPulseWidthPosition());
         verticalTalon.setSelectedSensorPosition(verticalTalon.getSensorCollection().getPulseWidthPosition() - Constants.ElevatorArm.VerticalDrive.absoluteEncoderOffset);
-        SmartDashboard.putNumber("initial pivot relative sensor units 3", verticalTalon.getSelectedSensorPosition());
-        SmartDashboard.putNumber("initial pivot relative sensor units 4", verticalTalon.getSelectedSensorPosition());
-        SmartDashboard.putNumber("initial pivot relative sensor units 5", verticalTalon.getSelectedSensorPosition());
+        //SmartDashboard.putNumber("initial pivot relative sensor units 3", verticalTalon.getSelectedSensorPosition());
+        //SmartDashboard.putNumber("initial pivot relative sensor units 4", verticalTalon.getSelectedSensorPosition());
+        //SmartDashboard.putNumber("initial pivot relative sensor units 5", verticalTalon.getSelectedSensorPosition());
         verticalTalon.setSensorPhase(Constants.ElevatorArm.VerticalDrive.sensorPhase);
         verticalTalon.setInverted(Constants.ElevatorArm.VerticalDrive.motorReversed);
-        SmartDashboard.putNumber("initial pivot relative sensor units 6", verticalTalon.getSelectedSensorPosition());
-        SmartDashboard.putNumber("initial pivot relative sensor units 7", verticalTalon.getSelectedSensorPosition());
-        SmartDashboard.putNumber("initial pivot relative sensor units 8", verticalTalon.getSelectedSensorPosition());
-        SmartDashboard.putNumber("initial pivot relative sensor units 9", verticalTalon.getSelectedSensorPosition());
-        SmartDashboard.putNumber("initial pivot relative sensor units 10", verticalTalon.getSelectedSensorPosition());
-        SmartDashboard.putNumber("initial pivot relative sensor units 11", verticalTalon.getSelectedSensorPosition());
-        SmartDashboard.putNumber("initial pivot relative sensor units 12", verticalTalon.getSelectedSensorPosition());
-        SmartDashboard.putNumber("initial pivot relative sensor units from sensor collection", verticalTalon.getSensorCollection().getQuadraturePosition());
+        //SmartDashboard.putNumber("initial pivot relative sensor units 6", verticalTalon.getSelectedSensorPosition());
+        //SmartDashboard.putNumber("initial pivot relative sensor units 7", verticalTalon.getSelectedSensorPosition());
+        //SmartDashboard.putNumber("initial pivot relative sensor units 8", verticalTalon.getSelectedSensorPosition());
+        //SmartDashboard.putNumber("initial pivot relative sensor units 9", verticalTalon.getSelectedSensorPosition());
+        //SmartDashboard.putNumber("initial pivot relative sensor units 10", verticalTalon.getSelectedSensorPosition());
+        //SmartDashboard.putNumber("initial pivot relative sensor units 11", verticalTalon.getSelectedSensorPosition());
+        //SmartDashboard.putNumber("initial pivot relative sensor units 12", verticalTalon.getSelectedSensorPosition());
+        //SmartDashboard.putNumber("initial pivot relative sensor units from sensor collection", verticalTalon.getSensorCollection().getQuadraturePosition());
        // verticalTalon.getSensorCollection().syncQuadratureWithPulseWidth(
        //                     3148,
        //                     2305,

@@ -65,19 +65,22 @@ public class DriveCommands extends CommandBase{
 
         return sequence(
             parallel(
+                print("start auto balance"),
+                //swerve.run(swerve::stop).asProxy(),
                 swerve.run(
-                    () -> swerve.drive(Constants.DriveCommands.AutoBalance.driveUpRampSpeed * ((swerve.getPose().getX() < 4) ? 1 : -1), 0, 0, true, false)),
+                    //() -> swerve.drive(Constants.DriveCommands.AutoBalance.driveUpRampSpeed * ((swerve.getPose().getX() < 4) ? 1 : -1), 0, 0, true, false)),
+                    () -> swerve.drive(-0.2, 0, 0, true, false)),
                 sequence(
                     new WaitUntilCommand(() -> swerve.getPitch() > Constants.DriveCommands.AutoBalance.onRampAngle),
                     new WaitUntilCommand(() -> swerve.getPitch() < Constants.DriveCommands.AutoBalance.stopAngle)
                 )
-            ),
+            ).withTimeout(5),
             swerve.run(() -> swerve.setModuleStates(stopStates))
         );
     }
 
     public static Command autoBalance(SwerveSubsystem swerve) {
-        // return autoBalanceBangBang(swerve);
-        return autoBalancePID(swerve);
+        return autoBalanceBangBang(swerve);
+        //return autoBalancePID(swerve);
     }
 }

@@ -9,6 +9,7 @@ import com.pathplanner.lib.PathConstraints;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 
 import static edu.wpi.first.wpilibj2.command.Commands.*;
@@ -114,7 +115,7 @@ public class RobotContainer {
 
   public void initVision() {
     if (vision == null) {
-      if (DriverStation.isFMSAttached() || true) {
+      if (DriverStation.isFMSAttached() || false) {
         vision = new Vision();
       }
     }

@@ -8,12 +8,14 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import static edu.wpi.first.wpilibj2.command.Commands.*;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorArm.Position;
 import frc.robot.subsystems.ElevatorArmSubsystem;
@@ -93,17 +95,25 @@ public class Autos {
      */
     public static Command centerNoBalance(SwerveSubsystem swerve, ElevatorArmSubsystem arm, IntakeSubsystem intake) {
         return sequence(
-            swerve.runOnce(() -> swerve.resetOdometry(new Pose2d())), 
-            arm.goToTargetCommand(Position.L3CUBE),
+            swerve.runOnce(() -> swerve.resetOdometry(new Pose2d(1.81, 3.28, Rotation2d.fromDegrees(-180.0)))), 
+            arm.goToTargetCommand(Position.L3CONE),
             intake.openCommand(),
             race(
                 parallel(
-                    swerve.run(() -> swerve.drive(0.2, 0, 0, true, true))),
+                    swerve.run(() -> swerve.drive(Constants.DriveCommands.AutoBalance.driveUpRampSpeed, 0, 0, true, true)),
                     arm.goToTargetCommand(Position.HOME),
                     intake.closeCommand()
                 ),
+                sequence(
+                    new WaitUntilCommand(() -> swerve.getPitch() < -1 * Constants.DriveCommands.AutoBalance.onRampAngle),
+                    new WaitUntilCommand(() -> swerve.getPitch() > Constants.DriveCommands.AutoBalance.onRampAngle),
+                    new WaitUntilCommand(() -> swerve.getPitch() < 2),
+                    new WaitCommand(0.5)
+                ),
                 new WaitCommand(5)
-            );
+            ),
+            swerve.runOnce(swerve::stop)
+        );
     }
 
     public Command getSelectedAuto() {
