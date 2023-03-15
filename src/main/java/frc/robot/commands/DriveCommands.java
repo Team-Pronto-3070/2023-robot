@@ -5,9 +5,11 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import static edu.wpi.first.wpilibj2.command.Commands.*;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
@@ -83,17 +85,21 @@ public class DriveCommands extends CommandBase{
     private static Command autoBalance2(SwerveSubsystem swerve) {
         return sequence(
             print("started auto balance v2"),
-            driveToAngleCommand(swerve, -1.0, 12, true),
-            driveToAngleCommand(swerve, -0.3, 5, false),
-            waitSeconds(1),
-            driveToAngleCommand(swerve, 0.1, 0, true),
+            new InstantCommand(() -> SmartDashboard.putNumber("auto state", 6)),
+            driveToAngleCommand(swerve, -1.5, 15, true),
+            new InstantCommand(() -> SmartDashboard.putNumber("auto state", 7)),
+            driveToAngleCommand(swerve, -0.6, -1, false),
+            new InstantCommand(() -> SmartDashboard.putNumber("auto state", 8)),
+            //waitSeconds(1),
+            driveToAngleCommand(swerve, 0.6, -2, true),
+            new InstantCommand(() -> SmartDashboard.putNumber("auto state", 9)),
             swerve.runOnce(() -> swerve.setModuleStates(new SwerveModuleState2[] {
                 new SwerveModuleState2(0, new Rotation2d(Units.degreesToRadians(45)), 0), // front left
                 new SwerveModuleState2(0, new Rotation2d(Units.degreesToRadians(-45)), 0), // front right
                 new SwerveModuleState2(0, new Rotation2d(Units.degreesToRadians(-45)), 0), // rear left
                 new SwerveModuleState2(0, new Rotation2d(Units.degreesToRadians(45)), 0), // rear right
             }))
-        ).withTimeout(5);
+        ).withTimeout(10);
     }
 
     public static Command autoBalance(SwerveSubsystem swerve) {

@@ -19,6 +19,7 @@ import frc.robot.Constants.GameObject;
 import frc.robot.Constants.ElevatorArm.Position;
 import frc.robot.commands.AutoScoringTrajectoryCommand;
 import frc.robot.commands.Autos;
+import frc.robot.commands.TeleopDriveCommand;
 import frc.robot.subsystems.ElevatorArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -38,13 +39,17 @@ public class RobotContainer {
   private int nextScoringSlot;
 
   public RobotContainer() {
+    ///*
     swerve.setDefaultCommand(swerve.run(() -> swerve.drive(
-            MathUtil.applyDeadband(oi.drive_x.getAsDouble(), Constants.OI.deadband, Constants.Swerve.maxSpeed) * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
-            MathUtil.applyDeadband(oi.drive_y.getAsDouble(), Constants.OI.deadband, Constants.Swerve.maxSpeed) * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
-            MathUtil.applyDeadband(oi.drive_rot.getAsDouble(), Constants.OI.deadband, Constants.Swerve.maxAngularSpeed) * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
+            MathUtil.applyDeadband(oi.drive_x.getAsDouble(), Constants.OI.deadband) * Constants.Swerve.maxSpeed * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
+            MathUtil.applyDeadband(oi.drive_y.getAsDouble(), Constants.OI.deadband) * Constants.Swerve.maxSpeed * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
+            MathUtil.applyDeadband(oi.drive_rot.getAsDouble(), Constants.OI.deadband) * Constants.Swerve.maxAngularSpeed * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
             true,
             false
         )));
+    //*/
+    //swerve.setDefaultCommand(new TeleopDriveCommand(swerve, oi, false, true, false, true,
+    //                        elevatorArm::getAngle, elevatorArm::getExtention, intake::getGameObject));
     elevatorArm.setDefaultCommand(elevatorArm.run(elevatorArm::stop));
     intake.setDefaultCommand(intake.run(intake::stop));
 

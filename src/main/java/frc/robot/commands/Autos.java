@@ -6,12 +6,15 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
+import com.pathplanner.lib.server.PathPlannerServer;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+
 import static edu.wpi.first.wpilibj2.command.Commands.*;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -43,7 +46,7 @@ public class Autos {
         eventMap.put("scoreLevel1Cube", arm.goToTargetCommand(Position.L1CUBE).andThen(intake.openCommand()));
         eventMap.put("scoreLevel2Cone", arm.goToTargetCommand(Position.L2CONE).andThen(intake.openCommand()));
         eventMap.put("scoreLevel2Cube", arm.goToTargetCommand(Position.L2CUBE).andThen(intake.openCommand()));
-        eventMap.put("scoreLevel3Cone", arm.goToTargetCommand(Position.L3CUBE).andThen(intake.openCommand()));
+        eventMap.put("scoreLevel3Cone", arm.goToTargetCommand(Position.L3CONE).andThen(intake.openCommand()));
         eventMap.put("scoreLevel3Cube", arm.goToTargetCommand(Position.L3CUBE).andThen(intake.openCommand()));
         eventMap.put("intakeCone", intake.closeCommand());
         eventMap.put("intakeCube", intake.closeCommand());
@@ -53,7 +56,7 @@ public class Autos {
             swerve::getPose, // Pose2d supplier
             swerve::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
             new PIDConstants(Constants.Auto.TranslationPID.P, Constants.Auto.TranslationPID.I, Constants.Auto.TranslationPID.D), // PID constants to correct for translation error (used to create the X and Y PID controllers)
-            new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
+            new PIDConstants(Constants.Auto.RotationPID.P, Constants.Auto.RotationPID.I, Constants.Auto.RotationPID.D), // PID constants to correct for rotation error (used to create the rotation controller)
             swerve::setChassisSpeeds, // chassis speeds consumer used to output to the drive subsystem
             eventMap,
             true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
@@ -76,6 +79,7 @@ public class Autos {
         autoChooser.addOption("1 Piece Taxi No Balance CENTER", centerNoBalance(swerve, arm, intake));
 
         SmartDashboard.putData("auto chooser", autoChooser);
+        PathPlannerServer.startServer(5811);
     }
 
     public Command buildAuto(String name) {
@@ -103,13 +107,18 @@ public class Autos {
                 arm.goToTargetCommand(Position.HOME),
                 intake.closeCommand(),
                 sequence(
-                    driveToAngleCommand(swerve, 1.0, -12, false),
-                    driveToAngleCommand(swerve, 0.3, 12, true),
-                    driveToAngleCommand(swerve, 0.3, 1, false),
-                    swerve.run(() -> swerve.drive(0.3, 0, 0, true, false)).withTimeout(1),
+                    new InstantCommand(() -> SmartDashboard.putNumber("auto state", 1)),
+                    driveToAngleCommand(swerve, 1.5, -12, false),
+                    new InstantCommand(() -> SmartDashboard.putNumber("auto state", 2)),
+                    driveToAngleCommand(swerve, 0.6, 12, true),
+                    new InstantCommand(() -> SmartDashboard.putNumber("auto state", 3)),
+                    driveToAngleCommand(swerve, 0.6, 1, false),
+                    new InstantCommand(() -> SmartDashboard.putNumber("auto state", 4)),
+                    swerve.run(() -> swerve.drive(0.6, 0, 0, true, false)).withTimeout(0.2),
+                    new InstantCommand(() -> SmartDashboard.putNumber("auto state", 5)),
                     swerve.run(swerve::stop)
                 )
-            ).withTimeout(5)
+            ).withTimeout(10)
         );
     }
 

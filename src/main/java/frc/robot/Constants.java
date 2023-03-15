@@ -24,11 +24,11 @@ public final class Constants {
     public static final double robotLengthWithBumpers = Units.inchesToMeters(32.5);
 
     public static final class Auto {
-        public static final double maxVelocity = 4.0; //meters per second
-        public static final double maxAcceleration = 3.0; //meters per second squared
+        public static final double maxVelocity = 1.0; //meters per second
+        public static final double maxAcceleration = 0.5; //meters per second squared
         public static final double velocityDeadband = 0.05; //meters per second
         public static final class TranslationPID {
-            public static final double P = 5.0;
+            public static final double P = 2.0;
             public static final double I = 0.0;
             public static final double D = 0.0;
         }
@@ -94,7 +94,8 @@ public final class Constants {
 
         public static final double maxSpeed = Units.feetToMeters(15.87); //meters per second
         public static final double maxAcceleration = 1.19 * 9.81; // traction limited: COF*g (TODO: this cof is for blue nitrile on carpet)
-        public static final double maxAngularSpeed = 10.0 * maxSpeed / Math.hypot(wheelBase / 2.0, trackWidth / 2.0);
+        //public static final double maxAngularSpeed = 10.0 * maxSpeed / Math.hypot(wheelBase / 2.0, trackWidth / 2.0);
+        public static final double maxAngularSpeed = 1.0 * maxSpeed / Math.hypot(wheelBase / 2.0, trackWidth / 2.0);
 
         //offsets are in radians
         public static final class FrontLeft {
@@ -119,15 +120,17 @@ public final class Constants {
         }
         public static final class Drive {
             public static final class PID {
-                public static final double P = 0.05;
+                public static final double P = 0.1;
                 public static final double I = 0.0;
                 public static final double D = 0.0;
                 public static final double F = 0.0;
             }
             public static final class Feedforward {
                 public static final double KS = 0.0;
-                public static final double KV = 12 / maxSpeed;
-                public static final double KA = 12 / maxAcceleration;
+                //public static final double KV = 12 / maxSpeed;
+                public static final double KV = 0.0;
+                //public static final double KA = 12 / maxAcceleration;
+                public static final double KA = 0.0;
             }
             public static final int continuousCurrentLimit = 35;
             public static final int peakCurrentLimit = 60;
@@ -327,7 +330,7 @@ public final class Constants {
                 Units.inchesToMeters(0.0),
                 Units.inchesToMeters(0.0)
             );
-        public static final double elevatorCarriageMass = Units.lbsToKilograms(0.0);
+        public static final double elevatorCarriageMass = Units.lbsToKilograms(0.1);
         public static final Translation3d gameObjectLocation = //relative to pivot point when fully retracted
             new Translation3d(
                 Units.inchesToMeters(0.0),
@@ -340,7 +343,7 @@ public final class Constants {
                 Units.inchesToMeters(0.0),
                 Units.inchesToMeters(0.0)
             );
-        public static final double elevatorStaticMass = Units.lbsToKilograms(0.0);
+        public static final double elevatorStaticMass = Units.lbsToKilograms(0.1);
         public static final Translation3d pivotLocation = //location of the pivot point relative to the center of the robot
             new Translation3d(
                 Units.inchesToMeters(8.5),
@@ -351,9 +354,9 @@ public final class Constants {
             new Translation3d(
                 Units.inchesToMeters(0.0),
                 Units.inchesToMeters(0.0),
-                Units.inchesToMeters(0.0)
+                Units.inchesToMeters(24.0)
             );
-        public static final double chassisMass = Units.lbsToKilograms(0.0);
+        public static final double chassisMass = Units.lbsToKilograms(90.0);
     }
 
     public static final class Vision {

@@ -89,7 +89,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public double getPitch() {
         //return gyro.getYComplementaryAngle();
-        return gyro.getAngle(gyro.getPitchAxis());
+        //return gyro.getAngle(gyro.getPitchAxis());
+        return gyro.getAngle(gyro.getRollAxis());
     }
 
     public void resetGyro() {
@@ -129,6 +130,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isOpenLoop) {
         SmartDashboard.putNumber("chassis omega", rot);
+        SmartDashboard.putNumber("chassis target mps", xSpeed);
         var swerveModuleStates = kinematics.toSwerveModuleStates(
             fieldRelative
                 ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getYaw())
@@ -190,5 +192,9 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("rear right angle", rearRight.getState().angle.getDegrees());
 
         SmartDashboard.putNumber("pitch", getPitch());
+
+        SmartDashboard.putNumber("manual yaw", gyro.getAngle(gyro.getYawAxis()));
+        SmartDashboard.putNumber("manual pitch", gyro.getAngle(gyro.getPitchAxis()));
+        SmartDashboard.putNumber("manual roll", gyro.getAngle(gyro.getRollAxis()));
     }
 }
