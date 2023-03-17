@@ -108,13 +108,13 @@ public class Autos {
                 intake.closeCommand(),
                 sequence(
                     new InstantCommand(() -> SmartDashboard.putNumber("auto state", 1)),
-                    driveToAngleCommand(swerve, 1.5, -12, false),
+                    driveToAngleCommand(swerve, 2.0, -12, false),
                     new InstantCommand(() -> SmartDashboard.putNumber("auto state", 2)),
-                    driveToAngleCommand(swerve, 0.6, 12, true),
+                    driveToAngleCommand(swerve, 1.0, 12, true),
                     new InstantCommand(() -> SmartDashboard.putNumber("auto state", 3)),
-                    driveToAngleCommand(swerve, 0.6, 1, false),
+                    driveToAngleCommand(swerve, 1.0, 1, false),
                     new InstantCommand(() -> SmartDashboard.putNumber("auto state", 4)),
-                    swerve.run(() -> swerve.drive(0.6, 0, 0, true, false)).withTimeout(0.2),
+                    swerve.run(() -> swerve.drive(1.0, 0, 0, true, false)).withTimeout(0.2),
                     new InstantCommand(() -> SmartDashboard.putNumber("auto state", 5)),
                     swerve.runOnce(swerve::stop),
                     waitSeconds(0.5)
