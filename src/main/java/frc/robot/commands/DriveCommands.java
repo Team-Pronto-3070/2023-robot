@@ -2,8 +2,12 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -112,5 +116,39 @@ public class DriveCommands extends CommandBase{
         Debouncer debounce = new Debouncer(Constants.DriveCommands.AutoBalance.angleDebounceTime);
         return swerve.run(() -> swerve.drive(speed, 0, 0, true, false))
                .until(() -> debounce.calculate((swerve.getPitch() > angle) ^ !increasing));
+    }
+
+    private static final ProfiledPIDController xController = new ProfiledPIDController(Constants.Auto.TranslationPID.P, Constants.Auto.TranslationPID.I, Constants.Auto.TranslationPID.D,
+                                                                    new TrapezoidProfile.Constraints(Constants.Auto.maxVelocity, Constants.Auto.maxAcceleration));
+    private static final ProfiledPIDController yController = new ProfiledPIDController(Constants.Auto.TranslationPID.P, Constants.Auto.TranslationPID.I, Constants.Auto.TranslationPID.D,
+                                                                    new TrapezoidProfile.Constraints(Constants.Auto.maxVelocity, Constants.Auto.maxAcceleration));
+    private static final ProfiledPIDController thetaController = new ProfiledPIDController(Constants.Auto.RotationPID.P, Constants.Auto.RotationPID.I, Constants.Auto.RotationPID.D,
+                                                                    new TrapezoidProfile.Constraints(1.0, 1.0));
+    static {
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    }
+
+    public static Command driveToPointPIDCommand(SwerveSubsystem swerve, Pose2d point) {
+        return new InstantCommand(() -> {
+                        Pose2d curPose = swerve.getPose();
+                        ChassisSpeeds curSpeed = swerve.getChassisSpeeds();
+                        xController.reset(new TrapezoidProfile.State(curPose.getX(), curSpeed.vxMetersPerSecond));
+                        yController.reset(new TrapezoidProfile.State(curPose.getY(), curSpeed.vyMetersPerSecond));
+                        thetaController.reset(new TrapezoidProfile.State(curPose.getRotation().getRadians(), curSpeed.omegaRadiansPerSecond));
+                        xController.setGoal(point.getX());
+                        yController.setGoal(point.getY());
+                        thetaController.setGoal(point.getRotation().getRadians());
+                    })
+                .andThen(
+                    swerve.run(() -> 
+                        swerve.drive(
+                            xController.calculate(swerve.getPose().getX()),
+                            yController.calculate(swerve.getPose().getY()),
+                            thetaController.calculate(swerve.getPose().getRotation().getRadians()),
+                            true,
+                            false
+                        )
+                    )
+                );
     }
 }
