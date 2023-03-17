@@ -42,12 +42,12 @@ public class Autos {
         eventMap.put("armToLevel3Cone", arm.goToTargetCommand(Position.L3CONE));
         eventMap.put("armToLevel3Cube", arm.goToTargetCommand(Position.L3CUBE));
         eventMap.put("resetArm", arm.goToTargetCommand(Position.HOME));
-        eventMap.put("scoreLevel1Cone", arm.goToTargetCommand(Position.L1CONE).andThen(intake.openCommand()));
-        eventMap.put("scoreLevel1Cube", arm.goToTargetCommand(Position.L1CUBE).andThen(intake.openCommand()));
-        eventMap.put("scoreLevel2Cone", arm.goToTargetCommand(Position.L2CONE).andThen(intake.openCommand()));
-        eventMap.put("scoreLevel2Cube", arm.goToTargetCommand(Position.L2CUBE).andThen(intake.openCommand()));
-        eventMap.put("scoreLevel3Cone", arm.goToTargetCommand(Position.L3CONE).andThen(intake.openCommand()));
-        eventMap.put("scoreLevel3Cube", arm.goToTargetCommand(Position.L3CUBE).andThen(intake.openCommand()));
+        eventMap.put("scoreLevel1Cone", arm.goToTargetCommand(Position.L1CONE).andThen(intake.openCommand().withTimeout(2)));
+        eventMap.put("scoreLevel1Cube", arm.goToTargetCommand(Position.L1CUBE).andThen(intake.openCommand().withTimeout(2)));
+        eventMap.put("scoreLevel2Cone", arm.goToTargetCommand(Position.L2CONE).andThen(intake.openCommand().withTimeout(2)));
+        eventMap.put("scoreLevel2Cube", arm.goToTargetCommand(Position.L2CUBE).andThen(intake.openCommand().withTimeout(2)));
+        eventMap.put("scoreLevel3Cone", arm.goToTargetCommand(Position.L3CONE).andThen(intake.openCommand().withTimeout(2)));
+        eventMap.put("scoreLevel3Cube", arm.goToTargetCommand(Position.L3CUBE).andThen(intake.openCommand().withTimeout(2)));
         eventMap.put("intakeCone", intake.closeCommand());
         eventMap.put("intakeCube", intake.closeCommand());
         eventMap.put("autoBalance", DriveCommands.autoBalance(swerve));
@@ -101,8 +101,8 @@ public class Autos {
     public static Command centerNoBalance(SwerveSubsystem swerve, ElevatorArmSubsystem arm, IntakeSubsystem intake) {
         return sequence(
             swerve.runOnce(() -> swerve.resetOdometry(new Pose2d(1.81, 3.28, Rotation2d.fromDegrees(-180.0)))), 
-            arm.goToTargetCommand(Position.L3CONE),
-            intake.openCommand(),
+            arm.goToTargetCommand(Position.L3CONE).withTimeout(5),
+            intake.openCommand().withTimeout(3),
             parallel(
                 arm.goToTargetCommand(Position.HOME),
                 intake.closeCommand(),
@@ -116,7 +116,8 @@ public class Autos {
                     new InstantCommand(() -> SmartDashboard.putNumber("auto state", 4)),
                     swerve.run(() -> swerve.drive(0.6, 0, 0, true, false)).withTimeout(0.2),
                     new InstantCommand(() -> SmartDashboard.putNumber("auto state", 5)),
-                    swerve.run(swerve::stop)
+                    swerve.runOnce(swerve::stop),
+                    waitSeconds(0.5)
                 )
             ).withTimeout(10)
         );

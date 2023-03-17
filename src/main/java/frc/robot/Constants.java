@@ -24,8 +24,8 @@ public final class Constants {
     public static final double robotLengthWithBumpers = Units.inchesToMeters(32.5);
 
     public static final class Auto {
-        public static final double maxVelocity = 1.0; //meters per second
-        public static final double maxAcceleration = 0.5; //meters per second squared
+        public static final double maxVelocity = 2.0; //meters per second
+        public static final double maxAcceleration = 1.0; //meters per second squared
         public static final double velocityDeadband = 0.05; //meters per second
         public static final class TranslationPID {
             public static final double P = 2.0;
@@ -33,7 +33,7 @@ public final class Constants {
             public static final double D = 0.0;
         }
         public static final class RotationPID {
-            public static final double P = 0.5;
+            public static final double P = 1.5;
             public static final double I = 0.0;
             public static final double D = 0.0;
         }
@@ -204,7 +204,7 @@ public final class Constants {
 
                 config.forwardSoftLimitEnable = true; //TODO: set this to true once the threshold is filled in
                 //config.forwardSoftLimitThreshold = 870.0;
-                config.forwardSoftLimitThreshold = 928.0;
+                config.forwardSoftLimitThreshold = 912.0;
                 config.reverseSoftLimitEnable = true; //TODO: set this to true once the threshold is filled in
                 config.reverseSoftLimitThreshold = 77.0;
 
@@ -286,7 +286,7 @@ public final class Constants {
 
         public static enum Position {
             //HOME (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(75))),
-            HOME (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(81.5))),
+            HOME (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(80.5))),
 
             //L1CONE (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(5))),
             L1CONE (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(11))),
@@ -362,7 +362,8 @@ public final class Constants {
     public static final class Vision {
         public static final String cameraName = "OV9281_1";
         public static final Transform3d robotToCamera = new Transform3d(
-            new Translation3d(Units.inchesToMeters(4), Units.inchesToMeters(10), Units.inchesToMeters(6)),
+            //new Translation3d(Units.inchesToMeters(4), Units.inchesToMeters(10), Units.inchesToMeters(6)),
+            new Translation3d(Units.inchesToMeters(4), Units.inchesToMeters(-11.5), Units.inchesToMeters(15)),
             new Rotation3d(0, -Units.degreesToRadians(20), 0)
         );
     }

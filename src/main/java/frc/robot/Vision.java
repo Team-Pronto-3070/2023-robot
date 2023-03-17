@@ -11,6 +11,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision {
 
@@ -26,6 +27,9 @@ public class Vision {
             aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
             if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
                 aprilTagFieldLayout.setOrigin(OriginPosition.kRedAllianceWallRightSide);
+                SmartDashboard.putString("alliance", "red");
+            } else {
+                SmartDashboard.putString("alliance", "blue");
             }
         } catch (IOException e) {
             permenantlyDisable();

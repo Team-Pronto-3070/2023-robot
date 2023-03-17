@@ -41,9 +41,9 @@ public class RobotContainer {
   public RobotContainer() {
     ///*
     swerve.setDefaultCommand(swerve.run(() -> swerve.drive(
-            MathUtil.applyDeadband(oi.drive_x.getAsDouble(), Constants.OI.deadband) * Constants.Swerve.maxSpeed * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
-            MathUtil.applyDeadband(oi.drive_y.getAsDouble(), Constants.OI.deadband) * Constants.Swerve.maxSpeed * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
-            MathUtil.applyDeadband(oi.drive_rot.getAsDouble(), Constants.OI.deadband) * Constants.Swerve.maxAngularSpeed * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
+            Math.pow(MathUtil.applyDeadband(oi.drive_x.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxSpeed * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
+            Math.pow(MathUtil.applyDeadband(oi.drive_y.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxSpeed * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
+            Math.pow(MathUtil.applyDeadband(oi.drive_rot.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxAngularSpeed * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
             true,
             false
         )));
@@ -120,7 +120,8 @@ public class RobotContainer {
 
   public void initVision() {
     if (vision == null) {
-      if (DriverStation.isFMSAttached() || false) {
+      //if (DriverStation.isFMSAttached() || true) { //TODO
+      if (DriverStation.isDSAttached() && true) {
         vision = new Vision();
       }
     }

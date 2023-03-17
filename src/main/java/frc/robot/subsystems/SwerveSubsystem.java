@@ -28,7 +28,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final ProntoSwerveModule rearRight;
 
     private final ADIS16470_IMU gyro;
-    private double gryoOffset = 0.0;
+    private double gyroOffset = 0.0;
 
     public final SwerveDriveKinematics2 kinematics;
     private final SwerveDrivePoseEstimator poseEstimator;
@@ -84,7 +84,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public Rotation2d getYaw() {
-        return Rotation2d.fromDegrees(gyro.getAngle() - gryoOffset);
+        return Rotation2d.fromDegrees(gyro.getAngle() - gyroOffset);
     }
 
     public double getPitch() {
@@ -111,6 +111,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
+        gyro.setGyroAngle(gyro.getYawAxis(), pose.getRotation().getDegrees());
         poseEstimator.resetPosition(
             getYaw(),
             new SwerveModulePosition[] {
@@ -121,7 +122,7 @@ public class SwerveSubsystem extends SubsystemBase {
             },
             pose
         );
-        gryoOffset = gyro.getAngle() - pose.getRotation().getDegrees();
+        //gyroOffset = gyro.getAngle() - pose.getRotation().getDegrees();
     }
 
     public void stop() {

@@ -26,16 +26,41 @@
     },
     {
       "anchorPoint": {
+        "x": 4.187444020257812,
+        "y": 0.8041254704415447
+      },
+      "prevControl": {
+        "x": 2.7563672225801574,
+        "y": 0.8390599369694014
+      },
+      "nextControl": {
+        "x": 5.846073499984951,
+        "y": 0.7636361437082247
+      },
+      "holonomicAngle": 90.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
         "x": 6.35,
-        "y": 0.93
+        "y": 0.85
       },
       "prevControl": {
         "x": 4.853658867623079,
-        "y": 0.7751087257899708
+        "y": 0.6951087257899707
       },
       "nextControl": {
         "x": 4.853658867623079,
-        "y": 0.7751087257899708
+        "y": 0.6951087257899707
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -47,6 +72,31 @@
           "intakeCube"
         ],
         "executionBehavior": "sequential",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 4.174631451433613,
+        "y": 0.6007959903782168
+      },
+      "prevControl": {
+        "x": 5.86409285129677,
+        "y": 0.5822948584715592
+      },
+      "nextControl": {
+        "x": 2.8126062258087976,
+        "y": 0.615711399727919
+      },
+      "holonomicAngle": 90.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -85,19 +135,19 @@
       ]
     },
     {
-      "position": 0.5,
+      "position": 1.072048117897727,
       "names": [
         "armToGroundIntake"
       ]
     },
     {
-      "position": 1.05,
+      "position": 2.0877618963068194,
       "names": [
         "resetArm"
       ]
     },
     {
-      "position": 1.5,
+      "position": 3.4428932883522725,
       "names": [
         "armToLevel3Cube"
       ]
