@@ -40,6 +40,25 @@ public class Vision {
         poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
     }
 
+    public Vision(DriverStation.Alliance alliance) {
+        AprilTagFieldLayout aprilTagFieldLayout = null;
+        try {
+            aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
+            if (alliance == DriverStation.Alliance.Red) {
+                aprilTagFieldLayout.setOrigin(OriginPosition.kRedAllianceWallRightSide);
+                SmartDashboard.putString("alliance", "red");
+            } else {
+                SmartDashboard.putString("alliance", "blue");
+            }
+        } catch (IOException e) {
+            permenantlyDisable();
+        }
+
+        camera = new PhotonCamera(Constants.Vision.cameraName);
+        poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP, camera, Constants.Vision.robotToCamera);
+        poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+    }
+
      /**
      * @param estimatedRobotPose The current best guess at robot pose
      * @return A pair of the fused camera observations to a single Pose2d on the field, and the time
