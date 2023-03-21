@@ -95,8 +95,8 @@ public class OI {
         targetLvl2ArmPosition = operator.povLeft();
         targetLvl3ArmPosition = operator.povUp();
 
-        manualArmVerticalPower = () -> MathUtil.applyDeadband(-operator.getLeftY(), Constants.OI.deadband, Constants.OI.maxManualRotationSpeed);
-        manualArmElevatorPower = () -> MathUtil.applyDeadband(-operator.getRightY(), Constants.OI.deadband, Constants.OI.maxManualExtensionSpeed);
+        manualArmVerticalPower = () -> MathUtil.applyDeadband(-operator.getLeftY(), Constants.OI.deadband) * Constants.OI.maxManualRotationSpeed;
+        manualArmElevatorPower = () -> MathUtil.applyDeadband(-operator.getRightY(), Constants.OI.deadband) * Constants.OI.maxManualExtensionSpeed;
 
         manualArmButton = operator.rightTrigger(Constants.OI.triggerDeadband).and(() -> manualArmElevatorPower.getAsDouble() != 0 || manualArmVerticalPower.getAsDouble() != 0);
 
