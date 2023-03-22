@@ -104,14 +104,14 @@
     {
       "anchorPoint": {
         "x": 1.8,
-        "y": 4.5
+        "y": 4.65
       },
       "prevControl": {
         "x": 2.9178750433836753,
-        "y": 4.972266095709829
+        "y": 5.122266095709829
       },
       "nextControl": null,
-      "holonomicAngle": 180.0,
+      "holonomicAngle": 160.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -135,19 +135,19 @@
       ]
     },
     {
-      "position": 1.268017578125,
+      "position": 1.0564098011363636,
       "names": [
         "armToGroundIntake"
       ]
     },
     {
-      "position": 3.5612792968750018,
+      "position": 3.0,
       "names": [
         "armToLevel3Cube"
       ]
     },
     {
-      "position": 2.1046919389204546,
+      "position": 2.0206676136363635,
       "names": [
         "resetArm"
       ]

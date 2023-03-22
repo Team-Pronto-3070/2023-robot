@@ -24,8 +24,8 @@ public final class Constants {
     public static final double robotLengthWithBumpers = Units.inchesToMeters(32.5);
 
     public static final class Auto {
-        public static final double maxVelocity = 2.0; //meters per second
-        public static final double maxAcceleration = 1.0; //meters per second squared
+        public static final double maxVelocity = 2.5; //meters per second
+        public static final double maxAcceleration = 1.2; //meters per second squared
         public static final double velocityDeadband = 0.05; //meters per second
         public static final class TranslationPID {
             public static final double P = 2.0;
@@ -54,8 +54,8 @@ public final class Constants {
 
         public static final double slowSpeed = 0.5;
 
-        public static final double maxManualExtensionSpeed = .21;
-        public static final double maxManualRotationSpeed = .3;
+        public static final double maxManualExtensionSpeed = 0.8;
+        public static final double maxManualRotationSpeed = 1.0;
     }
 
     public static final class Intake {
@@ -298,7 +298,10 @@ public final class Constants {
             L2CUBE (new Translation2d(1.4, Rotation2d.fromDegrees(37))),
             L3CUBE (new Translation2d(1.9, Rotation2d.fromDegrees(38.5))),
 
-            SHELF (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(59.0)));
+            SHELF (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(59.0))),
+
+            AUTOL3CUBE (new Translation2d(1.9, Rotation2d.fromDegrees(45.0))),
+            AUTOL3CONE (new Translation2d(1.9, Rotation2d.fromDegrees(50.0)));
 
             public final Translation2d translation;
             private Position(Translation2d translation) {
@@ -363,7 +366,8 @@ public final class Constants {
         public static final String cameraName = "OV9281_1";
         public static final Transform3d robotToCamera = new Transform3d(
             //new Translation3d(Units.inchesToMeters(4), Units.inchesToMeters(10), Units.inchesToMeters(6)),
-            new Translation3d(Units.inchesToMeters(4), Units.inchesToMeters(-11.5), Units.inchesToMeters(15)),
+            //new Translation3d(Units.inchesToMeters(4), Units.inchesToMeters(-11.5), Units.inchesToMeters(15)),
+            new Translation3d(Units.inchesToMeters(13.0 - 8.5), Units.inchesToMeters(1.875 - 12.0), Units.inchesToMeters(9.75)),
             new Rotation3d(0, -Units.degreesToRadians(20), 0)
         );
     }

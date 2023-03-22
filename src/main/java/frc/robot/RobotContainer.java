@@ -131,7 +131,7 @@ public class RobotContainer {
   }
 
   public void initVision() {
-    SmartDashboard.putBoolean("vision on", vision == null);
+    SmartDashboard.putBoolean("vision on", vision != null);
     if (!triedVision) {
       if (vision == null) {
         //if (DriverStation.isFMSAttached() || true) { //TODO

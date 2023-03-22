@@ -42,12 +42,12 @@ public class Autos {
         eventMap.put("armToLevel3Cone", arm.goToTargetCommand(Position.L3CONE));
         eventMap.put("armToLevel3Cube", arm.goToTargetCommand(Position.L3CUBE));
         eventMap.put("resetArm", arm.goToTargetCommand(Position.HOME));
-        eventMap.put("scoreLevel1Cone", arm.goToTargetCommand(Position.L1CONE).andThen(intake.openCommand().withTimeout(2)));
-        eventMap.put("scoreLevel1Cube", arm.goToTargetCommand(Position.L1CUBE).andThen(intake.openCommand().withTimeout(2)));
-        eventMap.put("scoreLevel2Cone", arm.goToTargetCommand(Position.L2CONE).andThen(intake.openCommand().withTimeout(2)));
-        eventMap.put("scoreLevel2Cube", arm.goToTargetCommand(Position.L2CUBE).andThen(intake.openCommand().withTimeout(2)));
-        eventMap.put("scoreLevel3Cone", arm.goToTargetCommand(Position.L3CONE).andThen(intake.openCommand().withTimeout(2)));
-        eventMap.put("scoreLevel3Cube", arm.goToTargetCommand(Position.L3CUBE).andThen(intake.openCommand().withTimeout(2)));
+        eventMap.put("scoreLevel1Cone", arm.goToTargetCommand(Position.L1CONE).andThen(intake.openCommand().withTimeout(1.0)));
+        eventMap.put("scoreLevel1Cube", arm.goToTargetCommand(Position.L1CUBE).andThen(intake.openCommand().withTimeout(1.0)));
+        eventMap.put("scoreLevel2Cone", arm.goToTargetCommand(Position.L2CONE).andThen(intake.openCommand().withTimeout(1.0)));
+        eventMap.put("scoreLevel2Cube", arm.goToTargetCommand(Position.L2CUBE).andThen(intake.openCommand().withTimeout(1.0)));
+        eventMap.put("scoreLevel3Cone", arm.goToTargetCommand(Position.AUTOL3CONE).andThen(arm.goToTargetCommand(Position.L3CONE)).andThen(intake.openCommand().withTimeout(1.0)));
+        eventMap.put("scoreLevel3Cube", arm.goToTargetCommand(Position.AUTOL3CUBE).andThen(arm.goToTargetCommand(Position.L3CUBE)).andThen(intake.openCommand().withTimeout(1.0)));
         eventMap.put("intakeCone", intake.closeCommand());
         eventMap.put("intakeCube", intake.closeCommand());
         eventMap.put("autoBalance", DriveCommands.autoBalance(swerve));
