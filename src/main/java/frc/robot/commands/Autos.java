@@ -39,8 +39,10 @@ public class Autos {
         eventMap.put("armToLevel1Cube", arm.goToTargetCommand(Position.L1CUBE));
         eventMap.put("armToLevel2Cone", arm.goToTargetCommand(Position.L2CONE));
         eventMap.put("armToLevel2Cube", arm.goToTargetCommand(Position.L2CUBE));
-        eventMap.put("armToLevel3Cone", arm.goToTargetCommand(Position.L3CONE));
-        eventMap.put("armToLevel3Cube", arm.goToTargetCommand(Position.L3CUBE));
+        //eventMap.put("armToLevel3Cone", arm.goToTargetCommand(Position.L3CONE));
+        eventMap.put("armToLevel3Cone", arm.goToTargetCommand(Position.AUTOL3CONE));
+        //eventMap.put("armToLevel3Cube", arm.goToTargetCommand(Position.L3CUBE));
+        eventMap.put("armToLevel3Cube", arm.goToTargetCommand(Position.AUTOL3CUBE));
         eventMap.put("resetArm", arm.goToTargetCommand(Position.HOME));
         eventMap.put("scoreLevel1Cone", arm.goToTargetCommand(Position.L1CONE).andThen(intake.openCommand().withTimeout(1.0)));
         eventMap.put("scoreLevel1Cube", arm.goToTargetCommand(Position.L1CUBE).andThen(intake.openCommand().withTimeout(1.0)));
