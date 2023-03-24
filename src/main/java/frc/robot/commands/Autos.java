@@ -103,6 +103,7 @@ public class Autos {
     public static Command centerNoBalance(SwerveSubsystem swerve, ElevatorArmSubsystem arm, IntakeSubsystem intake) {
         return sequence(
             swerve.runOnce(() -> swerve.resetOdometry(new Pose2d(1.81, 3.28, Rotation2d.fromDegrees(-180.0)))), 
+            arm.goToTargetCommand(Position.AUTOL3CONE).withTimeout(5),
             arm.goToTargetCommand(Position.L3CONE).withTimeout(5),
             intake.openCommand().withTimeout(3),
             parallel(
