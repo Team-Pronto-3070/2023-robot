@@ -214,7 +214,7 @@ public final class Constants {
                                               * 4096.0               // * sensor units / rot -> units/s   sensor units per second
                                               * 10.0;                // * s/(100ms) -> units/100ms        sensor units per 100 miliseconds
 
-                config.motionAcceleration =   3.0                    // rad/s^2                           max acceleration in radians per s^2
+                config.motionAcceleration =   1.5                    // rad/s^2                           max acceleration in radians per s^2
                                               * (1 / (2 * Math.PI))  // * rot/rad -> rot/s^2              rotations per second^2
                                               * 4096.0               // * sensor units / rot -> units/s^2 sensor units per second^2
                                               / 10.0;                // * s/(100ms) -> (units/100ms)/s    (sensor units / 100 miliseconds) / second
@@ -298,7 +298,8 @@ public final class Constants {
             L2CUBE (new Translation2d(1.4, Rotation2d.fromDegrees(37))),
             L3CUBE (new Translation2d(1.9, Rotation2d.fromDegrees(38.5))),
 
-            SHELF (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(59.0))),
+            //SHELF (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(59.0))),
+            SHELF (new Translation2d(1.165, Rotation2d.fromDegrees(59.0))),
 
             AUTOL3CUBE (new Translation2d(1.9, Rotation2d.fromDegrees(45.0))),
             AUTOL3CONE (new Translation2d(1.9, Rotation2d.fromDegrees(50.0)));

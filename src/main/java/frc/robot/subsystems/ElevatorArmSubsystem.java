@@ -92,7 +92,7 @@ public class ElevatorArmSubsystem extends SubsystemBase {
 
         SmartDashboard.putNumber("motion magic extention setpoint", raw_extension_setpoint);
         if (raw_extension_setpoint > 0 && elevatorTalon.isRevLimitSwitchClosed() == 1) {
-            elevatorTalon.set(ControlMode.PercentOutput, 0.1);
+            elevatorTalon.set(ControlMode.PercentOutput, 0.2);
             SmartDashboard.putBoolean("extension workaround", true);
         } else {
             elevatorTalon.set(

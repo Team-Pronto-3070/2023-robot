@@ -8,6 +8,7 @@ import com.pathplanner.lib.PathConstraints;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,6 +28,7 @@ import frc.robot.Constants.ElevatorArm.Position;
 import frc.robot.commands.AutoScoringTrajectoryCommand;
 import frc.robot.commands.Autos;
 import frc.robot.commands.TeleopDriveCommand;
+import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.ElevatorArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -47,11 +49,13 @@ public class RobotContainer {
   private int nextScoringSlot;
 
   public RobotContainer() {
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());
     ///*
     swerve.setDefaultCommand(swerve.run(() -> swerve.drive(
             Math.pow(MathUtil.applyDeadband(oi.drive_x.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxSpeed * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
             Math.pow(MathUtil.applyDeadband(oi.drive_y.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxSpeed * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
-            Math.pow(MathUtil.applyDeadband(oi.drive_rot.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxAngularSpeed * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
+            Math.pow(MathUtil.applyDeadband(oi.drive_rot.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxAngularSpeed * (oi.driveSlow.getAsBoolean() ? 0.25 : 1),
             true,
             false
         )));
@@ -64,9 +68,11 @@ public class RobotContainer {
     nextArmPosition = Position.L3CONE;
     nextScoringSlot = 0;
 
-    SmartDashboard.putData("vision off", new InstantCommand(() -> {vision = null; triedVision = true;}));
-    SmartDashboard.putData("vision blue", new InstantCommand(() -> {vision = new Vision(DriverStation.Alliance.Blue); triedVision = true;}));
-    SmartDashboard.putData("vision red", new InstantCommand(() -> {vision = new Vision(DriverStation.Alliance.Red); triedVision = true;}));
+    SmartDashboard.putData("vision off", new InstantCommand(() -> {vision = null; triedVision = true;}).ignoringDisable(true));
+    SmartDashboard.putData("vision blue", new InstantCommand(() -> {vision = new Vision(DriverStation.Alliance.Blue); triedVision = true;}).ignoringDisable(true));
+    SmartDashboard.putData("vision red", new InstantCommand(() -> {vision = new Vision(DriverStation.Alliance.Red); triedVision = true;}).ignoringDisable(true));
+
+    SmartDashboard.putData("auto balance", DriveCommands.autoBalance(swerve));
 
     configureBindings();
   }
@@ -83,15 +89,15 @@ public class RobotContainer {
     oi.armToGroundIntakePositionButton.onTrue(elevatorArm.goToTargetCommand(Position.L1CONE)); 
     oi.armToHomePositionButton.onTrue(elevatorArm.goToTargetCommand(Position.HOME));
 
-    oi.fullAutoScore.onTrue(
-      new ProxyCommand(
-        () -> sequence(
-          new AutoScoringTrajectoryCommand(nextScoringSlot, new PathConstraints(4, 3), autos.autoBuilder, swerve)
-          .alongWith(elevatorArm.goToTargetCommand(nextArmPosition))
-        )
-      )
-    );
-    oi.driveToScoringNodeButton.onTrue(new ProxyCommand(() -> new AutoScoringTrajectoryCommand(nextScoringSlot, new PathConstraints(4, 3), autos.autoBuilder, swerve))); //TODO determine path constraints
+    //oi.fullAutoScore.onTrue(
+    //  new ProxyCommand(
+    //    () -> sequence(
+    //      new AutoScoringTrajectoryCommand(nextScoringSlot, new PathConstraints(4, 3), autos.autoBuilder, swerve)
+    //      .alongWith(elevatorArm.goToTargetCommand(nextArmPosition))
+    //    )
+    //  )
+    //);
+    //oi.driveToScoringNodeButton.onTrue(new ProxyCommand(() -> new AutoScoringTrajectoryCommand(nextScoringSlot, new PathConstraints(4, 3), autos.autoBuilder, swerve))); //TODO determine path constraints
     oi.gyroResetButton.onTrue(swerve.runOnce(swerve::resetGyro));
     oi.interruptButton.onTrue(new InstantCommand(elevatorArm::stop, elevatorArm))
                       .onTrue(new InstantCommand(swerve::stop, swerve))

@@ -107,7 +107,7 @@ public class Autos {
             arm.goToTargetCommand(Position.L3CONE).withTimeout(5),
             intake.openCommand().withTimeout(3),
             parallel(
-                arm.goToTargetCommand(Position.HOME),
+                arm.goToTargetCommand(Position.HOME).withTimeout(4),
                 intake.closeCommand(),
                 sequence(
                     new InstantCommand(() -> SmartDashboard.putNumber("auto state", 1)),

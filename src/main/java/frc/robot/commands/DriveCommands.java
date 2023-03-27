@@ -86,12 +86,12 @@ public class DriveCommands extends CommandBase{
         );
     }
 
-    private static Command autoBalance2(SwerveSubsystem swerve) {
+    private static CommandBase autoBalance2(SwerveSubsystem swerve) {
         return sequence(
             new InstantCommand(() -> SmartDashboard.putNumber("auto state", 6)),
-            driveToAngleCommand(swerve, -1.5, 15, true),
+            driveToAngleCommand(swerve, -2.0, 21, true),
             new InstantCommand(() -> SmartDashboard.putNumber("auto state", 7)),
-            driveToAngleCommand(swerve, -0.6, 12, false),
+            driveToAngleCommand(swerve, -0.6, 13.5, false),
             new InstantCommand(() -> SmartDashboard.putNumber("auto state", 8)),
             //waitSeconds(1),
             //driveToAngleCommand(swerve, 0.6, -2, true),
@@ -105,7 +105,7 @@ public class DriveCommands extends CommandBase{
         ).withTimeout(10);
     }
 
-    public static Command autoBalance(SwerveSubsystem swerve) {
+    public static CommandBase autoBalance(SwerveSubsystem swerve) {
         //return autoBalanceBangBang(swerve);
         //return autoBalancePID(swerve);
         return autoBalance2(swerve);
