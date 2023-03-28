@@ -67,8 +67,15 @@ public class Autos {
 
         autoChooser = new SendableChooser<Command>();
         autoChooser.setDefaultOption("none", new PrintCommand("no auto option selected"));
-        autoChooser.addOption("test1", buildAuto("test1"));
-        autoChooser.addOption("0 Piece Taxi Balance", buildAuto("0 Piece Taxi Balance"));
+        autoChooser.addOption(
+            "1 Piece No Move", 
+            sequence(
+                arm.goToTargetCommand(Position.AUTOL3CONE).withTimeout(5),
+                arm.goToTargetCommand(Position.L3CONE).withTimeout(5),
+                intake.openCommand().withTimeout(3), 
+                arm.goToTargetCommand(Position.HOME).withTimeout(5)
+            ));
+        //autoChooser.addOption("0 Piece Taxi Balance", buildAuto("0 Piece Taxi Balance"));
         autoChooser.addOption("1 Piece Taxi LZ", buildAuto("1 Piece Taxi LZ"));
         autoChooser.addOption("2 Piece Balance LZ", buildAuto("2 Piece Balance LZ"));
         autoChooser.addOption("2 Piece No Balance LZ", buildAuto("2 Piece No Balance LZ"));
