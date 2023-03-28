@@ -4,15 +4,11 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.PathConstraints;
-
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 
 import static edu.wpi.first.wpilibj2.command.Commands.*;
@@ -25,9 +21,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import frc.robot.Constants.GameObject;
 import frc.robot.Constants.ElevatorArm.Position;
-import frc.robot.commands.AutoScoringTrajectoryCommand;
 import frc.robot.commands.Autos;
-import frc.robot.commands.TeleopDriveCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.ElevatorArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -97,7 +91,6 @@ public class RobotContainer {
     oi.armToGroundIntakePositionButton.onTrue(elevatorArm.goToTargetCommand(Position.L1CONE)); 
     oi.armToHomePosition.onTrue(elevatorArm.goToTargetCommand(Position.HOME));
 
-    //oi.driveToScoringNodeButton.onTrue(new ProxyCommand(() -> new AutoScoringTrajectoryCommand(nextScoringSlot, new PathConstraints(4, 3), autos.autoBuilder, swerve))); //TODO determine path constraints
     oi.gyroResetButton.onTrue(swerve.runOnce(swerve::resetGyro));
     oi.interruptButton.onTrue(new InstantCommand(elevatorArm::stop, elevatorArm))
                       .onTrue(new InstantCommand(swerve::stop, swerve))

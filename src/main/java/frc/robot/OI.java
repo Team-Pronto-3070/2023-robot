@@ -1,6 +1,5 @@
 package frc.robot;
 
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
@@ -33,6 +32,9 @@ public class OI {
 
     public final Trigger gyroResetButton;
     public final Trigger interruptButton;
+    
+    public final Trigger closeIntakeButton;
+    public final Trigger openIntakeButton;
 
     public final Trigger targetLvl1ArmPosition;
     public final Trigger targetLvl2ArmPosition;
@@ -40,16 +42,13 @@ public class OI {
 
     public final Trigger targetShelfIntake;
     public final Trigger targetFloorIntake;
+    
+    public final Trigger setGameObjectCone;
+    public final Trigger setGameObjectCube;
 
     public final Trigger manualArmButton;
     public final DoubleSupplier manualArmVerticalPower;
     public final DoubleSupplier manualArmElevatorPower;
-
-    public final Trigger setGameObjectCone;
-    public final Trigger setGameObjectCube;
-    
-    public final Trigger closeIntakeButton;
-    public final Trigger openIntakeButton;
 
     public OI(int driverPort, int operatorPort) {
         driver = new CommandXboxController(driverPort);
