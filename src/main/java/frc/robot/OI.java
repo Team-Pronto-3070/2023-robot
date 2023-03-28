@@ -22,18 +22,15 @@ public class OI {
     public final DoubleSupplier absoluteHeadingHorizontal;
     public final DoubleSupplier absoluteHeadingVertical;
 
-    public final Trigger driveSlow;
-
-    public final Trigger armToNextTargetPositionButton;
     public final Trigger armToShelfIntakePositionButton;
     public final Trigger armToGroundIntakePositionButton;
-    public final Trigger armToHomePositionButton;
+    public final Trigger armToHomePosition;
 
-    public final Trigger closeIntakeButton;
-    public final Trigger openIntakeButton;
+    public final Trigger scoreGamePiece;
+    public final Trigger fullIntake;
+    public final Trigger armToNextTargetPosition;
+    public final Trigger driveSlow;
 
-    public final Trigger fullAutoScore;
-    public final Trigger driveToScoringNodeButton;
     public final Trigger gyroResetButton;
     public final Trigger interruptButton;
 
@@ -41,27 +38,22 @@ public class OI {
     public final Trigger targetLvl2ArmPosition;
     public final Trigger targetLvl3ArmPosition;
 
+    public final Trigger targetShelfIntake;
+    public final Trigger targetFloorIntake;
+
     public final Trigger manualArmButton;
     public final DoubleSupplier manualArmVerticalPower;
     public final DoubleSupplier manualArmElevatorPower;
 
     public final Trigger setGameObjectCone;
     public final Trigger setGameObjectCube;
-    public final Trigger setGameObjectNone;
-
-    public final Trigger targetSlot1;
-    public final Trigger targetSlot2;
-    public final Trigger targetSlot3;
-    public final Trigger targetSlot4;
-    public final Trigger targetSlot5;
-    public final Trigger targetSlot6;
-    public final Trigger targetSlot7;
-    public final Trigger targetSlot8;
-    public final Trigger targetSlot9;
-
+    
+    public final Trigger closeIntakeButton;
+    public final Trigger openIntakeButton;
 
     public OI(int driverPort, int operatorPort) {
         driver = new CommandXboxController(driverPort);
+        operator = new CommandXboxController(operatorPort);
 
         drive_x = () -> -driver.getLeftY();
         drive_y = () -> -driver.getLeftX();
@@ -74,49 +66,34 @@ public class OI {
         absoluteHeadingHorizontal = () -> -driver.getRightX();
         absoluteHeadingVertical = () -> -driver.getRightY();
 
-        openIntakeButton = driver.leftTrigger(Constants.OI.triggerDeadband);
-        closeIntakeButton = driver.rightTrigger(Constants.OI.triggerDeadband);
+        fullIntake = driver.rightBumper();
+        armToNextTargetPosition = driver.leftBumper();
+        scoreGamePiece = driver.leftTrigger(Constants.OI.triggerDeadband);
+        driveSlow = driver.rightTrigger();
 
-        armToNextTargetPositionButton = driver.y();
+        gyroResetButton = driver.povRight();
+        interruptButton = driver.start().or(operator.start());
+
         armToShelfIntakePositionButton = driver.b();
         armToGroundIntakePositionButton = driver.a();
-        armToHomePositionButton = driver.x();
-
-        driveSlow = driver.rightBumper();
-        
-        fullAutoScore = driver.povLeft();
-        driveToScoringNodeButton = driver.leftBumper();
-        gyroResetButton = driver.povRight();
-        interruptButton = driver.start();
-
-        operator = new CommandXboxController(operatorPort);
+        armToHomePosition = driver.x().or(operator.leftTrigger());
 
         targetLvl1ArmPosition = operator.povDown();
         targetLvl2ArmPosition = operator.povLeft();
         targetLvl3ArmPosition = operator.povUp();
+
+        targetShelfIntake = operator.b();
+        targetFloorIntake = operator.a();
+
+        openIntakeButton = operator.leftBumper();
+        closeIntakeButton = operator.rightBumper();
 
         manualArmVerticalPower = () -> MathUtil.applyDeadband(-operator.getLeftY(), Constants.OI.deadband) * Constants.OI.maxManualRotationSpeed;
         manualArmElevatorPower = () -> MathUtil.applyDeadband(-operator.getRightY(), Constants.OI.deadband) * Constants.OI.maxManualExtensionSpeed;
 
         manualArmButton = operator.rightTrigger(Constants.OI.triggerDeadband).and(() -> manualArmElevatorPower.getAsDouble() != 0 || manualArmVerticalPower.getAsDouble() != 0);
 
-        BooleanSupplier noBumperPressed = () -> !operator.rightBumper().getAsBoolean() && !operator.leftBumper().getAsBoolean();
-        setGameObjectCone = operator.y().and(noBumperPressed);
-        setGameObjectCube = operator.x().and(noBumperPressed);
-        setGameObjectNone = operator.a().and(noBumperPressed);
-
-        BooleanSupplier leftGrid = () -> operator.leftBumper().getAsBoolean() && !operator.rightBumper().getAsBoolean();
-        BooleanSupplier centerGrid = () -> operator.rightBumper().getAsBoolean() && operator.leftBumper().getAsBoolean();
-        BooleanSupplier rightGrid = () -> operator.rightBumper().getAsBoolean() && !operator.leftBumper().getAsBoolean();
-
-        targetSlot1 = operator.x().and(leftGrid);
-        targetSlot2 = operator.a().and(leftGrid);
-        targetSlot3 = operator.b().and(leftGrid);
-        targetSlot4 = operator.x().and(centerGrid);
-        targetSlot5 = operator.a().and(centerGrid);
-        targetSlot6 = operator.b().and(centerGrid);
-        targetSlot7 = operator.x().and(rightGrid);
-        targetSlot8 = operator.a().and(rightGrid);
-        targetSlot9 = operator.b().and(rightGrid);
+        setGameObjectCone = operator.y();
+        setGameObjectCube = operator.x();
     }
 }

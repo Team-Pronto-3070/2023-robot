@@ -46,7 +46,7 @@ public class RobotContainer {
   private final Autos autos = new Autos(swerve, elevatorArm, intake);
 
   private Position nextArmPosition;
-  private int nextScoringSlot;
+  private Position nextIntakePosition;
 
   public RobotContainer() {
     DataLogManager.start();
@@ -66,7 +66,7 @@ public class RobotContainer {
     intake.setDefaultCommand(intake.run(intake::stop));
 
     nextArmPosition = Position.L3CONE;
-    nextScoringSlot = 0;
+    nextIntakePosition = Position.SHELF;
 
     SmartDashboard.putData("vision off", new InstantCommand(() -> {vision = null; triedVision = true;}).ignoringDisable(true));
     SmartDashboard.putData("vision blue", new InstantCommand(() -> {vision = new Vision(DriverStation.Alliance.Blue); triedVision = true;}).ignoringDisable(true));
@@ -78,25 +78,25 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+
+    oi.fullIntake.whileTrue(
+      parallel(
+        intake.openCommand().andThen(intake.autoCloseCommand()),
+        elevatorArm.goToTargetCommand(nextIntakePosition).repeatedly()
+      )
+    ).onFalse(elevatorArm.goToTargetCommand(Position.HOME));
+
+    oi.scoreGamePiece.onTrue(intake.openCommand().andThen(elevatorArm.goToTargetCommand(Position.HOME)));
+
     oi.closeIntakeButton.onTrue(intake.closeCommand());
     //oi.openIntakeButton.onTrue(intake.openCommand());
     oi.openIntakeButton.whileTrue(intake.openCommand().andThen(intake.autoCloseCommand()));
 
-    //TODO - check for cones vs cubes for arm positions
-
-    oi.armToNextTargetPositionButton.onTrue(new ProxyCommand(() -> elevatorArm.goToTargetCommand(nextArmPosition)));
+    oi.armToNextTargetPosition.onTrue(new ProxyCommand(() -> elevatorArm.goToTargetCommand(nextArmPosition)));
     oi.armToShelfIntakePositionButton.onTrue(elevatorArm.goToTargetCommand(Position.SHELF));
     oi.armToGroundIntakePositionButton.onTrue(elevatorArm.goToTargetCommand(Position.L1CONE)); 
-    oi.armToHomePositionButton.onTrue(elevatorArm.goToTargetCommand(Position.HOME));
+    oi.armToHomePosition.onTrue(elevatorArm.goToTargetCommand(Position.HOME));
 
-    //oi.fullAutoScore.onTrue(
-    //  new ProxyCommand(
-    //    () -> sequence(
-    //      new AutoScoringTrajectoryCommand(nextScoringSlot, new PathConstraints(4, 3), autos.autoBuilder, swerve)
-    //      .alongWith(elevatorArm.goToTargetCommand(nextArmPosition))
-    //    )
-    //  )
-    //);
     //oi.driveToScoringNodeButton.onTrue(new ProxyCommand(() -> new AutoScoringTrajectoryCommand(nextScoringSlot, new PathConstraints(4, 3), autos.autoBuilder, swerve))); //TODO determine path constraints
     oi.gyroResetButton.onTrue(swerve.runOnce(swerve::resetGyro));
     oi.interruptButton.onTrue(new InstantCommand(elevatorArm::stop, elevatorArm))
@@ -118,22 +118,14 @@ public class RobotContainer {
           new InstantCommand(() -> nextArmPosition = Position.L3CONE),
           new InstantCommand(() -> nextArmPosition = Position.L3CUBE),
           () -> intake.getGameObject() == GameObject.CONE));
+
+    oi.targetShelfIntake.onTrue(new InstantCommand(() -> nextIntakePosition = Position.SHELF));
+    oi.targetFloorIntake.onTrue(new InstantCommand(() -> nextIntakePosition = Position.L1CUBE));
     
     oi.manualArmButton.whileTrue(elevatorArm.manualMoveCommand(oi.manualArmVerticalPower, oi.manualArmElevatorPower));
 
     oi.setGameObjectCone.onTrue(intake.runOnce(() -> intake.setGameObject(GameObject.CONE)));
     oi.setGameObjectCube.onTrue(intake.runOnce(() -> intake.setGameObject(GameObject.CUBE)));
-    oi.setGameObjectNone.onTrue(intake.runOnce(() -> intake.setGameObject(GameObject.NONE)));
-
-    oi.targetSlot1.onTrue(new InstantCommand(() -> nextScoringSlot = 0));
-    oi.targetSlot2.onTrue(new InstantCommand(() -> nextScoringSlot = 1));
-    oi.targetSlot3.onTrue(new InstantCommand(() -> nextScoringSlot = 2));
-    oi.targetSlot4.onTrue(new InstantCommand(() -> nextScoringSlot = 3));
-    oi.targetSlot5.onTrue(new InstantCommand(() -> nextScoringSlot = 4));
-    oi.targetSlot6.onTrue(new InstantCommand(() -> nextScoringSlot = 5));
-    oi.targetSlot7.onTrue(new InstantCommand(() -> nextScoringSlot = 6));
-    oi.targetSlot8.onTrue(new InstantCommand(() -> nextScoringSlot = 7));
-    oi.targetSlot9.onTrue(new InstantCommand(() -> nextScoringSlot = 8));
   }
 
   public void initVision() {
