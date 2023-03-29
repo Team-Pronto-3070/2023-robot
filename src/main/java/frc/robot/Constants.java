@@ -64,10 +64,12 @@ public final class Constants {
         public static final int rightSwitchPort = 3;
         public static final double closeVelocity = 1.0;
         public static final double openVelocity = -1.0;
-        public static final boolean inverted = true;
-        public static final double closeDuration = 1.0;
+        public static final boolean inverted = false;
+        public static final double closeDuration = 2.0;
         public static final double openTimeout = 3.0;
         public static final TalonSRXConfiguration config = new TalonSRXConfiguration();
+        public static final double currentDebounceTime = .2;
+        public static final double closedCurrent = 14.5; // amps
         static {
             config.continuousCurrentLimit = 20; //amps
             config.peakCurrentDuration = 100; //miliseconds
