@@ -75,7 +75,7 @@ public class OI {
 
         armToShelfIntakePositionButton = driver.b();
         armToGroundIntakePositionButton = driver.a();
-        armToHomePosition = driver.x().or(operator.leftTrigger());
+        armToHomePosition = driver.x().or(operator.povRight());
 
         targetLvl1ArmPosition = operator.povDown();
         targetLvl2ArmPosition = operator.povLeft();

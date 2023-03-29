@@ -51,7 +51,7 @@ public class RobotContainer {
             Math.pow(MathUtil.applyDeadband(oi.drive_y.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxSpeed * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
             Math.pow(MathUtil.applyDeadband(oi.drive_rot.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxAngularSpeed * (oi.driveSlow.getAsBoolean() ? 0.25 : 1),
             true,
-            false
+            true
         )));
     //*/
     //swerve.setDefaultCommand(new TeleopDriveCommand(swerve, oi, false, true, false, true,
@@ -76,7 +76,7 @@ public class RobotContainer {
     oi.fullIntake.whileTrue(
       parallel(
         intake.openCommand().andThen(intake.autoCloseCommand()),
-        elevatorArm.goToTargetCommand(nextIntakePosition).repeatedly()
+        new ProxyCommand(() -> elevatorArm.goToTargetCommand(nextIntakePosition).repeatedly())
       )
     ).onFalse(elevatorArm.goToTargetCommand(Position.HOME));
 
