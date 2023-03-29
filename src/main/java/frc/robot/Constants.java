@@ -66,7 +66,7 @@ public final class Constants {
         public static final double openVelocity = -1.0;
         public static final boolean inverted = false;
         public static final double closeDuration = 2.0;
-        public static final double openTimeout = 3.0;
+        public static final double openTimeout = 1.0;
         public static final TalonSRXConfiguration config = new TalonSRXConfiguration();
         public static final double currentDebounceTime = .2;
         public static final double closedCurrent = 14.5; // amps
