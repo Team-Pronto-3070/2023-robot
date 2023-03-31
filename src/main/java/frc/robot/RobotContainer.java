@@ -13,16 +13,19 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 
 import static edu.wpi.first.wpilibj2.command.Commands.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import frc.robot.Constants.GameObject;
 import frc.robot.Constants.ElevatorArm.Position;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.TeleopDriveCommand;
 import frc.robot.subsystems.ElevatorArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -45,16 +48,14 @@ public class RobotContainer {
   public RobotContainer() {
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
-    ///*
     swerve.setDefaultCommand(swerve.run(() -> swerve.drive(
             Math.pow(MathUtil.applyDeadband(oi.drive_x.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxSpeed * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
             Math.pow(MathUtil.applyDeadband(oi.drive_y.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxSpeed * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
-            Math.pow(MathUtil.applyDeadband(oi.drive_rot.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxAngularSpeed * (oi.driveSlow.getAsBoolean() ? 0.25 : 1),
+            Math.pow(MathUtil.applyDeadband(oi.drive_rot.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxAngularSpeed * (oi.driveSlow.getAsBoolean() ? 0.15 : 1),
             true,
             true
         )));
-    //*/
-    //swerve.setDefaultCommand(new TeleopDriveCommand(swerve, oi, false, true, false, true,
+    //swerve.setDefaultCommand(new TeleopDriveCommand(swerve, oi, true, true, true, false,
     //                        elevatorArm::getAngle, elevatorArm::getExtention, intake::getGameObject));
     elevatorArm.setDefaultCommand(elevatorArm.run(elevatorArm::stop));
     intake.setDefaultCommand(intake.run(intake::stop));
@@ -72,21 +73,46 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+    oi.goToCardinal.onTrue(swerve.turnToNearestCardinalDirection(oi.processed_drive_x, oi.processed_drive_y));
 
     oi.fullIntake.whileTrue(
       parallel(
-        intake.openCommand().andThen(intake.autoCloseCommand()),
+        //intake.openCommand().andThen(intake.autoCloseCommand()),
+        //intake.openCommand().asProxy().andThen(intake.uninteruptableAutoCloseCommand()),
+        intake.uninteruptableAutoCloseCommand(),
         new ProxyCommand(() -> elevatorArm.goToTargetCommand(nextIntakePosition).repeatedly())
       )
     ).onFalse(elevatorArm.goToTargetCommand(Position.HOME));
 
-    oi.scoreGamePiece.onTrue(intake.openCommand().andThen(elevatorArm.goToTargetCommand(Position.HOME)));
+    oi.scoreGamePiece.and(() -> elevatorArm.getAngle().getDegrees() < 75.0).onTrue(intake.openCommand().andThen(elevatorArm.goToTargetCommand(Position.HOME)));
 
     oi.closeIntakeButton.onTrue(intake.closeCommand());
-    //oi.openIntakeButton.onTrue(intake.openCommand());
-    oi.openIntakeButton.whileTrue(intake.openCommand().andThen(intake.autoCloseCommand()));
+    oi.openIntakeButton.onTrue(intake.openCommand());
+    //oi.openIntakeButton.whileTrue(intake.openCommand().andThen(intake.autoCloseCommand()));
 
-    oi.armToNextTargetPosition.onTrue(new ProxyCommand(() -> elevatorArm.goToTargetCommand(nextArmPosition)));
+    //oi.armToNextTargetPosition.onTrue(new ProxyCommand(() -> elevatorArm.goToTargetCommand(nextArmPosition)));
+    oi.armToNextTargetPosition.onTrue(
+      new ConditionalCommand(
+        new SelectCommand(
+          Map.ofEntries(
+            Map.entry(Position.L1CONE, elevatorArm.goToTargetCommand(Position.L1CONE)),
+            Map.entry(Position.L1CUBE, elevatorArm.goToTargetCommand(Position.L1CONE)),
+            Map.entry(Position.L2CONE, elevatorArm.goToTargetCommand(Position.L2CONE)),
+            Map.entry(Position.L2CUBE, elevatorArm.goToTargetCommand(Position.L2CONE)),
+            Map.entry(Position.L3CONE, elevatorArm.goToTargetCommand(Position.L3CONE)),
+            Map.entry(Position.L3CUBE, elevatorArm.goToTargetCommand(Position.L3CONE))
+          ), () -> nextArmPosition),
+        new SelectCommand(
+          Map.ofEntries(
+            Map.entry(Position.L1CONE, elevatorArm.goToTargetCommand(Position.L1CUBE)),
+            Map.entry(Position.L1CUBE, elevatorArm.goToTargetCommand(Position.L1CUBE)),
+            Map.entry(Position.L2CONE, elevatorArm.goToTargetCommand(Position.L2CUBE)),
+            Map.entry(Position.L2CUBE, elevatorArm.goToTargetCommand(Position.L2CUBE)),
+            Map.entry(Position.L3CONE, elevatorArm.goToTargetCommand(Position.L3CUBE)),
+            Map.entry(Position.L3CUBE, elevatorArm.goToTargetCommand(Position.L3CUBE))
+          ), () -> nextArmPosition),
+        () -> intake.getGameObject() == GameObject.CONE)
+      );
     oi.armToShelfIntakePositionButton.onTrue(elevatorArm.goToTargetCommand(Position.SHELF));
     oi.armToGroundIntakePositionButton.onTrue(elevatorArm.goToTargetCommand(Position.L1CONE)); 
     oi.armToHomePosition.onTrue(elevatorArm.goToTargetCommand(Position.HOME));

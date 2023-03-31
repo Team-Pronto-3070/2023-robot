@@ -30,6 +30,8 @@ public class OI {
     public final Trigger armToNextTargetPosition;
     public final Trigger driveSlow;
 
+    public final Trigger goToCardinal;
+
     public final Trigger gyroResetButton;
     public final Trigger interruptButton;
     
@@ -58,10 +60,6 @@ public class OI {
         drive_y = () -> -driver.getLeftX();
         drive_rot = () -> -driver.getRightX();
 
-        processed_drive_x = () -> Math.pow(MathUtil.applyDeadband(drive_x.getAsDouble(), Constants.OI.deadband, Constants.Swerve.maxSpeed), 3);
-        processed_drive_y = () -> Math.pow(MathUtil.applyDeadband(drive_y.getAsDouble(), Constants.OI.deadband, Constants.Swerve.maxSpeed), 3);
-        processed_drive_rot = () -> MathUtil.applyDeadband(drive_rot.getAsDouble(), Constants.OI.deadband, Constants.Swerve.maxAngularSpeed);
-
         absoluteHeadingHorizontal = () -> -driver.getRightX();
         absoluteHeadingVertical = () -> -driver.getRightY();
 
@@ -69,6 +67,15 @@ public class OI {
         armToNextTargetPosition = driver.leftBumper();
         scoreGamePiece = driver.leftTrigger(Constants.OI.triggerDeadband);
         driveSlow = driver.rightTrigger();
+        
+        goToCardinal = driver.y();
+
+        //processed_drive_x = () -> Math.pow(MathUtil.applyDeadband(drive_x.getAsDouble(), Constants.OI.deadband, Constants.Swerve.maxSpeed), 3);
+        //processed_drive_y = () -> Math.pow(MathUtil.applyDeadband(drive_y.getAsDouble(), Constants.OI.deadband, Constants.Swerve.maxSpeed), 3);
+        //processed_drive_rot = () -> MathUtil.applyDeadband(drive_rot.getAsDouble(), Constants.OI.deadband, Constants.Swerve.maxAngularSpeed);
+        processed_drive_x = () -> Math.pow(MathUtil.applyDeadband(drive_x.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxSpeed * (driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1);
+        processed_drive_y = () -> Math.pow(MathUtil.applyDeadband(drive_y.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxSpeed * (driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1);
+        processed_drive_rot = () -> Math.pow(MathUtil.applyDeadband(drive_rot.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxAngularSpeed * (driveSlow.getAsBoolean() ? 0.25 : 1);
 
         gyroResetButton = driver.povRight();
         interruptButton = driver.start().or(operator.start());

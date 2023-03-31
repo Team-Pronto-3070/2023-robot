@@ -75,7 +75,7 @@ public final class Constants {
             config.peakCurrentDuration = 100; //miliseconds
             config.peakCurrentLimit = 25; //amps
         }
-        public static final int distanceThreshold = 60; //arbitrary units, greater is closer
+        public static final int distanceThreshold = 65; //arbitrary units, greater is closer
         public static final double distanceDebounceTime = 0.5; //seconds
         public static final Function<RawColor, Boolean> isCube = 
             (color) -> color.red <= color.green;
@@ -288,7 +288,8 @@ public final class Constants {
 
         public static enum Position {
             //HOME (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(75))),
-            HOME (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(80.5))),
+            //HOME (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(80.5))),
+            HOME (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(82))),
 
             //L1CONE (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(5))),
             L1CONE (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(11))),
@@ -302,6 +303,7 @@ public final class Constants {
 
             //SHELF (new Translation2d(Constants.ElevatorArm.initialArmLength, Rotation2d.fromDegrees(59.0))),
             SHELF (new Translation2d(1.165, Rotation2d.fromDegrees(59.0))),
+            //SHELF (new Translation2d(1.522, Rotation2d.fromDegrees(44.82))),
 
             AUTOL3CUBE (new Translation2d(1.9, Rotation2d.fromDegrees(45.0))),
             AUTOL3CONE (new Translation2d(1.9, Rotation2d.fromDegrees(50.0)));

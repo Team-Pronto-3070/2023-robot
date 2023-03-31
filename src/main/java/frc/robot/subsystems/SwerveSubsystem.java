@@ -1,19 +1,25 @@
 package frc.robot.subsystems;
 
 import java.util.Optional;
+import java.util.function.DoubleSupplier;
 
 import org.photonvision.EstimatedRobotPose;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.util.Units;
 //import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import frc.robot.util.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.ProntoSwerveModule;
@@ -169,6 +175,43 @@ public class SwerveSubsystem extends SubsystemBase {
         }
     }
 
+    public CommandBase turnToAngle(Rotation2d angle, DoubleSupplier x, DoubleSupplier y) {
+        PIDController thetaController = new PIDController(0.3, 0.1, 0);
+        thetaController.reset();
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        thetaController.setTolerance(Units.degreesToRadians(2));
+        thetaController.setSetpoint(angle.getRadians());
+        return this.run(() -> this.drive(x.getAsDouble(), y.getAsDouble(), thetaController.calculate(this.getYaw().getRadians()) * Constants.Swerve.maxAngularSpeed, true, false))
+                .until(() -> thetaController.atSetpoint()).andThen(thetaController::close);
+    }
+
+    public CommandBase turnToNearestCardinalDirection(DoubleSupplier x, DoubleSupplier y) {
+        return new ProxyCommand(() -> {
+            double angle = this.getYaw().getDegrees() % 360.0;
+            if (angle < 0) angle += 360.0;
+            if (90 <= angle && angle < 270) {
+                return turnToAngle(Rotation2d.fromDegrees(180), x, y);
+            } else {
+                return turnToAngle(Rotation2d.fromDegrees(0), x, y);
+            }
+
+            /*
+            if (45 <= angle && angle < 135) {
+                return turnToAngle(Rotation2d.fromDegrees(90), x, y);
+            } else if (135 <= angle && angle < 225) {
+                return turnToAngle(Rotation2d.fromDegrees(180), x, y);
+            } else if (225 <= angle && angle < 315) {
+                return turnToAngle(Rotation2d.fromDegrees(270), x, y);
+            } else if ((315 <= angle && angle < 360) || (0 <= angle && angle < 45)) {
+                return turnToAngle(Rotation2d.fromDegrees(0), x, y);
+            } else {
+                //return Commands.print(((Double) angle).toString());
+                return Commands.none();
+            }
+            */
+        });
+    }
+
     @Override
     public void periodic() {
         poseEstimator.update(
@@ -193,6 +236,8 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("rear right angle", rearRight.getState().angle.getDegrees());
 
         SmartDashboard.putNumber("pitch", getPitch());
+        SmartDashboard.putNumber("yaw", getYaw().getDegrees());
+        SmartDashboard.putNumber("mod yaw", getYaw().getDegrees() % 360.0);
 
         SmartDashboard.putNumber("manual yaw", gyro.getAngle(gyro.getYawAxis()));
         SmartDashboard.putNumber("manual pitch", gyro.getAngle(gyro.getPitchAxis()));

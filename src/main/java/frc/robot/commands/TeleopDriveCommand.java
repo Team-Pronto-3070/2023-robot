@@ -38,7 +38,7 @@ public class TeleopDriveCommand extends CommandBase {
         this.useAntiTipper = useAntiTipper;
 
         if (useAbsoluteAngle) {
-            thetaController = new PIDController(1, 0, 0); //TODO
+            thetaController = new PIDController(0.2, 0.001, 0); //TODO
             thetaController.enableContinuousInput(-Math.PI, Math.PI);
             lastAngle = 0;
         }
