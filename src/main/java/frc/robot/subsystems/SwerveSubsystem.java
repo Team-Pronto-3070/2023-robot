@@ -212,6 +212,14 @@ public class SwerveSubsystem extends SubsystemBase {
         });
     }
 
+    public void setX() {
+        stop();
+        frontLeft.setAngle(Rotation2d.fromDegrees(45));
+        frontRight.setAngle(Rotation2d.fromDegrees(-45));
+        rearLeft.setAngle(Rotation2d.fromDegrees(-45));
+        rearRight.setAngle(Rotation2d.fromDegrees(45));
+    }
+
     @Override
     public void periodic() {
         poseEstimator.update(

@@ -152,7 +152,7 @@ public class RobotContainer {
     if (!triedVision) {
       if (vision == null) {
         //if (DriverStation.isFMSAttached() || true) { //TODO
-        if (DriverStation.isDSAttached()) {
+        if (DriverStation.isDSAttached() && false) {
           vision = new Vision();
         }
       } else {

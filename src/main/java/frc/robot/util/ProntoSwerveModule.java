@@ -126,4 +126,9 @@ public class ProntoSwerveModule {
             turningAbsoluteEncoder.getVelocity()
         );
     }
+
+    public void setAngle(Rotation2d angle) {
+        turningPID.setReference(angle.getRadians(), CANSparkMax.ControlType.kPosition,
+                                0);
+    }
 }
