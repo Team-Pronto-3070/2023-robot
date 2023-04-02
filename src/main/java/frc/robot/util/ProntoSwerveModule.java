@@ -128,6 +128,7 @@ public class ProntoSwerveModule {
     }
 
     public void setAngle(Rotation2d angle) {
+        lastAngle = angle;
         turningPID.setReference(angle.getRadians(), CANSparkMax.ControlType.kPosition,
                                 0);
     }

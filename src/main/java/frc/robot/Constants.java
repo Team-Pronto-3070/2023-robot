@@ -187,7 +187,8 @@ public final class Constants {
             public static final boolean motorReversed = true;
             public static final boolean sensorPhase = false;
 
-            public static final double absoluteEncoderOffset = 3219.0; // encoder units when arm is horizontal
+            //public static final double absoluteEncoderOffset = 3219.0; // encoder units when arm is horizontal
+            public static final double absoluteEncoderOffset = 2369.0; // encoder units when arm is horizontal
 
             public static final TalonSRXConfiguration config = new TalonSRXConfiguration();
             static {

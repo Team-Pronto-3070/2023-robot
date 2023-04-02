@@ -48,7 +48,7 @@ public class Autos {
         eventMap.put("armToLevel3Cone", arm.goToTargetCommand(Position.AUTOL3CONE));
         //eventMap.put("armToLevel3Cube", arm.goToTargetCommand(Position.L3CUBE));
         eventMap.put("armToLevel3Cube", arm.goToTargetCommand(Position.AUTOL3CUBE));
-        eventMap.put("resetArm", arm.goToTargetCommand(Position.HOME));
+        eventMap.put("resetArm", arm.goToTargetCommand(Position.HOME).withTimeout(3));
         eventMap.put("scoreLevel1Cone", arm.goToTargetCommand(Position.L1CONE).andThen(intake.openCommand().withTimeout(1.0)));
         eventMap.put("scoreLevel1Cube", arm.goToTargetCommand(Position.L1CUBE).andThen(intake.openCommand().withTimeout(1.0)));
         eventMap.put("scoreLevel2Cone", arm.goToTargetCommand(Position.L2CONE).andThen(intake.openCommand().withTimeout(1.0)));
@@ -144,13 +144,22 @@ public class Autos {
     public static CommandBase autoBalanceV3(SwerveSubsystem swerve, ElevatorArmSubsystem arm, IntakeSubsystem intake) {
         return sequence(
             swerve.runOnce(() -> swerve.resetOdometry(new Pose2d(1.81, 3.28, Rotation2d.fromDegrees(-180.0)))), 
-            arm.goToTargetCommand(Position.AUTOL3CONE).withTimeout(5),
-            arm.goToTargetCommand(Position.L3CONE).withTimeout(5),
-            intake.openCommand().withTimeout(3),
-            waitSeconds(1),
+            parallel(
+                sequence(
+                    arm.goToTargetCommand(Position.AUTOL3CONE).withTimeout(5),
+                    arm.goToTargetCommand(Position.L3CONE).withTimeout(5),
+                    intake.openCommand().withTimeout(3),
+                    waitSeconds(1)
+                ),
+                sequence(
+                    new InstantCommand(swerve::makeNewGyro),
+                    waitSeconds(0.5),
+                    swerve.runOnce(() -> swerve.resetOdometry(new Pose2d(1.81, 3.28, Rotation2d.fromDegrees(-180.0))))
+                )
+            ),
             parallel(
                 arm.goToTargetCommand(Position.HOME).withTimeout(3),
-                intake.closeCommand(),
+                //intake.closeCommand(),
                 sequence(
                     new InstantCommand(() -> SmartDashboard.putNumber("auto state", 1)),
                     driveToAngleCommand(swerve, 2.0, -12, false),
@@ -160,7 +169,7 @@ public class Autos {
                 )
             ).withTimeout(10),
             new InstantCommand(() -> SmartDashboard.putNumber("auto state", 6)).withTimeout(3),
-            waitSeconds(1),
+            waitSeconds(2),
             driveToAngleCommand(swerve, -0.5, 12.9, false),
             new InstantCommand(() -> SmartDashboard.putNumber("auto state", 8)).withTimeout(3),
             swerve.runOnce(swerve::setX)

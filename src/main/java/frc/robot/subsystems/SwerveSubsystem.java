@@ -25,6 +25,9 @@ import frc.robot.Constants;
 import frc.robot.util.ProntoSwerveModule;
 import frc.robot.util.SwerveDriveKinematics2;
 import frc.robot.util.SwerveModuleState2;
+import frc.robot.util.ADIS16470_IMU.CalibrationTime;
+import frc.robot.util.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.SPI;
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -33,7 +36,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final ProntoSwerveModule rearLeft;
     private final ProntoSwerveModule rearRight;
 
-    private final ADIS16470_IMU gyro;
+    private ADIS16470_IMU gyro;
     private double gyroOffset = 0.0;
 
     public final SwerveDriveKinematics2 kinematics;
@@ -154,11 +157,13 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void setChassisSpeeds(ChassisSpeeds speeds) {
+        SmartDashboard.putNumber("auto troubleshooting desired chassis speed", speeds.vxMetersPerSecond);
         setModuleStates(kinematics.toSwerveModuleStates(speeds));
     }
     
     public void setModuleStates(SwerveModuleState2[] desiredStates) {
         SwerveDriveKinematics2.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
+        SmartDashboard.putNumber("auto troubleshooting front left desired speed", desiredStates[0].speedMetersPerSecond);
         frontLeft.setDesiredState(desiredStates[0], false);
         frontRight.setDesiredState(desiredStates[1], false);
         rearLeft.setDesiredState(desiredStates[2], false);
@@ -218,6 +223,11 @@ public class SwerveSubsystem extends SubsystemBase {
         frontRight.setAngle(Rotation2d.fromDegrees(-45));
         rearLeft.setAngle(Rotation2d.fromDegrees(-45));
         rearRight.setAngle(Rotation2d.fromDegrees(45));
+    }
+
+    public void makeNewGyro() {
+        //gyro = new ADIS16470_IMU(IMUAxis.kZ, IMUAxis.kY, IMUAxis.kX, SPI.Port.kOnboardCS0, CalibrationTime._2s);
+        gyro.calibrate();
     }
 
     @Override
