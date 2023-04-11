@@ -206,7 +206,8 @@ public final class Constants {
                 config.peakCurrentDuration = 100; //miliseconds
                 config.peakCurrentLimit = 60; //amps
 
-                config.forwardSoftLimitEnable = true; //TODO: set this to true once the threshold is filled in
+                //config.forwardSoftLimitEnable = true; //TODO: set this to true once the threshold is filled in
+                config.forwardSoftLimitEnable = false;
                 //config.forwardSoftLimitThreshold = 870.0;
                 config.forwardSoftLimitThreshold = 912.0;
                 config.reverseSoftLimitEnable = true; //TODO: set this to true once the threshold is filled in

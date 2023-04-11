@@ -84,15 +84,15 @@ public class Autos {
         //autoChooser.addOption("0 Piece Taxi Balance", buildAuto("0 Piece Taxi Balance"));
         autoChooser.addOption("1 Piece Taxi LZ", buildAuto("1 Piece Taxi LZ"));
         autoChooser.addOption("1 Piece Taxi LZ v2", buildAuto("v2 1 Piece Taxi LZ v2"));
-        autoChooser.addOption("2 Piece Balance LZ", buildAuto("2 Piece Balance LZ"));
+        //autoChooser.addOption("2 Piece Balance LZ", buildAuto("2 Piece Balance LZ"));
         autoChooser.addOption("2 Piece No Balance LZ", buildAuto("2 Piece No Balance LZ"));
-        autoChooser.addOption("3 Piece No Balance LZ", buildAuto("3 Piece No Balance LZ"));
+        //autoChooser.addOption("3 Piece No Balance LZ", buildAuto("3 Piece No Balance LZ"));
         autoChooser.addOption("1 Piece Taxi WALL", buildAuto("1 Piece Taxi WALL"));
-        autoChooser.addOption("2 Piece Balance WALL", buildAuto("2 Piece Balance WALL"));
-        autoChooser.addOption("2 Piece No Balance WALL", buildAuto("2 Piece No Balance WALL"));
-        autoChooser.addOption("3 Piece No Balance WALL", buildAuto("3 Piece No Balance WALL"));
-        autoChooser.addOption("1 Piece Taxi Balance CENTER", centerWithBalance(swerve, arm, intake));
-        autoChooser.addOption("1 Piece Taxi No Balance CENTER", centerNoBalance(swerve, arm, intake));
+        //autoChooser.addOption("2 Piece Balance WALL", buildAuto("2 Piece Balance WALL"));
+        //autoChooser.addOption("2 Piece No Balance WALL", buildAuto("2 Piece No Balance WALL"));
+        //autoChooser.addOption("3 Piece No Balance WALL", buildAuto("3 Piece No Balance WALL"));
+        //autoChooser.addOption("1 Piece Taxi Balance CENTER", centerWithBalance(swerve, arm, intake));
+        //autoChooser.addOption("1 Piece Taxi No Balance CENTER", centerNoBalance(swerve, arm, intake));
         autoChooser.addOption("auto balance v3", autoBalanceV3(swerve, arm, intake));
 
         SmartDashboard.putData("auto chooser", autoChooser);
